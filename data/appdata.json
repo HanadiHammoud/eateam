@@ -1,0 +1,25 @@
+{
+  "reports": [
+    {
+      "id": 1746000000000,
+      "date": "2026-04-29",
+      "author": "Hanadi Hammoud",
+      "type": "daily",
+      "content": "Daily Report\nDate: Wednesday, 29 April 2026\n\nSummary of Activities:\n• Conducted a meeting with Aya (new setter).\n• Attended a meeting with Elie, Fatima, and Maya.\n• Held a meeting with Jinane.\n• Conducted a follow-up meeting with Fatima and Maya.\n• Checked and reviewed yesterday's leads.\n• Continued updating the May plan and new tracking sheets.\n• Attended the RVO meeting.\n• Focused on optimization and building a structured plan moving forward.\n\nChallenges:\n• Aligning optimization efforts with ongoing operations requires clear prioritization and structured execution.\n\nAction Points:\n• Finalize and implement the May plan.\n• Ensure alignment across the team on optimization strategy.\n• Continue monitoring lead tracking and performance closely."
+    }
+  ],
+  "meetings": [
+    {
+      "id": 1,
+      "date": "2026-02-05",
+      "title": "Setter Performance & MDP Scaling Goals — EAXRVO",
+      "attendees": "Elie Ashkar · Stephan Z · Abdallah Staitieh · Hanadi Hammoud",
+      "program": "Genesis",
+      "content": "Feb 5, 2026 — EAXRVO Meeting\n\nSUMMARY\nElie Ashkar and Stephan Z discussed scaling MDP to 70–90 students and achieving $78K–$113K monthly revenue. Scaling identified as a \"setter game\" — setters must hit 10–12 bookings/day and 10% message-to-booking rate minimum.\n\nKEY POINTS\n• Pessimistic: 55% show-up + 35% close = $78K revenue\n• Average: 60% show-up + 35% close = $85K revenue\n• Optimistic: 65% show-up + 35% close = $92K revenue\n• Best case: 70% show-up + 40% close = $113K revenue (132–151 students)\n• Need 540 bookings/month = 18–24/day from 2 setters\n• Setters can earn $2K+/month with bonuses if KPIs hit\n• Lead center must be cleaned daily — categorize hot/no-show/dead\n• 15% of Genesis leads are business owners → good MDP prospects\n• Content creation + Google Ads to make MDP easier to close at $1.5K\n• Out of 59 students, 58 were not \"super sophisticated\" — focus on freelancers\n\nNEXT STEPS\n• Elie to review lead center and ensure document is updated\n• Send content creation brief based on pain points to group\n• Talk to lead center team on daily KPI dashboard setup\n• Find common ground with setters on booking targets for May"
+    }
+  ],
+  "wins": [],
+  "insights": [],
+  "improvements": [],
+  "tasks": null
+}
