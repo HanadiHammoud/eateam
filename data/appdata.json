@@ -1,6 +1,14 @@
 {
   "reports": [
     {
+      "id": 1777839116588,
+      "date": "2026-05-03",
+      "author": "Hanadi Hammoud",
+      "type": "daily",
+      "content": "majd test 11:11 pm",
+      "month": "2026-05"
+    },
+    {
       "id": 1777836236927,
       "date": "2026-05-03",
       "author": "Hanadi Hammoud",
@@ -12,7 +20,7 @@
       "date": "2026-04-29",
       "author": "Hanadi Hammoud",
       "type": "daily",
-      "content": "Daily Report\nDate: Wednesday, 29 April 2026\n\nSummary of Activities:\nâ¢ Conducted a meeting with Aya (new setter).\nâ¢ Attended a meeting with Elie, Fatima, and Maya.\nâ¢ Held a meeting with Jinane.\nâ¢ Conducted a follow-up meeting with Fatima and Maya.\nâ¢ Checked and reviewed yesterday's leads.\nâ¢ Continued updating the May plan and new tracking sheets.\nâ¢ Attended the RVO meeting.\nâ¢ Focused on optimization and building a structured plan moving forward.\n\nChallenges:\nâ¢ Aligning optimization efforts with ongoing operations requires clear prioritization and structured execution.\n\nAction Points:\nâ¢ Finalize and implement the May plan.\nâ¢ Ensure alignment across the team on optimization strategy.\nâ¢ Continue monitoring lead tracking and performance closely."
+      "content": "Daily Report\nDate: Wednesday, 29 April 2026\n\nSummary of Activities:\nÃ¢ÂÂ¢ Conducted a meeting with Aya (new setter).\nÃ¢ÂÂ¢ Attended a meeting with Elie, Fatima, and Maya.\nÃ¢ÂÂ¢ Held a meeting with Jinane.\nÃ¢ÂÂ¢ Conducted a follow-up meeting with Fatima and Maya.\nÃ¢ÂÂ¢ Checked and reviewed yesterday's leads.\nÃ¢ÂÂ¢ Continued updating the May plan and new tracking sheets.\nÃ¢ÂÂ¢ Attended the RVO meeting.\nÃ¢ÂÂ¢ Focused on optimization and building a structured plan moving forward.\n\nChallenges:\nÃ¢ÂÂ¢ Aligning optimization efforts with ongoing operations requires clear prioritization and structured execution.\n\nAction Points:\nÃ¢ÂÂ¢ Finalize and implement the May plan.\nÃ¢ÂÂ¢ Ensure alignment across the team on optimization strategy.\nÃ¢ÂÂ¢ Continue monitoring lead tracking and performance closely."
     }
   ],
   "meetings": [
@@ -27,10 +35,10 @@
     {
       "id": 1,
       "date": "2026-02-05",
-      "title": "Setter Performance & MDP Scaling Goals â EAXRVO",
-      "attendees": "Elie Ashkar Â· Stephan Z Â· Abdallah Staitieh Â· Hanadi Hammoud",
+      "title": "Setter Performance & MDP Scaling Goals Ã¢ÂÂ EAXRVO",
+      "attendees": "Elie Ashkar ÃÂ· Stephan Z ÃÂ· Abdallah Staitieh ÃÂ· Hanadi Hammoud",
       "program": "Genesis",
-      "content": "Feb 5, 2026 â EAXRVO Meeting\n\nSUMMARY\nElie Ashkar and Stephan Z discussed scaling MDP to 70â90 students and achieving $78Kâ$113K monthly revenue. Scaling identified as a \"setter game\" â setters must hit 10â12 bookings/day and 10% message-to-booking rate minimum.\n\nKEY POINTS\nâ¢ Pessimistic: 55% show-up + 35% close = $78K revenue\nâ¢ Average: 60% show-up + 35% close = $85K revenue\nâ¢ Optimistic: 65% show-up + 35% close = $92K revenue\nâ¢ Best case: 70% show-up + 40% close = $113K revenue (132â151 students)\nâ¢ Need 540 bookings/month = 18â24/day from 2 setters\nâ¢ Setters can earn $2K+/month with bonuses if KPIs hit\nâ¢ Lead center must be cleaned daily â categorize hot/no-show/dead\nâ¢ 15% of Genesis leads are business owners â good MDP prospects\nâ¢ Content creation + Google Ads to make MDP easier to close at $1.5K\nâ¢ Out of 59 students, 58 were not \"super sophisticated\" â focus on freelancers\n\nNEXT STEPS\nâ¢ Elie to review lead center and ensure document is updated\nâ¢ Send content creation brief based on pain points to group\nâ¢ Talk to lead center team on daily KPI dashboard setup\nâ¢ Find common ground with setters on booking targets for May"
+      "content": "Feb 5, 2026 Ã¢ÂÂ EAXRVO Meeting\n\nSUMMARY\nElie Ashkar and Stephan Z discussed scaling MDP to 70Ã¢ÂÂ90 students and achieving $78KÃ¢ÂÂ$113K monthly revenue. Scaling identified as a \"setter game\" Ã¢ÂÂ setters must hit 10Ã¢ÂÂ12 bookings/day and 10% message-to-booking rate minimum.\n\nKEY POINTS\nÃ¢ÂÂ¢ Pessimistic: 55% show-up + 35% close = $78K revenue\nÃ¢ÂÂ¢ Average: 60% show-up + 35% close = $85K revenue\nÃ¢ÂÂ¢ Optimistic: 65% show-up + 35% close = $92K revenue\nÃ¢ÂÂ¢ Best case: 70% show-up + 40% close = $113K revenue (132Ã¢ÂÂ151 students)\nÃ¢ÂÂ¢ Need 540 bookings/month = 18Ã¢ÂÂ24/day from 2 setters\nÃ¢ÂÂ¢ Setters can earn $2K+/month with bonuses if KPIs hit\nÃ¢ÂÂ¢ Lead center must be cleaned daily Ã¢ÂÂ categorize hot/no-show/dead\nÃ¢ÂÂ¢ 15% of Genesis leads are business owners Ã¢ÂÂ good MDP prospects\nÃ¢ÂÂ¢ Content creation + Google Ads to make MDP easier to close at $1.5K\nÃ¢ÂÂ¢ Out of 59 students, 58 were not \"super sophisticated\" Ã¢ÂÂ focus on freelancers\n\nNEXT STEPS\nÃ¢ÂÂ¢ Elie to review lead center and ensure document is updated\nÃ¢ÂÂ¢ Send content creation brief based on pain points to group\nÃ¢ÂÂ¢ Talk to lead center team on daily KPI dashboard setup\nÃ¢ÂÂ¢ Find common ground with setters on booking targets for May"
     }
   ],
   "wins": [],
