@@ -336,21 +336,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
      OVERVIEW
 ═══════════════════════════════════════════ -->
 <div id="tab-overview" class="content active">
-  <div class="section-title">Operations Overview
-    <div class="section-sub">Elie Ashkar · Genesis + MDP Programs · <span id="overviewMonthSub"></span></div>
+  <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>Operations Overview
+      <div class="section-sub">Elie Ashkar · Genesis + MDP Programs</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button onclick="shiftOverviewMonth(-1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">◀</button>
+      <div id="ovMonthLabel" style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--accent2);background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:6px;padding:4px 12px;min-width:96px;text-align:center;"></div>
+      <button onclick="shiftOverviewMonth(1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">▶</button>
+    </div>
   </div>
 
-  <div class="sheets-banner">
-    <div style="font-size:22px;">📊</div>
-    <div class="sheets-text" style="flex:1;">
-      <strong>Connect Google Sheets for live data sync</strong>
-      <span>File → Share → Publish to web → Select sheet → CSV format. Works on HTML file, GitHub Pages, and any browser.</span>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <input class="form-input" id="sheetUrl" style="width:280px;font-family:'IBM Plex Mono',monospace;font-size:11px;" placeholder="https://docs.google.com/spreadsheets/d/..." />
-      <button class="btn btn-primary btn-sm" onclick="connectSheet()">Connect</button>
-    </div>
-  </div>
+
 
   <div class="kpi-grid">
     <div class="kpi-card purple"><div class="kpi-label">Total Leads (CRM)</div><div class="kpi-value purple" id="ov-leads">—</div><div class="kpi-meta">All stages · All sources</div></div>
@@ -959,7 +956,6 @@ function shiftMonth(dir){
   if(_activeMonth > 12){ _activeMonth=1; _activeYear++; }
   if(_activeMonth < 1){  _activeMonth=12; _activeYear--; }
   updateMonthLabel();
-  renderOverview();
   if(typeof renderReports==='function') renderReports();
   if(typeof renderMeetings==='function') renderMeetings();
   if(typeof renderKPIList==='function'){
@@ -970,14 +966,28 @@ function shiftMonth(dir){
   }
 }
 
+// ── Overview has its own independent month selector ──
+let _ovYear  = today.getFullYear();
+let _ovMonth = today.getMonth() + 1;
+
+function ovMonthKey(){ return _ovYear + '-' + String(_ovMonth).padStart(2,'0'); }
+function ovMonthLabel(){ return MONTH_NAMES[_ovMonth-1] + ' ' + _ovYear; }
+
+function shiftOverviewMonth(dir){
+  _ovMonth += dir;
+  if(_ovMonth > 12){ _ovMonth=1; _ovYear++; }
+  if(_ovMonth < 1){  _ovMonth=12; _ovYear--; }
+  const el=document.getElementById('ovMonthLabel'); if(el) el.textContent=ovMonthLabel();
+  renderOverview();
+}
+
 function updateMonthLabel(){
   const el=document.getElementById('monthLabel'); if(el) el.textContent=activeMonthLabel();
-  const sub=document.getElementById('overviewMonthSub'); if(sub) sub.textContent=activeMonthLabel();
 }
 updateMonthLabel();
 
-// ════════════════════════════════
-// HARDCODED MONTHLY DATA
+// Init overview month label
+(function(){ const el=document.getElementById('ovMonthLabel'); if(el) el.textContent=ovMonthLabel(); })();
 // ════════════════════════════════
 const MONTHLY_DATA = {
   '2026-04': {
@@ -1000,9 +1010,9 @@ const MONTHLY_DATA = {
 };
 
 function renderOverview(){
-  const mk = activeMonthKey();
+  const mk = ovMonthKey();
   const d  = MONTHLY_DATA[mk];
-  const lbl = activeMonthLabel();
+  const lbl = ovMonthLabel();
 
   // genesis month label
   const gml = document.getElementById('ov-genesis-month'); if(gml) gml.textContent = d ? lbl+' Actuals' : lbl;
@@ -1447,7 +1457,7 @@ async function saveReport(){
   const btn=document.querySelector('#reportForm .btn-primary');
   btn.textContent='Saving…'; btn.disabled=true;
   const d=await loadAppData(); if(!d.reports) d.reports=[];
-  d.reports.unshift({id:Date.now(),date,author,type,content,month:activeMonthKey()});
+  d.reports.unshift({id:Date.now(),date,author,type,content,month:activeMonthKey(),time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
   await saveAppData();
   document.getElementById('rContent').value='';
   toggleReportForm(false); btn.textContent='Save Report'; btn.disabled=false;
@@ -1468,9 +1478,8 @@ function renderReportsList(){
       const color=AUTHOR_COLORS[r.author]||'var(--text2)';
       return `<div class="report-card">
         <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
-          <div><div class="report-date-chip">${dateStr}</div>
+          <div><div class="report-date-chip">${dateStr}${r.time ? ' · '+r.time : ''}</div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${TYPE_LABELS[r.type]||r.type} <span style="color:${color};font-weight:600;">— ${r.author}</span></div></div>
-          <div style="display:flex;align-items:center;gap:10px;">
             <button onclick="event.stopPropagation();deleteReport(${r.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
             <span class="chevron">▶</span></div>
         </div>
@@ -1504,7 +1513,7 @@ async function saveMeeting(){
   const btn=document.querySelector('#meetingForm .btn-primary');
   btn.textContent='Saving…'; btn.disabled=true;
   const d=await loadAppData(); if(!d.meetings) d.meetings=[];
-  d.meetings.unshift({id:Date.now(),date,title,attendees,program,content,month:activeMonthKey()});
+  d.meetings.unshift({id:Date.now(),date,title,attendees,program,content,month:activeMonthKey(),time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
   ['mDate','mTitle','mAttendees','mContent'].forEach(id=>document.getElementById(id).value='');
   await saveAppData(); toggleMeetingForm(false);
   btn.textContent='Save Meeting Notes'; btn.disabled=false;
@@ -1525,7 +1534,7 @@ function renderMeetings(){
       const tagCls=PROG_TAG_CLASS[m.program]||'lead';
       return `<div class="report-card">
         <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
-          <div><div class="report-date-chip">${dateStr}</div>
+          <div><div class="report-date-chip">${dateStr}${m.time ? ' · '+m.time : ''}</div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${escHtml(m.title)}</div>
           <div style="font-size:11px;color:var(--text3);margin-top:3px;">${escHtml(m.attendees||'')}</div></div>
           <div style="display:flex;align-items:center;gap:8px;">${syncBadge}<span class="tag ${tagCls}">${m.program}</span>
@@ -1668,6 +1677,9 @@ syncVal('genesis-price','$');
 syncVal('mdp-price','$');
 runSimulator();
 
+// ── PASSWORD GATE ──
+const DASHBOARD_PASSWORD = 'elieteam2026';
+
 // ── Delete password guard ──
 function confirmDelete(msg){
   const pw=prompt((msg||'Confirm deletion')+'\n\nEnter password to confirm:');
@@ -1681,9 +1693,7 @@ function escHtml(s){
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ── PASSWORD GATE ──
-// Change the password below to whatever you want to share with your team
-const DASHBOARD_PASSWORD = 'elieteam2026';
+// ── PASSWORD GATE FUNCTION ──
 
 function checkPassword(){
   const val = document.getElementById('pwInput').value;
