@@ -635,11 +635,40 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-reports" class="content">
   <div class="section-title">Daily Reports
-    <div class="section-sub">Paste WhatsApp reports directly · Choose the person · Saved in browser</div>
+    <div class="section-sub">Paste WhatsApp reports directly · Synced to GitHub · Live on all devices</div>
+  </div>
+
+  <!-- GitHub Sync Setup (shared class — shown on both Reports and Meetings tabs) -->
+  <div class="gh-setup-panel panel" style="margin-bottom:20px;border-color:rgba(108,99,255,.3);">
+    <div class="panel-title" style="color:var(--accent2);">🔗 Connect GitHub — sync everything across all devices</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.7;">
+      All data (reports, meetings, KPI logs, tasks) saves to your repo as <code style="background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;">data/appdata.json</code> — visible on every device, completely free.<br>
+      <strong style="color:var(--text);">One-time setup per device (2 min):</strong> Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> → Generate new token → tick <strong>repo</strong> scope → copy it → paste below.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div><label class="form-label">GitHub Username</label><input class="form-input gh-input-owner" id="gh-owner" placeholder="e.g. hanadihammoud" /></div>
+      <div><label class="form-label">Repository Name</label><input class="form-input gh-input-repo" id="gh-repo" placeholder="e.g. eateam" /></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Personal Access Token</label>
+      <input class="form-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="saveGHConfig()">Connect & Save</button>
+      <span style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Token stored on this device only — never shared anywhere except GitHub</span>
+    </div>
+  </div>
+
+  <!-- Sync status bar -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap;">
+    <span style="font-size:12px;color:var(--text2);">Sync:</span>
+    <span class="gh-status-badge"><span class="status-badge badge-yellow"><span class="badge-dot"></span>Checking…</span></span>
+    <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display=p.style.display==='none'?'block':'none')">⚙ Setup</button>
+    <button class="btn btn-ghost btn-sm" style="color:var(--red2);" onclick="clearGHConfig()">Disconnect</button>
   </div>
 
   <div class="info-box">
-    <strong>How to use:</strong> Click "New Report" → select the team member → paste their WhatsApp message as-is in the text area → Save. The report is stored and displayed with the date and name. No formatting needed.
+    <strong>How to use:</strong> Click "New Report" → select the team member → paste their WhatsApp message as-is → Save. Synced instantly to GitHub and visible on every device.
   </div>
 
   <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
@@ -699,11 +728,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-meetings" class="content">
   <div class="section-title">Meeting Notes
-    <div class="section-sub">Paste Gemini notes directly · Searchable archive · Saved in browser</div>
+    <div class="section-sub">Paste Gemini notes directly · Searchable archive · Synced to GitHub</div>
+  </div>
+
+  <!-- Sync status bar (setup panel toggled from Reports tab or here) -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap;">
+    <span style="font-size:12px;color:var(--text2);">Sync:</span>
+    <span class="gh-status-badge"><span class="status-badge badge-yellow"><span class="badge-dot"></span>Checking…</span></span>
+    <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display=p.style.display==='none'?'block':'none');switchTab('reports',document.querySelector('.nav-tab'))">⚙ Setup (in Reports tab)</button>
   </div>
 
   <div class="info-box">
-    <strong>Gemini import:</strong> After your Google Meet, Gemini auto-generates notes. Open the notes → copy all text → click "Add Meeting Notes" below → paste in the field. There is no direct API integration possible for free, but paste-in is one step. <strong>Direct Gemini API</strong> would require Google Workspace API access (paid).
+    <strong>Gemini import:</strong> After your Google Meet, Gemini auto-generates notes. Open the notes → copy all text → click "Add Meeting Notes" below → paste in the field.
   </div>
 
   <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
@@ -1086,6 +1122,7 @@ function loadTasks(){
 
 function saveTasks(data){
   try{ localStorage.setItem('ea_tasks_v2', JSON.stringify(data)); }catch(e){}
+  if(_appData){ _appData.tasks=data; saveAppData(false); }
 }
 
 function renderTasks(){
@@ -1171,64 +1208,187 @@ function addTask(){
 document.getElementById('taskModal').addEventListener('click', function(e){ if(e.target===this) closeTaskModal(); });
 renderTasks();
 
-// ════════════════════════════════
-// KPI LOGGERS
-// ════════════════════════════════
-function loadKPIData(key){ try{ return JSON.parse(localStorage.getItem('ea_kpi_'+key))||[]; }catch(e){ return []; } }
-function saveKPIData(key,data){ try{ localStorage.setItem('ea_kpi_'+key, JSON.stringify(data)); }catch(e){} }
+// ════════════════════════════════════════════════════════════════
+// GITHUB SYNC ENGINE — one file (data/appdata.json) for everything
+// ════════════════════════════════════════════════════════════════
 
-let wins = loadKPIData('wins');
-let insights = loadKPIData('insights');
-let improvements = loadKPIData('improvements');
+// ── Config helpers ──
+function getGHConfig(){
+  return {
+    owner: localStorage.getItem('gh_owner')||'',
+    repo:  localStorage.getItem('gh_repo')||'',
+    token: localStorage.getItem('gh_token')||''
+  };
+}
+function isGHConfigured(){
+  const {owner,repo,token} = getGHConfig();
+  return !!(owner && repo && token);
+}
+function saveGHConfig(){
+  const owner = document.getElementById('gh-owner').value.trim();
+  const repo  = document.getElementById('gh-repo').value.trim();
+  const token = document.getElementById('gh-token').value.trim();
+  if(!owner||!repo||!token){ alert('Please fill in all three fields.'); return; }
+  localStorage.setItem('gh_owner',owner);
+  localStorage.setItem('gh_repo',repo);
+  localStorage.setItem('gh_token',token);
+  _appData=null; _ghSHA=null;
+  document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display='none');
+  updateSyncBadges('connecting');
+  loadAppData().then(()=>{ updateSyncBadges('ok'); refreshAllViews(); });
+}
+function clearGHConfig(){
+  if(!confirm('Disconnect GitHub sync? Data will only save locally on this device.')) return;
+  ['gh_owner','gh_repo','gh_token'].forEach(k=>localStorage.removeItem(k));
+  _appData=null; _ghSHA=null;
+  document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display='block');
+  updateSyncBadges('local');
+}
+function updateSyncBadges(state){
+  const html = {
+    ok:          '<span class="status-badge badge-green"><span class="badge-dot"></span>GitHub Synced — live on all devices</span>',
+    connecting:  '<span class="status-badge badge-yellow"><span class="badge-dot"></span>Connecting…</span>',
+    local:       '<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only — connect GitHub to sync</span>'
+  }[state]||'';
+  document.querySelectorAll('.gh-status-badge').forEach(el=>el.innerHTML=html);
+}
 
+// ── GitHub API ──
+const GH_DATA_PATH = 'data/appdata.json';
+let _ghSHA   = null;
+let _appData = null;
+
+async function ghReadFile(){
+  const {owner,repo,token} = getGHConfig();
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{
+    headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}
+  });
+  if(res.status===404) return {data:null,sha:null};
+  if(!res.ok) throw new Error('GitHub read error: '+res.status);
+  const j = await res.json();
+  return { data: JSON.parse(atob(j.content.replace(/\n/g,''))), sha: j.sha };
+}
+
+async function ghWriteFile(data, sha){
+  const {owner,repo,token} = getGHConfig();
+  const body = {
+    message: 'ops: sync appdata',
+    content: btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2)))),
+    ...(sha?{sha}:{})
+  };
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{
+    method:'PUT',
+    headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||'GitHub write error: '+res.status); }
+  return (await res.json()).content.sha;
+}
+
+// ── Local migration helper (first run) ──
+function localFallback(){
+  const reports      = JSON.parse(localStorage.getItem('ea_reports_v2')||'null');
+  const meetings     = JSON.parse(localStorage.getItem('ea_meetings_v2')||'null');
+  const wins         = JSON.parse(localStorage.getItem('ea_kpi_wins')||'[]');
+  const insights     = JSON.parse(localStorage.getItem('ea_kpi_insights')||'[]');
+  const improvements = JSON.parse(localStorage.getItem('ea_kpi_improvements')||'[]');
+  const tasks        = JSON.parse(localStorage.getItem('ea_tasks_v2')||'null');
+  return { reports: reports||[defaultReport], meetings: meetings||[defaultMeeting], wins, insights, improvements, tasks };
+}
+
+// ── Load ──
+async function loadAppData(){
+  if(_appData) return _appData;
+  if(!isGHConfigured()){ _appData=localFallback(); return _appData; }
+  try{
+    const {data,sha} = await ghReadFile();
+    if(data){ _ghSHA=sha; _appData=data; localStorage.setItem('ea_appdata_cache',JSON.stringify(data)); return _appData; }
+    // File doesn't exist yet — bootstrap from local data
+    _appData = localFallback();
+    _ghSHA = await ghWriteFile(_appData, null);
+    return _appData;
+  } catch(e){
+    console.warn('GitHub load failed, using cache:', e.message);
+    const cache = localStorage.getItem('ea_appdata_cache');
+    _appData = cache ? JSON.parse(cache) : localFallback();
+    return _appData;
+  }
+}
+
+// ── Save ──
+async function saveAppData(){
+  if(!_appData) return;
+  localStorage.setItem('ea_appdata_cache', JSON.stringify(_appData));
+  if(!isGHConfigured()) return;
+  try{ _ghSHA = await ghWriteFile(_appData, _ghSHA); }
+  catch(e){ alert('⚠️ Saved locally but GitHub sync failed:\n'+e.message+'\n\nCheck your token and try again.'); }
+}
+
+// ── Refresh all views after load ──
+function refreshAllViews(){
+  if(!_appData) return;
+  renderReportsList();
+  renderMeetings();
+  const d = _appData;
+  renderKPIList(d.wins||[],'winsDisplay');
+  renderKPIList(d.insights||[],'insightsDisplay');
+  renderKPIList(d.improvements||[],'improvementsDisplay');
+  const wc=document.getElementById('winsCount'); if(wc) wc.textContent=(d.wins||[]).length+' logged';
+  const ic=document.getElementById('insightsCount'); if(ic) ic.textContent=(d.insights||[]).length+' logged';
+  const imc=document.getElementById('improvCount'); if(imc) imc.textContent=(d.improvements||[]).length+' logged';
+  if(d.tasks) renderTasks();
+}
+
+// ── Kick off on page load ──
+loadAppData().then(()=>{
+  updateSyncBadges(isGHConfigured()?'ok':'local');
+  refreshAllViews();
+  // pre-fill owner/repo in setup panels if already configured
+  const c = getGHConfig();
+  if(c.owner){ document.querySelectorAll('.gh-input-owner').forEach(el=>el.value=c.owner); }
+  if(c.repo){  document.querySelectorAll('.gh-input-repo').forEach(el=>el.value=c.repo); }
+  if(isGHConfigured()){ document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display='none'); }
+});
+
+// ════════════════════════════════
+// KPI LOGGERS — GitHub-backed
+// ════════════════════════════════
 function renderKPIList(items, containerId){
   const el = document.getElementById(containerId);
   if(!el) return;
-  el.innerHTML = items.slice(-5).reverse().map(i => `
+  el.innerHTML = (items||[]).slice(-5).reverse().map(i=>`
     <div class="kpi-target-row" style="margin-top:4px;">
-      <span class="kpi-target-label" style="flex:1;">${i.text}</span>
+      <span class="kpi-target-label" style="flex:1;">${escHtml(i.text)}</span>
       <span class="kpi-target-range">${i.date}</span>
     </div>`).join('') || '<div style="font-size:11px;color:var(--text3);padding:8px 0;">No entries yet.</div>';
 }
-
-function logWin(){
-  const t = document.getElementById('winLog').value.trim();
-  if(!t) return;
-  wins.push({text:t, date:new Date().toLocaleDateString()});
-  saveKPIData('wins', wins);
-  document.getElementById('winLog').value = '';
-  const el = document.getElementById('winsCount');
-  if(el) el.textContent = wins.length + ' logged';
-  renderKPIList(wins, 'winsDisplay');
+async function logWin(){
+  const t=document.getElementById('winLog').value.trim(); if(!t) return;
+  const d=await loadAppData(); if(!d.wins) d.wins=[];
+  d.wins.push({text:t,date:new Date().toLocaleDateString()});
+  document.getElementById('winLog').value='';
+  await saveAppData();
+  const el=document.getElementById('winsCount'); if(el) el.textContent=d.wins.length+' logged';
+  renderKPIList(d.wins,'winsDisplay');
 }
-function logInsight(){
-  const t = document.getElementById('insightLog').value.trim();
-  if(!t) return;
-  insights.push({text:t, date:new Date().toLocaleDateString()});
-  saveKPIData('insights', insights);
-  document.getElementById('insightLog').value = '';
-  const el = document.getElementById('insightsCount');
-  if(el) el.textContent = insights.length + ' logged';
-  renderKPIList(insights, 'insightsDisplay');
+async function logInsight(){
+  const t=document.getElementById('insightLog').value.trim(); if(!t) return;
+  const d=await loadAppData(); if(!d.insights) d.insights=[];
+  d.insights.push({text:t,date:new Date().toLocaleDateString()});
+  document.getElementById('insightLog').value='';
+  await saveAppData();
+  const el=document.getElementById('insightsCount'); if(el) el.textContent=d.insights.length+' logged';
+  renderKPIList(d.insights,'insightsDisplay');
 }
-function logImprovement(){
-  const t = document.getElementById('improvementLog').value.trim();
-  if(!t) return;
-  improvements.push({text:t, date:new Date().toLocaleDateString()});
-  saveKPIData('improvements', improvements);
-  document.getElementById('improvementLog').value = '';
-  const el = document.getElementById('improvCount');
-  if(el) el.textContent = improvements.length + ' logged';
-  renderKPIList(improvements, 'improvementsDisplay');
+async function logImprovement(){
+  const t=document.getElementById('improvementLog').value.trim(); if(!t) return;
+  const d=await loadAppData(); if(!d.improvements) d.improvements=[];
+  d.improvements.push({text:t,date:new Date().toLocaleDateString()});
+  document.getElementById('improvementLog').value='';
+  await saveAppData();
+  const el=document.getElementById('improvCount'); if(el) el.textContent=d.improvements.length+' logged';
+  renderKPIList(d.improvements,'improvementsDisplay');
 }
-
-// Init displays
-renderKPIList(wins, 'winsDisplay');
-renderKPIList(insights, 'insightsDisplay');
-renderKPIList(improvements, 'improvementsDisplay');
-const wc = document.getElementById('winsCount'); if(wc && wins.length) wc.textContent = wins.length + ' logged';
-const ic = document.getElementById('insightsCount'); if(ic && insights.length) ic.textContent = insights.length + ' logged';
-const imc = document.getElementById('improvCount'); if(imc && improvements.length) imc.textContent = improvements.length + ' logged';
 
 function updateHanadiKPI(){
   const tasks = document.querySelectorAll('#tasks-hanadi .task-item');
@@ -1265,103 +1425,80 @@ function updateAyaKPI(){
 }
 
 // ════════════════════════════════
-// DAILY REPORTS
+// DAILY REPORTS — GitHub-backed
 // ════════════════════════════════
-function loadReports(){ try{ return JSON.parse(localStorage.getItem('ea_reports_v2'))||[defaultReport]; }catch(e){ return [defaultReport]; } }
-function saveReports(data){ try{ localStorage.setItem('ea_reports_v2', JSON.stringify(data)); }catch(e){} }
-
 const defaultReport = {
-  id: Date.now(),
-  date: '2026-04-29',
-  author: 'Hanadi Hammoud',
-  type: 'daily',
-  content: `Daily Report\nDate: Wednesday, 29 April 2026\n\nSummary of Activities:\n• Conducted a meeting with Aya (new setter).\n• Attended a meeting with Elie, Fatima, and Maya.\n• Held a meeting with Jinane.\n• Conducted a follow-up meeting with Fatima and Maya.\n• Checked and reviewed yesterday's leads.\n• Continued updating the May plan and new tracking sheets.\n• Attended the RVO meeting.\n• Focused on optimization and building a structured plan moving forward.\n\nChallenges:\n• Aligning optimization efforts with ongoing operations requires clear prioritization and structured execution.\n\nAction Points:\n• Finalize and implement the May plan.\n• Ensure alignment across the team on optimization strategy.\n• Continue monitoring lead tracking and performance closely.`
+  id:1746000000000, date:'2026-04-29', author:'Hanadi Hammoud', type:'daily',
+  content:`Daily Report\nDate: Wednesday, 29 April 2026\n\nSummary of Activities:\n• Conducted a meeting with Aya (new setter).\n• Attended a meeting with Elie, Fatima, and Maya.\n• Held a meeting with Jinane.\n• Conducted a follow-up meeting with Fatima and Maya.\n• Checked and reviewed yesterday's leads.\n• Continued updating the May plan and new tracking sheets.\n• Attended the RVO meeting.\n• Focused on optimization and building a structured plan moving forward.\n\nChallenges:\n• Aligning optimization efforts with ongoing operations requires clear prioritization and structured execution.\n\nAction Points:\n• Finalize and implement the May plan.\n• Ensure alignment across the team on optimization strategy.\n• Continue monitoring lead tracking and performance closely.`
 };
 
 function toggleReportForm(show){
-  document.getElementById('reportForm').style.display = show ? 'block' : 'none';
-  if(show){
-    const d = new Date();
-    document.getElementById('rDate').value = d.toISOString().split('T')[0];
-  }
+  document.getElementById('reportForm').style.display = show?'block':'none';
+  if(show) document.getElementById('rDate').value = new Date().toISOString().split('T')[0];
 }
-
-function saveReport(){
-  const date = document.getElementById('rDate').value;
-  const author = document.getElementById('rAuthor').value;
-  const type = document.getElementById('rType').value;
-  const content = document.getElementById('rContent').value.trim();
+async function saveReport(){
+  const date=document.getElementById('rDate').value, author=document.getElementById('rAuthor').value,
+        type=document.getElementById('rType').value, content=document.getElementById('rContent').value.trim();
   if(!content){ alert('Please paste the report content.'); return; }
-  const reports = loadReports();
-  reports.unshift({ id: Date.now(), date, author, type, content });
-  saveReports(reports);
-  document.getElementById('rContent').value = '';
+  const btn=document.querySelector('#reportForm .btn-primary');
+  btn.textContent='Saving…'; btn.disabled=true;
+  const d=await loadAppData(); if(!d.reports) d.reports=[];
+  d.reports.unshift({id:Date.now(),date,author,type,content});
+  await saveAppData();
+  document.getElementById('rContent').value='';
   toggleReportForm(false);
-  renderReports();
+  btn.textContent='Save Report'; btn.disabled=false;
+  renderReportsList();
 }
+const AUTHOR_COLORS={'Hanadi Hammoud':'var(--accent2)','Fatima Rajab':'var(--gold)','Maya Timani':'var(--cyan)','Aya Saiid':'var(--green2)'};
+const TYPE_LABELS={daily:'Daily Report',weekly:'Weekly Summary',incident:'Issue / Incident',other:'Other'};
 
-const AUTHOR_COLORS = {
-  'Hanadi Hammoud':'var(--accent2)',
-  'Fatima Rajab':'var(--gold)',
-  'Maya Timani':'var(--cyan)',
-  'Aya Saiid':'var(--green2)'
-};
-const TYPE_LABELS = {daily:'Daily Report',weekly:'Weekly Summary',incident:'Issue / Incident',other:'Other'};
-
-function renderReports(){
-  const filterPerson = document.getElementById('reportFilterPerson').value;
-  const filterMonth = document.getElementById('reportFilterMonth').value;
-  let reports = loadReports();
-  if(filterPerson) reports = reports.filter(r => r.author === filterPerson);
-  if(filterMonth) reports = reports.filter(r => r.date && r.date.startsWith(filterMonth));
-
-  document.getElementById('reportsList').innerHTML = reports.length === 0
-    ? '<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No reports found.</div>'
-    : reports.map(r => {
-        const dObj = new Date(r.date);
-        const dateStr = r.date ? dObj.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) : '—';
-        const color = AUTHOR_COLORS[r.author] || 'var(--text2)';
-        return `<div class="report-card">
-          <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
-            <div>
-              <div class="report-date-chip">${dateStr}</div>
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${TYPE_LABELS[r.type]||r.type} <span style="color:${color};font-weight:600;">— ${r.author}</span></div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span class="status-badge badge-green"><span class="badge-dot"></span>Saved</span>
-              <button onclick="event.stopPropagation();deleteReport(${r.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
-              <span class="chevron">▶</span>
-            </div>
+function renderReportsList(){
+  const filterPerson=document.getElementById('reportFilterPerson').value;
+  const filterMonth=document.getElementById('reportFilterMonth').value;
+  const d=_appData||{reports:[defaultReport]};
+  let list=d.reports||[defaultReport];
+  if(filterPerson) list=list.filter(r=>r.author===filterPerson);
+  if(filterMonth)  list=list.filter(r=>r.date&&r.date.startsWith(filterMonth));
+  const syncBadge=isGHConfigured()
+    ?'<span class="status-badge badge-green"><span class="badge-dot"></span>Synced</span>'
+    :'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only</span>';
+  document.getElementById('reportsList').innerHTML=list.length===0
+    ?'<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No reports found.</div>'
+    :list.map(r=>{
+      const dateStr=r.date?new Date(r.date).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'—';
+      const color=AUTHOR_COLORS[r.author]||'var(--text2)';
+      return `<div class="report-card">
+        <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
+          <div>
+            <div class="report-date-chip">${dateStr}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${TYPE_LABELS[r.type]||r.type} <span style="color:${color};font-weight:600;">— ${r.author}</span></div>
           </div>
-          <div class="report-body">
-            <div class="report-raw">${escHtml(r.content)}</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            ${syncBadge}
+            <button onclick="event.stopPropagation();deleteReport(${r.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
+            <span class="chevron">▶</span>
           </div>
-        </div>`;
-      }).join('');
+        </div>
+        <div class="report-body"><div class="report-raw">${escHtml(r.content)}</div></div>
+      </div>`;
+    }).join('');
 }
-
-function deleteReport(id){
+function renderReports(){ renderReportsList(); }
+async function deleteReport(id){
   if(!confirm('Delete this report?')) return;
-  const reports = loadReports().filter(r => r.id !== id);
-  saveReports(reports);
-  renderReports();
+  const d=await loadAppData();
+  d.reports=(d.reports||[]).filter(r=>r.id!==id);
+  await saveAppData(); renderReportsList();
 }
 
-renderReports();
-
 // ════════════════════════════════
-// MEETING NOTES
+// MEETING NOTES — GitHub-backed
 // ════════════════════════════════
-function loadMeetings(){ try{ return JSON.parse(localStorage.getItem('ea_meetings_v2'))||[defaultMeeting]; }catch(e){ return [defaultMeeting]; } }
-function saveMeetings(data){ try{ localStorage.setItem('ea_meetings_v2', JSON.stringify(data)); }catch(e){} }
-
 const defaultMeeting = {
-  id: 1,
-  date: '2026-02-05',
-  title: 'Setter Performance & MDP Scaling Goals — EAXRVO',
-  attendees: 'Elie Ashkar · Stephan Z · Abdallah Staitieh · Hanadi Hammoud',
-  program: 'Genesis',
-  content: `Feb 5, 2026 — EAXRVO Meeting
+  id:1, date:'2026-02-05', title:'Setter Performance & MDP Scaling Goals — EAXRVO',
+  attendees:'Elie Ashkar · Stephan Z · Abdallah Staitieh · Hanadi Hammoud', program:'Genesis',
+  content:`Feb 5, 2026 — EAXRVO Meeting
 
 SUMMARY
 Elie Ashkar and Stephan Z discussed scaling MDP to 70–90 students and achieving $78K–$113K monthly revenue. Scaling identified as a "setter game" — setters must hit 10–12 bookings/day and 10% message-to-booking rate minimum.
@@ -1386,69 +1523,63 @@ NEXT STEPS
 };
 
 function toggleMeetingForm(show){
-  document.getElementById('meetingForm').style.display = show ? 'block' : 'none';
-  if(show){ document.getElementById('mDate').value = new Date().toISOString().split('T')[0]; }
+  document.getElementById('meetingForm').style.display=show?'block':'none';
+  if(show) document.getElementById('mDate').value=new Date().toISOString().split('T')[0];
 }
-
-function saveMeeting(){
-  const date = document.getElementById('mDate').value;
-  const title = document.getElementById('mTitle').value.trim();
-  const attendees = document.getElementById('mAttendees').value.trim();
-  const program = document.getElementById('mProgram').value;
-  const content = document.getElementById('mContent').value.trim();
+async function saveMeeting(){
+  const date=document.getElementById('mDate').value, title=document.getElementById('mTitle').value.trim(),
+        attendees=document.getElementById('mAttendees').value.trim(), program=document.getElementById('mProgram').value,
+        content=document.getElementById('mContent').value.trim();
   if(!title){ alert('Please enter a meeting title.'); return; }
   if(!content){ alert('Please paste the meeting notes.'); return; }
-  const meetings = loadMeetings();
-  meetings.unshift({ id: Date.now(), date, title, attendees, program, content });
-  saveMeetings(meetings);
-  ['mDate','mTitle','mAttendees','mContent'].forEach(id => document.getElementById(id).value = '');
+  const btn=document.querySelector('#meetingForm .btn-primary');
+  btn.textContent='Saving…'; btn.disabled=true;
+  const d=await loadAppData(); if(!d.meetings) d.meetings=[];
+  d.meetings.unshift({id:Date.now(),date,title,attendees,program,content});
+  ['mDate','mTitle','mAttendees','mContent'].forEach(id=>document.getElementById(id).value='');
+  await saveAppData();
   toggleMeetingForm(false);
+  btn.textContent='Save Meeting Notes'; btn.disabled=false;
   renderMeetings();
 }
-
-const PROG_TAG_CLASS = {Genesis:'genesis',MDP:'mdp',Sales:'booked','General':'lead'};
-
+const PROG_TAG_CLASS={Genesis:'genesis',MDP:'mdp',Sales:'booked','General':'lead'};
 function renderMeetings(){
-  const q = (document.getElementById('meetingSearch').value || '').toLowerCase();
-  let meetings = loadMeetings();
-  if(q) meetings = meetings.filter(m =>
-    (m.title||'').toLowerCase().includes(q) ||
-    (m.attendees||'').toLowerCase().includes(q) ||
-    (m.content||'').toLowerCase().includes(q)
-  );
-  document.getElementById('meetingsList').innerHTML = meetings.length === 0
-    ? '<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No meetings found.</div>'
-    : meetings.map(m => {
-        const dateStr = m.date ? new Date(m.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '—';
-        const tagCls = PROG_TAG_CLASS[m.program] || 'lead';
-        return `<div class="report-card">
-          <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
-            <div>
-              <div class="report-date-chip">${dateStr}</div>
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${escHtml(m.title)}</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:3px;">${escHtml(m.attendees||'')}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span class="tag ${tagCls}">${m.program}</span>
-              <button onclick="event.stopPropagation();deleteMeeting(${m.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
-              <span class="chevron">▶</span>
-            </div>
+  const q=(document.getElementById('meetingSearch').value||'').toLowerCase();
+  const d=_appData||{meetings:[defaultMeeting]};
+  let meetings=d.meetings||[defaultMeeting];
+  if(q) meetings=meetings.filter(m=>(m.title||'').toLowerCase().includes(q)||(m.attendees||'').toLowerCase().includes(q)||(m.content||'').toLowerCase().includes(q));
+  const syncBadge=isGHConfigured()
+    ?'<span class="status-badge badge-green"><span class="badge-dot"></span>Synced</span>'
+    :'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only</span>';
+  document.getElementById('meetingsList').innerHTML=meetings.length===0
+    ?'<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No meetings found.</div>'
+    :meetings.map(m=>{
+      const dateStr=m.date?new Date(m.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'—';
+      const tagCls=PROG_TAG_CLASS[m.program]||'lead';
+      return `<div class="report-card">
+        <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
+          <div>
+            <div class="report-date-chip">${dateStr}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${escHtml(m.title)}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px;">${escHtml(m.attendees||'')}</div>
           </div>
-          <div class="report-body">
-            <div class="report-raw">${escHtml(m.content)}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${syncBadge}
+            <span class="tag ${tagCls}">${m.program}</span>
+            <button onclick="event.stopPropagation();deleteMeeting(${m.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
+            <span class="chevron">▶</span>
           </div>
-        </div>`;
-      }).join('');
+        </div>
+        <div class="report-body"><div class="report-raw">${escHtml(m.content)}</div></div>
+      </div>`;
+    }).join('');
 }
-
-function deleteMeeting(id){
+async function deleteMeeting(id){
   if(!confirm('Delete this meeting note?')) return;
-  const meetings = loadMeetings().filter(m => m.id !== id);
-  saveMeetings(meetings);
-  renderMeetings();
+  const d=await loadAppData();
+  d.meetings=(d.meetings||[]).filter(m=>m.id!==id);
+  await saveAppData(); renderMeetings();
 }
-
-renderMeetings();
 
 // ════════════════════════════════
 // GOOGLE SHEETS
