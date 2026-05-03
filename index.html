@@ -322,6 +322,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <button class="nav-tab" onclick="switchTab('simulator',this)">Scenario Sim</button>
   </div>
   <div class="topbar-right">
+    <div style="display:flex;align-items:center;gap:6px;margin-right:12px;">
+      <button onclick="shiftMonth(-1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">◀</button>
+      <div id="monthLabel" style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--accent2);background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:6px;padding:4px 12px;min-width:96px;text-align:center;"></div>
+      <button onclick="shiftMonth(1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">▶</button>
+    </div>
     <div class="live-dot"></div>
     <div class="date-chip" id="topDate"></div>
   </div>
@@ -332,7 +337,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-overview" class="content active">
   <div class="section-title">Operations Overview
-    <div class="section-sub">Elie Ashkar · Genesis + MDP Programs · Based on Zoho CRM export</div>
+    <div class="section-sub">Elie Ashkar · Genesis + MDP Programs · <span id="overviewMonthSub"></span></div>
   </div>
 
   <div class="sheets-banner">
@@ -348,27 +353,27 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   </div>
 
   <div class="kpi-grid">
-    <div class="kpi-card purple"><div class="kpi-label">Total Leads (CRM)</div><div class="kpi-value purple">7,726</div><div class="kpi-meta">All stages · All sources</div></div>
-    <div class="kpi-card cyan"><div class="kpi-label">Active Bookings</div><div class="kpi-value cyan">51</div><div class="kpi-meta">Genesis 24 · MDP 5 · Other 22</div></div>
-    <div class="kpi-card green"><div class="kpi-label">Total Revenue</div><div class="kpi-value green">$35,300</div><div class="kpi-meta">Genesis $25K · MDP $4K · Other $6.3K</div></div>
-    <div class="kpi-card gold"><div class="kpi-label">Cash Collected</div><div class="kpi-value gold">$27,280</div><div class="kpi-meta">Genesis $17.5K · MDP $4.1K</div></div>
-    <div class="kpi-card orange"><div class="kpi-label">Pending Cash</div><div class="kpi-value orange">$8,020</div><div class="kpi-meta">Revenue minus collected</div></div>
-    <div class="kpi-card green"><div class="kpi-label">Closed Won</div><div class="kpi-value green">33</div><div class="kpi-meta">Genesis 19 · MDP 5 · Other 9</div></div>
+    <div class="kpi-card purple"><div class="kpi-label">Total Leads (CRM)</div><div class="kpi-value purple" id="ov-leads">—</div><div class="kpi-meta">All stages · All sources</div></div>
+    <div class="kpi-card cyan"><div class="kpi-label">Active Bookings</div><div class="kpi-value cyan" id="ov-bookings">—</div><div class="kpi-meta" id="ov-bookings-meta"> </div></div>
+    <div class="kpi-card green"><div class="kpi-label">Total Revenue</div><div class="kpi-value green" id="ov-revenue">—</div><div class="kpi-meta" id="ov-revenue-meta"> </div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Cash Collected</div><div class="kpi-value gold" id="ov-cash">—</div><div class="kpi-meta" id="ov-cash-meta"> </div></div>
+    <div class="kpi-card orange"><div class="kpi-label">Pending Cash</div><div class="kpi-value orange" id="ov-pending">—</div><div class="kpi-meta">Revenue minus collected</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Closed Won</div><div class="kpi-value green" id="ov-closed">—</div><div class="kpi-meta" id="ov-closed-meta"> </div></div>
   </div>
 
   <div class="two-col">
     <div class="panel">
-      <div class="panel-title">🏗 Genesis Program · April Actuals</div>
+      <div class="panel-title">🏗 Genesis Program · <span id="ov-genesis-month">—</span></div>
       <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
-        <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Total Booked</div><div class="kpi-value purple" style="font-size:22px;">408</div></div>
-        <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Shows</div><div class="kpi-value cyan" style="font-size:22px;">84</div><div class="kpi-meta">48.5% show rate</div></div>
-        <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Closed</div><div class="kpi-value green" style="font-size:22px;">26</div><div class="kpi-meta">30.9% close rate</div></div>
+        <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Total Booked</div><div class="kpi-value purple" style="font-size:22px;" id="ov-gen-booked">—</div></div>
+        <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Shows</div><div class="kpi-value cyan" style="font-size:22px;" id="ov-gen-shows">—</div><div class="kpi-meta" id="ov-gen-showrate"> </div></div>
+        <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Closed</div><div class="kpi-value green" style="font-size:22px;" id="ov-gen-closed">—</div><div class="kpi-meta" id="ov-gen-closerate"> </div></div>
       </div>
       <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;">
-        <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:20px;">$39,000</div></div>
-        <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Cash Collected</div><div class="kpi-value green" style="font-size:20px;">$18,420</div></div>
+        <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:20px;" id="ov-gen-revenue">—</div></div>
+        <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Cash Collected</div><div class="kpi-value green" style="font-size:20px;" id="ov-gen-cash">—</div></div>
       </div>
-      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Weekly Funnel (Apr)</div>
+      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;" id="ov-funnel-label">Weekly Funnel</div>
       <div class="funnel-vis" id="aprilFunnel"></div>
       <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(108,99,255,.4);"></div>Booked</div>
@@ -391,35 +396,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:8px;line-height:1.6;">Aya Saiid is the current assigned setter — historical CRM reflects prior team. Aya's bookings will shift attribution as May data flows in.</div>
       <div class="divider"></div>
       <div class="panel-title">🔥 Follow-up Priority</div>
-      <div class="kpi-target-row"><span class="kpi-target-label">No Shows (April — reactivation pool)</span><span class="kpi-target-val" style="color:var(--red2);">87</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">No Shows — reactivation pool</span><span class="kpi-target-val" style="color:var(--red2);" id="ov-noshows">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">MDP crossover from Genesis (15%)</span><span class="kpi-target-val" style="color:var(--accent2);">~1,160</span></div>
-      <div class="kpi-target-row"><span class="kpi-target-label">Booked — pending confirmation</span><span class="kpi-target-val" style="color:var(--gold);">51</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Booked — pending confirmation</span><span class="kpi-target-val" style="color:var(--gold);" id="ov-pending-conf">—</span></div>
     </div>
   </div>
 
-  <div class="panel" style="margin-bottom:24px;">
-    <div class="panel-title">📊 Genesis April — Weekly Breakdown</div>
-    <div class="table-scroll">
-      <table>
-        <thead><tr><th>Week</th><th>Booked</th><th>Cancelled</th><th>Confirmed</th><th>Shows</th><th>Show Rate</th><th>Closed</th><th>Close Rate</th><th>Ad Spend</th><th>CPB</th><th>Revenue</th><th>Collected</th></tr></thead>
-        <tbody>
-          <tr><td style="color:var(--text)">Apr 1–5</td><td>79</td><td>50</td><td>29</td><td>14</td><td><span class="tag lead">48.3%</span></td><td>6</td><td><span class="tag won">42.9%</span></td><td>$1,292</td><td>$44.56</td><td>$9,000</td><td>$3,370</td></tr>
-          <tr><td style="color:var(--text)">Apr 6–12</td><td>120</td><td>75</td><td>45</td><td>23</td><td><span class="tag lead">51.1%</span></td><td>5</td><td><span class="tag lead">21.7%</span></td><td>$1,842</td><td>$40.94</td><td>$7,500</td><td>$3,850</td></tr>
-          <tr><td style="color:var(--text)">Apr 13–19</td><td>88</td><td>51</td><td>37</td><td>15</td><td><span class="tag cancelled">40.5%</span></td><td>5</td><td><span class="tag lead">33.3%</span></td><td>$1,626</td><td>$43.95</td><td>$7,500</td><td>$4,250</td></tr>
-          <tr><td style="color:var(--text)">Apr 20–26</td><td>73</td><td>36</td><td>37</td><td>21</td><td><span class="tag booked">56.8%</span></td><td>6</td><td><span class="tag lead">28.6%</span></td><td>$1,509</td><td>$40.78</td><td>$9,000</td><td>$4,650</td></tr>
-          <tr><td style="color:var(--text)">Apr 27–30</td><td>48</td><td>23</td><td>25</td><td>11</td><td><span class="tag lead">44.0%</span></td><td>4</td><td><span class="tag won">36.4%</span></td><td>$909</td><td>$36.37</td><td>$6,000</td><td>$2,300</td></tr>
-          <tr style="background:rgba(108,99,255,.05);">
-            <td style="color:var(--accent2);font-weight:700;font-family:'IBM Plex Mono',monospace;">TOTAL</td>
-            <td style="color:var(--text);font-weight:700;">408</td><td>235</td><td>173</td>
-            <td style="color:var(--text);font-weight:700;">84</td><td><span class="tag booked">48.5%</span></td>
-            <td style="color:var(--text);font-weight:700;">26</td><td><span class="tag lead">30.9%</span></td>
-            <td>$7,179</td><td>$41.50</td>
-            <td style="color:var(--gold);font-weight:700;font-family:'IBM Plex Mono',monospace;">$39,000</td>
-            <td style="color:var(--green2);font-weight:700;">$18,420</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="panel" style="margin-bottom:24px;" id="ov-weekly-panel">
+    <div class="panel-title">📊 Genesis <span id="ov-weekly-month-label"></span> — Weekly Breakdown</div>
+    <div id="ov-weekly-table"></div>
   </div>
 </div>
 
@@ -428,19 +413,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-tasks" class="content">
   <div class="section-title">Task Assignment Center
-    <div class="section-sub">Assign tasks with deadlines · Staff view their column · Mark complete · Reset period refreshes recurring tasks</div>
-  </div>
-
-  <div class="info-box">
-    <strong>💾 Saving:</strong> Tasks save in your browser (localStorage). On a single device/browser they persist between sessions. For team-wide sync across devices, you need to host this on a server with a database (Supabase free tier recommended — ask for setup guide).
-  </div>
-
-  <div class="reset-banner">
-    <div class="reset-banner-text"><strong>⚡ Period Reset</strong> — Clears all completed tasks and reloads the default recurring tasks for the new period. One-time tasks are removed. Use at the start of each week or month.</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-ghost btn-sm" onclick="resetPeriod('week')">Reset Week</button>
-      <button class="btn btn-ghost btn-sm" onclick="resetPeriod('month')">Reset Month</button>
-    </div>
+    <div class="section-sub">Assign tasks with deadlines · Mark complete · Synced across all devices</div>
   </div>
 
   <div class="task-board" id="taskBoard">
@@ -544,11 +517,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-kpis" class="content">
   <div class="section-title">Team KPI Dashboard
-    <div class="section-sub">Targets and performance benchmarks · KPI entries save in browser</div>
-  </div>
-
-  <div class="info-box">
-    <strong>💾 Saving note:</strong> KPI logs (wins, insights, improvements, daily numbers) are saved in your browser's localStorage. They persist on the same device/browser. For cross-device team access, the Supabase integration is needed.
+    <div class="section-sub">Targets and performance benchmarks · Synced across all devices</div>
   </div>
 
   <div class="two-col">
@@ -635,40 +604,35 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-reports" class="content">
   <div class="section-title">Daily Reports
-    <div class="section-sub">Paste WhatsApp reports directly · Synced to GitHub · Live on all devices</div>
+    <div class="section-sub">Paste WhatsApp reports directly · Synced to GitHub · <span id="reportsMonthLabel"></span></div>
   </div>
 
-  <!-- GitHub Sync Setup (shared class — shown on both Reports and Meetings tabs) -->
+  <!-- GitHub Setup Panel -->
   <div class="gh-setup-panel panel" style="margin-bottom:20px;border-color:rgba(108,99,255,.3);">
     <div class="panel-title" style="color:var(--accent2);">🔗 Connect GitHub — sync everything across all devices</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.7;">
-      All data (reports, meetings, KPI logs, tasks) saves to your repo as <code style="background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;">data/appdata.json</code> — visible on every device, completely free.<br>
-      <strong style="color:var(--text);">One-time setup per device (2 min):</strong> Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> → Generate new token → tick <strong>repo</strong> scope → copy it → paste below.
-    </div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.7;">All data saves to your repo as <code style="background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;">data/appdata.json</code> — free, permanent, visible on every device.<br>
+    <strong style="color:var(--text);">One-time setup per device:</strong> Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> → Generate → tick <strong>repo</strong> → copy token → paste below.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
       <div><label class="form-label">GitHub Username</label><input class="form-input gh-input-owner" id="gh-owner" placeholder="e.g. hanadihammoud" /></div>
       <div><label class="form-label">Repository Name</label><input class="form-input gh-input-repo" id="gh-repo" placeholder="e.g. eateam" /></div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Personal Access Token</label>
-      <input class="form-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
-    </div>
+    <div class="form-group"><label class="form-label">Personal Access Token</label><input class="form-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" /></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="saveGHConfig()">Connect & Save</button>
-      <span style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Token stored on this device only — never shared anywhere except GitHub</span>
+      <span style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Token stored on this device only</span>
     </div>
   </div>
 
-  <!-- Sync status bar -->
+  <!-- Status bar -->
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap;">
     <span style="font-size:12px;color:var(--text2);">Sync:</span>
-    <span class="gh-status-badge"><span class="status-badge badge-yellow"><span class="badge-dot"></span>Checking…</span></span>
+    <span class="gh-status-badge"></span>
     <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display=p.style.display==='none'?'block':'none')">⚙ Setup</button>
     <button class="btn btn-ghost btn-sm" style="color:var(--red2);" onclick="clearGHConfig()">Disconnect</button>
   </div>
 
   <div class="info-box">
-    <strong>How to use:</strong> Click "New Report" → select the team member → paste their WhatsApp message as-is → Save. Synced instantly to GitHub and visible on every device.
+    <strong>How to use:</strong> Click "New Report" → select team member → paste WhatsApp message → Save. Synced instantly and visible on every device.
   </div>
 
   <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
@@ -680,7 +644,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <option value="Maya Timani">Maya Timani</option>
       <option value="Aya Saiid">Aya Saiid</option>
     </select>
-    <input class="form-input" style="width:160px;" type="month" id="reportFilterMonth" onchange="renderReports()" />
   </div>
 
   <!-- New report form -->
@@ -728,18 +691,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-meetings" class="content">
   <div class="section-title">Meeting Notes
-    <div class="section-sub">Paste Gemini notes directly · Searchable archive · Synced to GitHub</div>
-  </div>
-
-  <!-- Sync status bar (setup panel toggled from Reports tab or here) -->
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap;">
-    <span style="font-size:12px;color:var(--text2);">Sync:</span>
-    <span class="gh-status-badge"><span class="status-badge badge-yellow"><span class="badge-dot"></span>Checking…</span></span>
-    <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display=p.style.display==='none'?'block':'none');switchTab('reports',document.querySelector('.nav-tab'))">⚙ Setup (in Reports tab)</button>
+    <div class="section-sub">Paste Gemini notes directly · Searchable archive · Saved in browser</div>
   </div>
 
   <div class="info-box">
-    <strong>Gemini import:</strong> After your Google Meet, Gemini auto-generates notes. Open the notes → copy all text → click "Add Meeting Notes" below → paste in the field.
+    <strong>Gemini import:</strong> After your Google Meet, Gemini auto-generates notes. Open the notes → copy all text → click "Add Meeting Notes" below → paste in the field. There is no direct API integration possible for free, but paste-in is one step. <strong>Direct Gemini API</strong> would require Google Workspace API access (paid).
   </div>
 
   <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
@@ -820,11 +776,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Use the KPI Logger in Team KPIs tab. Aya fills in daily. Maya verifies against CRM. 2 consecutive days below KPI triggers a notification to Hanadi. Weekly % hitting KPI is Maya's own performance metric.</div></div>
   </div>
 
-  <div class="error-card">
-    <div class="error-title">📋 Data Persistence: Dashboard Is Single-Device Only</div>
-    <div class="error-desc">Tasks, reports, KPI logs, and meeting notes currently save in browser localStorage. This means each team member sees their own version on their own device — changes don't sync across the team.</div>
-    <div class="resolution-card"><div class="resolution-title">✅ Resolution (Free)</div><div class="resolution-text">Host on GitHub Pages (free) + integrate Supabase (free tier: 500MB, unlimited API calls). Supabase gives you a real database with user accounts and real-time sync. Setup takes ~2 hours and is fully free for this scale. Ask for the implementation guide when ready.</div></div>
-  </div>
+
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -992,6 +944,127 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 const today = new Date();
 document.getElementById('topDate').textContent = today.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
 
+// ════════════════════════════════
+// MONTH SELECTOR
+// ════════════════════════════════
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let _activeYear  = today.getFullYear();
+let _activeMonth = today.getMonth() + 1;
+
+function activeMonthKey(){ return _activeYear + '-' + String(_activeMonth).padStart(2,'0'); }
+function activeMonthLabel(){ return MONTH_NAMES[_activeMonth-1] + ' ' + _activeYear; }
+
+function shiftMonth(dir){
+  _activeMonth += dir;
+  if(_activeMonth > 12){ _activeMonth=1; _activeYear++; }
+  if(_activeMonth < 1){  _activeMonth=12; _activeYear--; }
+  updateMonthLabel();
+  renderOverview();
+  if(typeof renderReports==='function') renderReports();
+  if(typeof renderMeetings==='function') renderMeetings();
+  if(typeof renderKPIList==='function'){
+    const d=_appData||{};
+    renderKPIList(d.wins||[],'winsDisplay');
+    renderKPIList(d.insights||[],'insightsDisplay');
+    renderKPIList(d.improvements||[],'improvementsDisplay');
+  }
+}
+
+function updateMonthLabel(){
+  const el=document.getElementById('monthLabel'); if(el) el.textContent=activeMonthLabel();
+  const sub=document.getElementById('overviewMonthSub'); if(sub) sub.textContent=activeMonthLabel();
+}
+updateMonthLabel();
+
+// ════════════════════════════════
+// HARDCODED MONTHLY DATA
+// ════════════════════════════════
+const MONTHLY_DATA = {
+  '2026-04': {
+    leads:'7,726', bookings:'51', bookingsMeta:'Genesis 24 · MDP 5 · Other 22',
+    revenue:'$35,300', revenueMeta:'Genesis $25K · MDP $4K · Other $6.3K',
+    cash:'$27,280', cashMeta:'Genesis $17.5K · MDP $4.1K',
+    pending:'$8,020', closed:'33', closedMeta:'Genesis 19 · MDP 5 · Other 9',
+    noshows:'87', pendingConf:'51',
+    gen:{ booked:'408', shows:'84', showRate:'48.5% show rate', closed:'26', closeRate:'30.9% close rate', revenue:'$39,000', cash:'$18,420' },
+    weeklyRows:[
+      {w:'Apr 1–5',   booked:79,  canc:50, conf:29, shows:14, showR:'48.3%', showTag:'lead',      closed:6, closeR:'42.9%', closeTag:'won',    spend:'$1,292', cpb:'$44.56', rev:'$9,000',  coll:'$3,370'},
+      {w:'Apr 6–12',  booked:120, canc:75, conf:45, shows:23, showR:'51.1%', showTag:'lead',      closed:5, closeR:'21.7%', closeTag:'lead',   spend:'$1,842', cpb:'$40.94', rev:'$7,500',  coll:'$3,850'},
+      {w:'Apr 13–19', booked:88,  canc:51, conf:37, shows:15, showR:'40.5%', showTag:'cancelled', closed:5, closeR:'33.3%', closeTag:'lead',   spend:'$1,626', cpb:'$43.95', rev:'$7,500',  coll:'$4,250'},
+      {w:'Apr 20–26', booked:73,  canc:36, conf:37, shows:21, showR:'56.8%', showTag:'booked',    closed:6, closeR:'28.6%', closeTag:'lead',   spend:'$1,509', cpb:'$40.78', rev:'$9,000',  coll:'$4,650'},
+      {w:'Apr 27–30', booked:48,  canc:23, conf:25, shows:11, showR:'44.0%', showTag:'lead',      closed:4, closeR:'36.4%', closeTag:'won',    spend:'$909',   cpb:'$36.37', rev:'$6,000',  coll:'$2,300'},
+    ],
+    weeklyTotals:{booked:408, canc:235, conf:173, shows:84, showR:'48.5%', showTag:'booked', closed:26, closeR:'30.9%', closeTag:'lead', spend:'$7,179', cpb:'$41.50', rev:'$39,000', coll:'$18,420'}
+  }
+  // Add future months here as: '2026-05': { ... }
+};
+
+function renderOverview(){
+  const mk = activeMonthKey();
+  const d  = MONTHLY_DATA[mk];
+  const lbl = activeMonthLabel();
+
+  // genesis month label
+  const gml = document.getElementById('ov-genesis-month'); if(gml) gml.textContent = d ? lbl+' Actuals' : lbl;
+  const wml = document.getElementById('ov-weekly-month-label'); if(wml) wml.textContent = lbl;
+  const fl  = document.getElementById('ov-funnel-label'); if(fl) fl.textContent = 'Weekly Funnel ('+(d?lbl:'No data')+')';
+
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val||'—'; };
+
+  if(!d){
+    // No data for this month — show dashes
+    ['ov-leads','ov-bookings','ov-bookings-meta','ov-revenue','ov-revenue-meta',
+     'ov-cash','ov-cash-meta','ov-pending','ov-closed','ov-closed-meta',
+     'ov-noshows','ov-pending-conf',
+     'ov-gen-booked','ov-gen-shows','ov-gen-showrate','ov-gen-closed','ov-gen-closerate',
+     'ov-gen-revenue','ov-gen-cash'].forEach(id=>set(id,'—'));
+    const wt=document.getElementById('ov-weekly-table');
+    if(wt) wt.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3);font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No data yet for '+lbl+'. Data will appear here once the month is complete.</div>';
+    // clear funnel
+    const f=document.getElementById('aprilFunnel'); if(f) f.innerHTML='';
+    return;
+  }
+
+  set('ov-leads', d.leads);
+  set('ov-bookings', d.bookings); set('ov-bookings-meta', d.bookingsMeta);
+  set('ov-revenue', d.revenue);   set('ov-revenue-meta', d.revenueMeta);
+  set('ov-cash', d.cash);         set('ov-cash-meta', d.cashMeta);
+  set('ov-pending', d.pending);
+  set('ov-closed', d.closed);     set('ov-closed-meta', d.closedMeta);
+  set('ov-noshows', d.noshows);   set('ov-pending-conf', d.pendingConf);
+  set('ov-gen-booked', d.gen.booked);
+  set('ov-gen-shows', d.gen.shows);   set('ov-gen-showrate', d.gen.showRate);
+  set('ov-gen-closed', d.gen.closed); set('ov-gen-closerate', d.gen.closeRate);
+  set('ov-gen-revenue', d.gen.revenue);
+  set('ov-gen-cash', d.gen.cash);
+
+  // Weekly table
+  const wt=document.getElementById('ov-weekly-table');
+  if(wt && d.weeklyRows){
+    const t=d.weeklyTotals;
+    wt.innerHTML=`<div class="table-scroll"><table>
+      <thead><tr><th>Week</th><th>Booked</th><th>Cancelled</th><th>Confirmed</th><th>Shows</th><th>Show Rate</th><th>Closed</th><th>Close Rate</th><th>Ad Spend</th><th>CPB</th><th>Revenue</th><th>Collected</th></tr></thead>
+      <tbody>
+        ${d.weeklyRows.map(r=>`<tr>
+          <td style="color:var(--text)">${r.w}</td><td>${r.booked}</td><td>${r.canc}</td><td>${r.conf}</td>
+          <td>${r.shows}</td><td><span class="tag ${r.showTag}">${r.showR}</span></td>
+          <td>${r.closed}</td><td><span class="tag ${r.closeTag}">${r.closeR}</span></td>
+          <td>${r.spend}</td><td>${r.cpb}</td><td>${r.rev}</td><td>${r.coll}</td>
+        </tr>`).join('')}
+        <tr style="background:rgba(108,99,255,.05);">
+          <td style="color:var(--accent2);font-weight:700;font-family:'IBM Plex Mono',monospace;">TOTAL</td>
+          <td style="color:var(--text);font-weight:700;">${t.booked}</td><td>${t.canc}</td><td>${t.conf}</td>
+          <td style="color:var(--text);font-weight:700;">${t.shows}</td><td><span class="tag ${t.showTag}">${t.showR}</span></td>
+          <td style="color:var(--text);font-weight:700;">${t.closed}</td><td><span class="tag ${t.closeTag}">${t.closeR}</span></td>
+          <td>${t.spend}</td><td>${t.cpb}</td>
+          <td style="color:var(--gold);font-weight:700;font-family:'IBM Plex Mono',monospace;">${t.rev}</td>
+          <td style="color:var(--green2);font-weight:700;">${t.coll}</td>
+        </tr>
+      </tbody></table></div>`;
+  }
+}
+renderOverview();
+
 // ── TABS ──
 function switchTab(name, btn) {
   document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
@@ -1152,35 +1225,15 @@ function toggleTask(el){
 }
 
 function deleteTask(key, idx){
-  if(!confirm('Delete this task?')) return;
+  if(!confirmDelete('Delete this task?')) return;
   const data = loadTasks();
   data[key].splice(idx, 1);
   saveTasks(data);
   renderTasks();
 }
 
-function resetPeriod(type){
-  const label = type === 'week' ? 'weekly' : 'monthly';
-  const msg = type === 'week'
-    ? 'Reset week? This will:\n• Remove all completed tasks\n• Reload recurring weekly + daily tasks\n• Keep uncompleted one-time tasks'
-    : 'Reset month? This will:\n• Remove all completed tasks\n• Reload all recurring tasks (daily, weekly, monthly)\n• Remove completed one-time tasks';
-  if(!confirm(msg)) return;
-  const data = loadTasks();
-  Object.keys(data).forEach(key => {
-    const def = DEFAULT_TASKS[key] || [];
-    // Keep: incomplete one-time tasks + all recurring
-    const kept = data[key].filter(t => !t.done && t.recurring === 'none');
-    // Re-add recurring default tasks (un-done)
-    const recurring = def.filter(t => {
-      if(type === 'week') return t.recurring === 'daily' || t.recurring === 'weekly';
-      return t.recurring === 'daily' || t.recurring === 'weekly' || t.recurring === 'monthly';
-    }).map(t => ({...t, done:false}));
-    data[key] = [...recurring, ...kept];
-  });
-  saveTasks(data);
-  renderTasks();
-  alert('Period reset complete ✓');
-}
+
+
 
 let addTaskTarget = 'hanadi';
 function openAddTask(key){
@@ -1209,127 +1262,89 @@ document.getElementById('taskModal').addEventListener('click', function(e){ if(e
 renderTasks();
 
 // ════════════════════════════════════════════════════════════════
-// GITHUB SYNC ENGINE — one file (data/appdata.json) for everything
+// GITHUB SYNC ENGINE
 // ════════════════════════════════════════════════════════════════
-
-// ── Config helpers ──
-function getGHConfig(){
-  return {
-    owner: localStorage.getItem('gh_owner')||'',
-    repo:  localStorage.getItem('gh_repo')||'',
-    token: localStorage.getItem('gh_token')||''
-  };
-}
-function isGHConfigured(){
-  const {owner,repo,token} = getGHConfig();
-  return !!(owner && repo && token);
-}
+function getGHConfig(){ return { owner:localStorage.getItem('gh_owner')||'', repo:localStorage.getItem('gh_repo')||'', token:localStorage.getItem('gh_token')||'' }; }
+function isGHConfigured(){ const {owner,repo,token}=getGHConfig(); return !!(owner&&repo&&token); }
 function saveGHConfig(){
-  const owner = document.getElementById('gh-owner').value.trim();
-  const repo  = document.getElementById('gh-repo').value.trim();
-  const token = document.getElementById('gh-token').value.trim();
+  const owner=document.getElementById('gh-owner').value.trim(), repo=document.getElementById('gh-repo').value.trim(), token=document.getElementById('gh-token').value.trim();
   if(!owner||!repo||!token){ alert('Please fill in all three fields.'); return; }
-  localStorage.setItem('gh_owner',owner);
-  localStorage.setItem('gh_repo',repo);
-  localStorage.setItem('gh_token',token);
+  localStorage.setItem('gh_owner',owner); localStorage.setItem('gh_repo',repo); localStorage.setItem('gh_token',token);
   _appData=null; _ghSHA=null;
   document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display='none');
   updateSyncBadges('connecting');
   loadAppData().then(()=>{ updateSyncBadges('ok'); refreshAllViews(); });
 }
 function clearGHConfig(){
-  if(!confirm('Disconnect GitHub sync? Data will only save locally on this device.')) return;
+  if(!confirm('Disconnect GitHub sync?')) return;
   ['gh_owner','gh_repo','gh_token'].forEach(k=>localStorage.removeItem(k));
   _appData=null; _ghSHA=null;
   document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display='block');
   updateSyncBadges('local');
 }
 function updateSyncBadges(state){
-  const html = {
-    ok:          '<span class="status-badge badge-green"><span class="badge-dot"></span>GitHub Synced — live on all devices</span>',
-    connecting:  '<span class="status-badge badge-yellow"><span class="badge-dot"></span>Connecting…</span>',
-    local:       '<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only — connect GitHub to sync</span>'
-  }[state]||'';
+  const html={ok:'<span class="status-badge badge-green"><span class="badge-dot"></span>GitHub Synced — live on all devices</span>',connecting:'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Connecting…</span>',local:'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only — connect GitHub to sync</span>'}[state]||'';
   document.querySelectorAll('.gh-status-badge').forEach(el=>el.innerHTML=html);
 }
 
-// ── GitHub API ──
-const GH_DATA_PATH = 'data/appdata.json';
-let _ghSHA   = null;
-let _appData = null;
+const GH_DATA_PATH='data/appdata.json';
+let _ghSHA=null, _appData=null;
 
 async function ghReadFile(){
-  const {owner,repo,token} = getGHConfig();
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{
-    headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}
-  });
+  const {owner,repo,token}=getGHConfig();
+  const res=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
   if(res.status===404) return {data:null,sha:null};
   if(!res.ok) throw new Error('GitHub read error: '+res.status);
-  const j = await res.json();
-  return { data: JSON.parse(atob(j.content.replace(/\n/g,''))), sha: j.sha };
+  const j=await res.json();
+  return {data:JSON.parse(atob(j.content.replace(/\n/g,''))),sha:j.sha};
 }
-
-async function ghWriteFile(data, sha){
-  const {owner,repo,token} = getGHConfig();
-  const body = {
-    message: 'ops: sync appdata',
-    content: btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2)))),
-    ...(sha?{sha}:{})
-  };
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{
-    method:'PUT',
-    headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-    body: JSON.stringify(body)
-  });
+async function ghWriteFile(data,sha){
+  const {owner,repo,token}=getGHConfig();
+  const body={message:'ops: sync appdata',content:btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2)))),...(sha?{sha}:{})};
+  const res=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
   if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||'GitHub write error: '+res.status); }
   return (await res.json()).content.sha;
 }
 
-// ── Local migration helper (first run) ──
 function localFallback(){
-  const reports      = JSON.parse(localStorage.getItem('ea_reports_v2')||'null');
-  const meetings     = JSON.parse(localStorage.getItem('ea_meetings_v2')||'null');
-  const wins         = JSON.parse(localStorage.getItem('ea_kpi_wins')||'[]');
-  const insights     = JSON.parse(localStorage.getItem('ea_kpi_insights')||'[]');
-  const improvements = JSON.parse(localStorage.getItem('ea_kpi_improvements')||'[]');
-  const tasks        = JSON.parse(localStorage.getItem('ea_tasks_v2')||'null');
-  return { reports: reports||[defaultReport], meetings: meetings||[defaultMeeting], wins, insights, improvements, tasks };
+  return {
+    reports:  JSON.parse(localStorage.getItem('ea_reports_v2')||'null')||[defaultReport],
+    meetings: JSON.parse(localStorage.getItem('ea_meetings_v2')||'null')||[defaultMeeting],
+    wins:     JSON.parse(localStorage.getItem('ea_kpi_wins')||'[]'),
+    insights: JSON.parse(localStorage.getItem('ea_kpi_insights')||'[]'),
+    improvements: JSON.parse(localStorage.getItem('ea_kpi_improvements')||'[]'),
+    tasks:    JSON.parse(localStorage.getItem('ea_tasks_v2')||'null')
+  };
 }
 
-// ── Load ──
 async function loadAppData(){
   if(_appData) return _appData;
   if(!isGHConfigured()){ _appData=localFallback(); return _appData; }
   try{
-    const {data,sha} = await ghReadFile();
+    const {data,sha}=await ghReadFile();
     if(data){ _ghSHA=sha; _appData=data; localStorage.setItem('ea_appdata_cache',JSON.stringify(data)); return _appData; }
-    // File doesn't exist yet — bootstrap from local data
-    _appData = localFallback();
-    _ghSHA = await ghWriteFile(_appData, null);
+    _appData=localFallback();
+    _ghSHA=await ghWriteFile(_appData,null);
     return _appData;
   } catch(e){
-    console.warn('GitHub load failed, using cache:', e.message);
-    const cache = localStorage.getItem('ea_appdata_cache');
-    _appData = cache ? JSON.parse(cache) : localFallback();
+    console.warn('GitHub load failed:',e.message);
+    const cache=localStorage.getItem('ea_appdata_cache');
+    _appData=cache?JSON.parse(cache):localFallback();
     return _appData;
   }
 }
-
-// ── Save ──
 async function saveAppData(){
   if(!_appData) return;
-  localStorage.setItem('ea_appdata_cache', JSON.stringify(_appData));
+  localStorage.setItem('ea_appdata_cache',JSON.stringify(_appData));
   if(!isGHConfigured()) return;
-  try{ _ghSHA = await ghWriteFile(_appData, _ghSHA); }
-  catch(e){ alert('⚠️ Saved locally but GitHub sync failed:\n'+e.message+'\n\nCheck your token and try again.'); }
+  try{ _ghSHA=await ghWriteFile(_appData,_ghSHA); }
+  catch(e){ alert('⚠️ Saved locally but GitHub sync failed:\n'+e.message); }
 }
 
-// ── Refresh all views after load ──
 function refreshAllViews(){
   if(!_appData) return;
-  renderReportsList();
-  renderMeetings();
-  const d = _appData;
+  renderReportsList(); renderMeetings();
+  const d=_appData;
   renderKPIList(d.wins||[],'winsDisplay');
   renderKPIList(d.insights||[],'insightsDisplay');
   renderKPIList(d.improvements||[],'improvementsDisplay');
@@ -1339,53 +1354,45 @@ function refreshAllViews(){
   if(d.tasks) renderTasks();
 }
 
-// ── Kick off on page load ──
 loadAppData().then(()=>{
   updateSyncBadges(isGHConfigured()?'ok':'local');
   refreshAllViews();
-  // pre-fill owner/repo in setup panels if already configured
-  const c = getGHConfig();
+  const c=getGHConfig();
   if(c.owner){ document.querySelectorAll('.gh-input-owner').forEach(el=>el.value=c.owner); }
   if(c.repo){  document.querySelectorAll('.gh-input-repo').forEach(el=>el.value=c.repo); }
   if(isGHConfigured()){ document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display='none'); }
 });
 
 // ════════════════════════════════
-// KPI LOGGERS — GitHub-backed
+// KPI LOGGERS
 // ════════════════════════════════
-function renderKPIList(items, containerId){
-  const el = document.getElementById(containerId);
-  if(!el) return;
-  el.innerHTML = (items||[]).slice(-5).reverse().map(i=>`
-    <div class="kpi-target-row" style="margin-top:4px;">
-      <span class="kpi-target-label" style="flex:1;">${escHtml(i.text)}</span>
-      <span class="kpi-target-range">${i.date}</span>
-    </div>`).join('') || '<div style="font-size:11px;color:var(--text3);padding:8px 0;">No entries yet.</div>';
+function renderKPIList(items,containerId){
+  const el=document.getElementById(containerId); if(!el) return;
+  const mk=activeMonthKey();
+  const filtered=(items||[]).filter(i=>!i.month||i.month===mk).slice(-5).reverse();
+  el.innerHTML=filtered.map(i=>`<div class="kpi-target-row" style="margin-top:4px;"><span class="kpi-target-label" style="flex:1;">${escHtml(i.text)}</span><span class="kpi-target-range">${i.date}</span></div>`).join('')||'<div style="font-size:11px;color:var(--text3);padding:8px 0;">No entries yet.</div>';
 }
 async function logWin(){
   const t=document.getElementById('winLog').value.trim(); if(!t) return;
   const d=await loadAppData(); if(!d.wins) d.wins=[];
-  d.wins.push({text:t,date:new Date().toLocaleDateString()});
-  document.getElementById('winLog').value='';
-  await saveAppData();
+  d.wins.push({text:t,date:new Date().toLocaleDateString(),month:activeMonthKey()});
+  document.getElementById('winLog').value=''; await saveAppData();
   const el=document.getElementById('winsCount'); if(el) el.textContent=d.wins.length+' logged';
   renderKPIList(d.wins,'winsDisplay');
 }
 async function logInsight(){
   const t=document.getElementById('insightLog').value.trim(); if(!t) return;
   const d=await loadAppData(); if(!d.insights) d.insights=[];
-  d.insights.push({text:t,date:new Date().toLocaleDateString()});
-  document.getElementById('insightLog').value='';
-  await saveAppData();
+  d.insights.push({text:t,date:new Date().toLocaleDateString(),month:activeMonthKey()});
+  document.getElementById('insightLog').value=''; await saveAppData();
   const el=document.getElementById('insightsCount'); if(el) el.textContent=d.insights.length+' logged';
   renderKPIList(d.insights,'insightsDisplay');
 }
 async function logImprovement(){
   const t=document.getElementById('improvementLog').value.trim(); if(!t) return;
   const d=await loadAppData(); if(!d.improvements) d.improvements=[];
-  d.improvements.push({text:t,date:new Date().toLocaleDateString()});
-  document.getElementById('improvementLog').value='';
-  await saveAppData();
+  d.improvements.push({text:t,date:new Date().toLocaleDateString(),month:activeMonthKey()});
+  document.getElementById('improvementLog').value=''; await saveAppData();
   const el=document.getElementById('improvCount'); if(el) el.textContent=d.improvements.length+' logged';
   renderKPIList(d.improvements,'improvementsDisplay');
 }
@@ -1425,60 +1432,47 @@ function updateAyaKPI(){
 }
 
 // ════════════════════════════════
-// DAILY REPORTS — GitHub-backed
+// DAILY REPORTS
 // ════════════════════════════════
-const defaultReport = {
-  id:1746000000000, date:'2026-04-29', author:'Hanadi Hammoud', type:'daily',
-  content:`Daily Report\nDate: Wednesday, 29 April 2026\n\nSummary of Activities:\n• Conducted a meeting with Aya (new setter).\n• Attended a meeting with Elie, Fatima, and Maya.\n• Held a meeting with Jinane.\n• Conducted a follow-up meeting with Fatima and Maya.\n• Checked and reviewed yesterday's leads.\n• Continued updating the May plan and new tracking sheets.\n• Attended the RVO meeting.\n• Focused on optimization and building a structured plan moving forward.\n\nChallenges:\n• Aligning optimization efforts with ongoing operations requires clear prioritization and structured execution.\n\nAction Points:\n• Finalize and implement the May plan.\n• Ensure alignment across the team on optimization strategy.\n• Continue monitoring lead tracking and performance closely.`
-};
+const defaultReport={id:1746000000000,date:'2026-04-29',author:'Hanadi Hammoud',type:'daily',month:'2026-04',content:`Daily Report\nDate: Wednesday, 29 April 2026\n\nSummary of Activities:\n• Conducted a meeting with Aya (new setter).\n• Attended a meeting with Elie, Fatima, and Maya.\n• Held a meeting with Jinane.\n• Conducted a follow-up meeting with Fatima and Maya.\n• Checked and reviewed yesterday's leads.\n• Continued updating the May plan and new tracking sheets.\n• Attended the RVO meeting.\n• Focused on optimization and building a structured plan moving forward.\n\nChallenges:\n• Aligning optimization efforts with ongoing operations requires clear prioritization and structured execution.\n\nAction Points:\n• Finalize and implement the May plan.\n• Ensure alignment across the team on optimization strategy.\n• Continue monitoring lead tracking and performance closely.`};
 
 function toggleReportForm(show){
-  document.getElementById('reportForm').style.display = show?'block':'none';
-  if(show) document.getElementById('rDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('reportForm').style.display=show?'block':'none';
+  if(show) document.getElementById('rDate').value=new Date().toISOString().split('T')[0];
 }
 async function saveReport(){
-  const date=document.getElementById('rDate').value, author=document.getElementById('rAuthor').value,
-        type=document.getElementById('rType').value, content=document.getElementById('rContent').value.trim();
+  const date=document.getElementById('rDate').value,author=document.getElementById('rAuthor').value,
+        type=document.getElementById('rType').value,content=document.getElementById('rContent').value.trim();
   if(!content){ alert('Please paste the report content.'); return; }
   const btn=document.querySelector('#reportForm .btn-primary');
   btn.textContent='Saving…'; btn.disabled=true;
   const d=await loadAppData(); if(!d.reports) d.reports=[];
-  d.reports.unshift({id:Date.now(),date,author,type,content});
+  d.reports.unshift({id:Date.now(),date,author,type,content,month:activeMonthKey()});
   await saveAppData();
   document.getElementById('rContent').value='';
-  toggleReportForm(false);
-  btn.textContent='Save Report'; btn.disabled=false;
+  toggleReportForm(false); btn.textContent='Save Report'; btn.disabled=false;
   renderReportsList();
 }
 const AUTHOR_COLORS={'Hanadi Hammoud':'var(--accent2)','Fatima Rajab':'var(--gold)','Maya Timani':'var(--cyan)','Aya Saiid':'var(--green2)'};
 const TYPE_LABELS={daily:'Daily Report',weekly:'Weekly Summary',incident:'Issue / Incident',other:'Other'};
-
 function renderReportsList(){
   const filterPerson=document.getElementById('reportFilterPerson').value;
-  const filterMonth=document.getElementById('reportFilterMonth').value;
+  const mk=activeMonthKey();
   const d=_appData||{reports:[defaultReport]};
-  let list=d.reports||[defaultReport];
+  let list=(d.reports||[defaultReport]).filter(r=>(r.month||r.date||'').startsWith(mk));
   if(filterPerson) list=list.filter(r=>r.author===filterPerson);
-  if(filterMonth)  list=list.filter(r=>r.date&&r.date.startsWith(filterMonth));
-  const syncBadge=isGHConfigured()
-    ?'<span class="status-badge badge-green"><span class="badge-dot"></span>Synced</span>'
-    :'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only</span>';
   document.getElementById('reportsList').innerHTML=list.length===0
-    ?'<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No reports found.</div>'
+    ?'<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No reports for '+activeMonthLabel()+'.</div>'
     :list.map(r=>{
       const dateStr=r.date?new Date(r.date).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'—';
       const color=AUTHOR_COLORS[r.author]||'var(--text2)';
       return `<div class="report-card">
         <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
-          <div>
-            <div class="report-date-chip">${dateStr}</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${TYPE_LABELS[r.type]||r.type} <span style="color:${color};font-weight:600;">— ${r.author}</span></div>
-          </div>
+          <div><div class="report-date-chip">${dateStr}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${TYPE_LABELS[r.type]||r.type} <span style="color:${color};font-weight:600;">— ${r.author}</span></div></div>
           <div style="display:flex;align-items:center;gap:10px;">
-            ${syncBadge}
             <button onclick="event.stopPropagation();deleteReport(${r.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
-            <span class="chevron">▶</span>
-          </div>
+            <span class="chevron">▶</span></div>
         </div>
         <div class="report-body"><div class="report-raw">${escHtml(r.content)}</div></div>
       </div>`;
@@ -1486,100 +1480,68 @@ function renderReportsList(){
 }
 function renderReports(){ renderReportsList(); }
 async function deleteReport(id){
-  if(!confirm('Delete this report?')) return;
-  const d=await loadAppData();
-  d.reports=(d.reports||[]).filter(r=>r.id!==id);
+  if(!confirmDelete('Delete this report?')) return;
+  const d=await loadAppData(); d.reports=(d.reports||[]).filter(r=>r.id!==id);
   await saveAppData(); renderReportsList();
 }
+renderReportsList();
 
 // ════════════════════════════════
-// MEETING NOTES — GitHub-backed
+// MEETING NOTES
 // ════════════════════════════════
-const defaultMeeting = {
-  id:1, date:'2026-02-05', title:'Setter Performance & MDP Scaling Goals — EAXRVO',
-  attendees:'Elie Ashkar · Stephan Z · Abdallah Staitieh · Hanadi Hammoud', program:'Genesis',
-  content:`Feb 5, 2026 — EAXRVO Meeting
-
-SUMMARY
-Elie Ashkar and Stephan Z discussed scaling MDP to 70–90 students and achieving $78K–$113K monthly revenue. Scaling identified as a "setter game" — setters must hit 10–12 bookings/day and 10% message-to-booking rate minimum.
-
-KEY POINTS
-• Pessimistic: 55% show-up + 35% close = $78K revenue
-• Average: 60% show-up + 35% close = $85K revenue
-• Optimistic: 65% show-up + 35% close = $92K revenue
-• Best case: 70% show-up + 40% close = $113K revenue (132–151 students)
-• Need 540 bookings/month = 18–24/day from 2 setters
-• Setters can earn $2K+/month with bonuses if KPIs hit
-• Lead center must be cleaned daily — categorize hot/no-show/dead
-• 15% of Genesis leads are business owners → good MDP prospects
-• Content creation + Google Ads to make MDP easier to close at $1.5K
-• Out of 59 students, 58 were not "super sophisticated" — focus on freelancers
-
-NEXT STEPS
-• Elie to review lead center and ensure document is updated
-• Send content creation brief based on pain points to group
-• Talk to lead center team on daily KPI dashboard setup
-• Find common ground with setters on booking targets for May`
-};
+const defaultMeeting={id:1,date:'2026-02-05',title:'Setter Performance & MDP Scaling Goals — EAXRVO',attendees:'Elie Ashkar · Stephan Z · Abdallah Staitieh · Hanadi Hammoud',program:'Genesis',month:'2026-02',content:`Feb 5, 2026 — EAXRVO Meeting\n\nSUMMARY\nElie Ashkar and Stephan Z discussed scaling MDP to 70–90 students and achieving $78K–$113K monthly revenue. Scaling identified as a "setter game" — setters must hit 10–12 bookings/day and 10% message-to-booking rate minimum.\n\nKEY POINTS\n• Pessimistic: 55% show-up + 35% close = $78K revenue\n• Average: 60% show-up + 35% close = $85K revenue\n• Optimistic: 65% show-up + 35% close = $92K revenue\n• Best case: 70% show-up + 40% close = $113K revenue (132–151 students)\n• Need 540 bookings/month = 18–24/day from 2 setters\n• Setters can earn $2K+/month with bonuses if KPIs hit\n• Lead center must be cleaned daily — categorize hot/no-show/dead\n• 15% of Genesis leads are business owners → good MDP prospects\n• Content creation + Google Ads to make MDP easier to close at $1.5K\n• Out of 59 students, 58 were not "super sophisticated" — focus on freelancers\n\nNEXT STEPS\n• Elie to review lead center and ensure document is updated\n• Send content creation brief based on pain points to group\n• Talk to lead center team on daily KPI dashboard setup\n• Find common ground with setters on booking targets for May`};
 
 function toggleMeetingForm(show){
   document.getElementById('meetingForm').style.display=show?'block':'none';
   if(show) document.getElementById('mDate').value=new Date().toISOString().split('T')[0];
 }
 async function saveMeeting(){
-  const date=document.getElementById('mDate').value, title=document.getElementById('mTitle').value.trim(),
-        attendees=document.getElementById('mAttendees').value.trim(), program=document.getElementById('mProgram').value,
+  const date=document.getElementById('mDate').value,title=document.getElementById('mTitle').value.trim(),
+        attendees=document.getElementById('mAttendees').value.trim(),program=document.getElementById('mProgram').value,
         content=document.getElementById('mContent').value.trim();
   if(!title){ alert('Please enter a meeting title.'); return; }
   if(!content){ alert('Please paste the meeting notes.'); return; }
   const btn=document.querySelector('#meetingForm .btn-primary');
   btn.textContent='Saving…'; btn.disabled=true;
   const d=await loadAppData(); if(!d.meetings) d.meetings=[];
-  d.meetings.unshift({id:Date.now(),date,title,attendees,program,content});
+  d.meetings.unshift({id:Date.now(),date,title,attendees,program,content,month:activeMonthKey()});
   ['mDate','mTitle','mAttendees','mContent'].forEach(id=>document.getElementById(id).value='');
-  await saveAppData();
-  toggleMeetingForm(false);
+  await saveAppData(); toggleMeetingForm(false);
   btn.textContent='Save Meeting Notes'; btn.disabled=false;
   renderMeetings();
 }
 const PROG_TAG_CLASS={Genesis:'genesis',MDP:'mdp',Sales:'booked','General':'lead'};
 function renderMeetings(){
   const q=(document.getElementById('meetingSearch').value||'').toLowerCase();
+  const mk=activeMonthKey();
   const d=_appData||{meetings:[defaultMeeting]};
-  let meetings=d.meetings||[defaultMeeting];
+  let meetings=(d.meetings||[defaultMeeting]).filter(m=>(m.month||m.date||'').startsWith(mk));
   if(q) meetings=meetings.filter(m=>(m.title||'').toLowerCase().includes(q)||(m.attendees||'').toLowerCase().includes(q)||(m.content||'').toLowerCase().includes(q));
-  const syncBadge=isGHConfigured()
-    ?'<span class="status-badge badge-green"><span class="badge-dot"></span>Synced</span>'
-    :'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only</span>';
+  const syncBadge=isGHConfigured()?'<span class="status-badge badge-green"><span class="badge-dot"></span>Synced</span>':'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only</span>';
   document.getElementById('meetingsList').innerHTML=meetings.length===0
-    ?'<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No meetings found.</div>'
+    ?'<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No meetings for '+activeMonthLabel()+'.</div>'
     :meetings.map(m=>{
       const dateStr=m.date?new Date(m.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'—';
       const tagCls=PROG_TAG_CLASS[m.program]||'lead';
       return `<div class="report-card">
         <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
-          <div>
-            <div class="report-date-chip">${dateStr}</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${escHtml(m.title)}</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:3px;">${escHtml(m.attendees||'')}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            ${syncBadge}
-            <span class="tag ${tagCls}">${m.program}</span>
+          <div><div class="report-date-chip">${dateStr}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${escHtml(m.title)}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;">${escHtml(m.attendees||'')}</div></div>
+          <div style="display:flex;align-items:center;gap:8px;">${syncBadge}<span class="tag ${tagCls}">${m.program}</span>
             <button onclick="event.stopPropagation();deleteMeeting(${m.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
-            <span class="chevron">▶</span>
-          </div>
+            <span class="chevron">▶</span></div>
         </div>
         <div class="report-body"><div class="report-raw">${escHtml(m.content)}</div></div>
       </div>`;
     }).join('');
 }
 async function deleteMeeting(id){
-  if(!confirm('Delete this meeting note?')) return;
-  const d=await loadAppData();
-  d.meetings=(d.meetings||[]).filter(m=>m.id!==id);
+  if(!confirmDelete('Delete this meeting note?')) return;
+  const d=await loadAppData(); d.meetings=(d.meetings||[]).filter(m=>m.id!==id);
   await saveAppData(); renderMeetings();
 }
+renderMeetings();
 
 // ════════════════════════════════
 // GOOGLE SHEETS
@@ -1705,6 +1667,14 @@ updateCalendarDays();
 syncVal('genesis-price','$');
 syncVal('mdp-price','$');
 runSimulator();
+
+// ── Delete password guard ──
+function confirmDelete(msg){
+  const pw=prompt((msg||'Confirm deletion')+'\n\nEnter password to confirm:');
+  if(pw===null) return false;
+  if(pw!==DASHBOARD_PASSWORD){ alert('Incorrect password. Delete cancelled.'); return false; }
+  return true;
+}
 
 // ── UTIL ──
 function escHtml(s){
