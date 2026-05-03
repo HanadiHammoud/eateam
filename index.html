@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elie Ashkar | Operations Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--card2:#22222e;
+  --border:#2a2a38;--border2:#333345;--accent:#6c63ff;--accent2:#a78bfa;
+  --gold:#f4c842;--gold2:#fde68a;--green:#22c55e;--green2:#4ade80;
+  --red:#ef4444;--red2:#f87171;--orange:#f97316;--cyan:#22d3ee;
+  --text:#f0f0f8;--text2:#a0a0b8;--text3:#606075;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;height:56px;gap:0;}
+.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;letter-spacing:-0.02em;margin-right:28px;white-space:nowrap;}
+.brand span{color:var(--accent2);}
+.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text3);background:none;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em;transition:all .15s;}
+.nav-tab:hover{color:var(--text2);background:var(--bg3);}
+.nav-tab.active{color:var(--accent2);background:rgba(108,99,255,.12);}
+.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto;padding-left:16px;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.date-chip{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+
+/* CONTENT */
+.content{display:none;padding:28px 24px;max-width:1400px;margin:0 auto;}
+.content.active{display:block;}
+.section-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:20px;letter-spacing:-.02em;}
+.section-title span{color:var(--accent2);}
+.section-sub{font-size:13px;color:var(--text3);margin-top:4px;font-weight:400;}
+
+/* CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:24px;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s;}
+.kpi-card:hover{border-color:var(--border2);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi-card.green::before{background:linear-gradient(90deg,var(--green),transparent);}
+.kpi-card.purple::before{background:linear-gradient(90deg,var(--accent),transparent);}
+.kpi-card.gold::before{background:linear-gradient(90deg,var(--gold),transparent);}
+.kpi-card.red::before{background:linear-gradient(90deg,var(--red),transparent);}
+.kpi-card.cyan::before{background:linear-gradient(90deg,var(--cyan),transparent);}
+.kpi-card.orange::before{background:linear-gradient(90deg,var(--orange),transparent);}
+.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:'DM Mono',monospace;margin-bottom:10px;}
+.kpi-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;line-height:1;}
+.kpi-value.green{color:var(--green);}
+.kpi-value.purple{color:var(--accent2);}
+.kpi-value.gold{color:var(--gold);}
+.kpi-value.red{color:var(--red2);}
+.kpi-value.cyan{color:var(--cyan);}
+.kpi-value.orange{color:var(--orange);}
+.kpi-meta{font-size:11px;color:var(--text3);margin-top:6px;}
+
+/* TWO/THREE COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+/* TABLE */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;}
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:500;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:11px 16px;border-bottom:1px solid rgba(42,42,56,.5);color:var(--text2);white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
+
+/* TAGS */
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.04em;font-family:'DM Mono',monospace;}
+.tag.genesis{background:rgba(108,99,255,.15);color:var(--accent2);border:1px solid rgba(108,99,255,.3);}
+.tag.mdp{background:rgba(244,200,66,.12);color:var(--gold);border:1px solid rgba(244,200,66,.3);}
+.tag.won{background:rgba(34,197,94,.12);color:var(--green2);border:1px solid rgba(34,197,94,.3);}
+.tag.lead{background:rgba(96,96,117,.2);color:var(--text3);border:1px solid var(--border);}
+.tag.booked{background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.3);}
+.tag.cancelled{background:rgba(249,115,22,.12);color:var(--orange);border:1px solid rgba(249,115,22,.3);}
+
+/* PANEL */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.panel-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+/* PROGRESS */
+.progress-bar-wrap{margin-bottom:12px;}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+.progress-label .name{color:var(--text2);}
+.progress-label .val{font-family:'DM Mono',monospace;color:var(--text3);font-size:11px;}
+.progress-track{height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.progress-fill.green{background:linear-gradient(90deg,var(--green),var(--green2));}
+.progress-fill.purple{background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.progress-fill.gold{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.progress-fill.cyan{background:linear-gradient(90deg,#0ea5e9,var(--cyan));}
+.progress-fill.orange{background:linear-gradient(90deg,var(--orange),#fb923c);}
+
+/* BADGE */
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;}
+.badge-green{background:rgba(34,197,94,.12);color:var(--green2);border:1px solid rgba(34,197,94,.25);}
+.badge-red{background:rgba(239,68,68,.12);color:var(--red2);border:1px solid rgba(239,68,68,.25);}
+.badge-yellow{background:rgba(244,200,66,.12);color:var(--gold);border:1px solid rgba(244,200,66,.25);}
+.badge-gray{background:rgba(96,96,117,.15);color:var(--text3);border:1px solid var(--border);}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+/* FORMS */
+.form-group{margin-bottom:14px;}
+.form-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+.form-select option{background:var(--card2);}
+.form-textarea{min-height:80px;resize:vertical;}
+.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#7c73ff;}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--card2);}
+.btn-sm{padding:7px 14px;font-size:11px;}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--red2);border:1px solid rgba(239,68,68,.3);}
+.btn-danger:hover{background:rgba(239,68,68,.25);}
+
+/* AVATAR */
+.avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'Syne',sans-serif;flex-shrink:0;}
+.av-purple{background:rgba(108,99,255,.2);color:var(--accent2);border:1px solid rgba(108,99,255,.3);}
+.av-gold{background:rgba(244,200,66,.15);color:var(--gold);border:1px solid rgba(244,200,66,.3);}
+.av-cyan{background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.25);}
+.av-green{background:rgba(34,197,94,.12);color:var(--green2);border:1px solid rgba(34,197,94,.25);}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:20px 0;}
+
+/* FUNNEL */
+.funnel-vis{display:flex;gap:6px;align-items:flex-end;height:80px;margin-top:12px;}
+.funnel-bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:var(--card2);border:1px solid var(--border2);border-radius:16px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;}
+.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:18px;}
+.modal-btns{display:flex;gap:8px;margin-top:16px;}
+
+/* TASK BOARD */
+.task-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px;}
+.team-col{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.team-col-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.team-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
+.team-role{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em;}
+.task-list{padding:10px;display:flex;flex-direction:column;gap:5px;max-height:460px;overflow-y:auto;}
+.task-list::-webkit-scrollbar{width:3px;}
+.task-list::-webkit-scrollbar-thumb{background:var(--border2);}
+.task-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:8px;cursor:pointer;transition:all .15s;position:relative;}
+.task-item:hover{border-color:var(--border2);}
+.task-item.done{opacity:.45;}
+.task-item.done .task-text{text-decoration:line-through;}
+.task-check{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--border2);background:none;flex-shrink:0;cursor:pointer;margin-top:1px;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.task-item.done .task-check{background:var(--green);border-color:var(--green);}
+.task-check::after{content:'✓';font-size:10px;color:#fff;display:none;}
+.task-item.done .task-check::after{display:block;}
+.task-text{font-size:12px;color:var(--text2);line-height:1.4;flex:1;}
+.task-priority{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.pri-high{background:var(--red);}
+.pri-med{background:var(--orange);}
+.pri-low{background:var(--text3);}
+.task-deadline{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:3px;}
+.task-deadline.overdue{color:var(--red2);}
+.task-deadline.due-soon{color:var(--orange);}
+.task-footer{padding:10px;border-top:1px solid var(--border);}
+.task-add-btn{width:100%;padding:8px;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--text3);font-size:12px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.task-add-btn:hover{border-color:var(--border2);color:var(--text2);background:var(--bg3);}
+.task-meta-row{display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap;}
+
+/* KPIS */
+.kpi-target-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;}
+.kpi-target-label{font-size:12px;color:var(--text2);}
+.kpi-target-range{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+.kpi-target-val{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+
+/* REPORTS */
+.report-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
+.report-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.report-header:hover{background:rgba(255,255,255,.02);}
+.report-body{padding:20px;display:none;}
+.report-body.open{display:block;}
+.report-section{margin-bottom:14px;}
+.report-section-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.report-list{list-style:none;}
+.report-list li{font-size:13px;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;}
+.report-list li::before{content:'→';position:absolute;left:0;color:var(--accent2);font-size:11px;top:5px;}
+.report-raw{font-size:12px;color:var(--text2);line-height:1.7;white-space:pre-wrap;background:var(--bg3);padding:14px;border-radius:8px;border:1px solid var(--border);}
+.report-date-chip{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);}
+.chevron{color:var(--text3);font-size:12px;transition:transform .2s;}
+.chevron.open{transform:rotate(90deg);}
+
+/* ERRORS */
+.error-card{background:var(--card);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:18px 20px;margin-bottom:12px;border-left:3px solid var(--red);}
+.error-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--red2);margin-bottom:6px;}
+.error-desc{font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5;}
+.resolution-card{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:12px 14px;}
+.resolution-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--green2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.resolution-text{font-size:12px;color:var(--text2);line-height:1.5;}
+
+/* SIMULATOR */
+.sim-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;}
+@media(max-width:1000px){.sim-grid{grid-template-columns:1fr;}}
+.sim-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;}
+.sim-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:20px;}
+.slider-row{margin-bottom:16px;}
+.slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.slider-label{font-size:12px;color:var(--text2);}
+.slider-val{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--accent2);}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:99px;background:var(--border);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(108,99,255,.5);cursor:pointer;}
+.slider-desc{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px;}
+.results-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;position:sticky;top:76px;}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.result-row:last-child{border-bottom:none;}
+.result-label{font-size:12px;color:var(--text3);}
+.result-value{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+.gap-indicator{padding:12px 14px;border-radius:8px;margin-top:12px;font-size:12px;font-weight:600;}
+.gap-over{background:rgba(34,197,94,.1);color:var(--green2);border:1px solid rgba(34,197,94,.25);}
+.gap-under{background:rgba(239,68,68,.1);color:var(--red2);border:1px solid rgba(239,68,68,.25);}
+
+/* MONTH PICKER */
+.month-picker{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap;}
+.month-picker select,.month-picker input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;}
+.month-picker select:focus,.month-picker input:focus{border-color:var(--accent);}
+
+/* SHEETS BANNER */
+.sheets-banner{background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.sheets-text strong{font-size:13px;color:var(--text);display:block;margin-bottom:2px;}
+.sheets-text span{font-size:11px;color:var(--text3);}
+
+/* RESET PERIOD BANNER */
+.reset-banner{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.reset-banner-text{font-size:13px;color:var(--text2);}
+.reset-banner-text strong{color:var(--orange);}
+
+/* INFO BOX */
+.info-box{background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.2);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:16px;}
+.info-box strong{color:var(--cyan);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Elie<span>Ashkar</span> <span style="color:var(--text3);font-size:11px;font-family:'DM Mono',monospace;font-weight:400;margin-left:4px;">OPS</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('overview',this)">Overview</button>
+    <button class="nav-tab" onclick="switchTab('tasks',this)">Task Center</button>
+    <button class="nav-tab" onclick="switchTab('kpis',this)">Team KPIs</button>
+    <button class="nav-tab" onclick="switchTab('reports',this)">Daily Reports</button>
+    <button class="nav-tab" onclick="switchTab('meetings',this)">Meeting Notes</button>
+    <button class="nav-tab" onclick="switchTab('errors',this)">Errors & Fixes</button>
+    <button class="nav-tab" onclick="switchTab('simulator',this)">Scenario Sim</button>
+  </div>
+  <div class="topbar-right">
+    <div class="live-dot"></div>
+    <div class="date-chip" id="topDate"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     OVERVIEW
+═══════════════════════════════════════════ -->
+<div id="tab-overview" class="content active">
+  <div class="section-title">Operations Overview
+    <div class="section-sub">Elie Ashkar · Genesis + MDP Programs · Based on Zoho CRM export</div>
+  </div>
+
+  <div class="sheets-banner">
+    <div style="font-size:22px;">📊</div>
+    <div class="sheets-text" style="flex:1;">
+      <strong>Connect Google Sheets for live data sync</strong>
+      <span>File → Share → Publish to web → Select sheet → CSV format. Works on HTML file, GitHub Pages, and any browser.</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input class="form-input" id="sheetUrl" style="width:280px;font-family:'DM Mono',monospace;font-size:11px;" placeholder="https://docs.google.com/spreadsheets/d/..." />
+      <button class="btn btn-primary btn-sm" onclick="connectSheet()">Connect</button>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card purple"><div class="kpi-label">Total Leads (CRM)</div><div class="kpi-value purple">7,726</div><div class="kpi-meta">All stages · All sources</div></div>
+    <div class="kpi-card cyan"><div class="kpi-label">Active Bookings</div><div class="kpi-value cyan">51</div><div class="kpi-meta">Genesis 24 · MDP 5 · Other 22</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Total Revenue</div><div class="kpi-value green">$35,300</div><div class="kpi-meta">Genesis $25K · MDP $4K · Other $6.3K</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Cash Collected</div><div class="kpi-value gold">$27,280</div><div class="kpi-meta">Genesis $17.5K · MDP $4.1K</div></div>
+    <div class="kpi-card orange"><div class="kpi-label">Pending Cash</div><div class="kpi-value orange">$8,020</div><div class="kpi-meta">Revenue minus collected</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Closed Won</div><div class="kpi-value green">33</div><div class="kpi-meta">Genesis 19 · MDP 5 · Other 9</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">🏗 Genesis Program · April Actuals</div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+        <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Total Booked</div><div class="kpi-value purple" style="font-size:22px;">408</div></div>
+        <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Shows</div><div class="kpi-value cyan" style="font-size:22px;">84</div><div class="kpi-meta">48.5% show rate</div></div>
+        <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Closed</div><div class="kpi-value green" style="font-size:22px;">26</div><div class="kpi-meta">30.9% close rate</div></div>
+      </div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;">
+        <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:20px;">$39,000</div></div>
+        <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Cash Collected</div><div class="kpi-value green" style="font-size:20px;">$18,420</div></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Weekly Funnel (Apr)</div>
+      <div class="funnel-vis" id="aprilFunnel"></div>
+      <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(108,99,255,.4);"></div>Booked</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(34,211,238,.5);"></div>Shows</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(34,197,94,.6);"></div>Closed</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🎯 Setter Attribution</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Attribution from Zoho CRM · Setter_Name field</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-label"><span class="name">Abdallah Hamdan</span><span class="val">Primary (historical)</span></div>
+        <div class="progress-track"><div class="progress-fill purple" style="width:85%"></div></div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-label"><span class="name">Fatima Rajab</span><span class="val">Supporting</span></div>
+        <div class="progress-track"><div class="progress-fill gold" style="width:15%"></div></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:8px;line-height:1.6;">Aya Saiid is the current assigned setter — historical CRM reflects prior team. Aya's bookings will shift attribution as May data flows in.</div>
+      <div class="divider"></div>
+      <div class="panel-title">🔥 Follow-up Priority</div>
+      <div class="kpi-target-row"><span class="kpi-target-label">No Shows (April — reactivation pool)</span><span class="kpi-target-val" style="color:var(--red2);">87</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">MDP crossover from Genesis (15%)</span><span class="kpi-target-val" style="color:var(--accent2);">~1,160</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Booked — pending confirmation</span><span class="kpi-target-val" style="color:var(--gold);">51</span></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:24px;">
+    <div class="panel-title">📊 Genesis April — Weekly Breakdown</div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Week</th><th>Booked</th><th>Cancelled</th><th>Confirmed</th><th>Shows</th><th>Show Rate</th><th>Closed</th><th>Close Rate</th><th>Ad Spend</th><th>CPB</th><th>Revenue</th><th>Collected</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--text)">Apr 1–5</td><td>79</td><td>50</td><td>29</td><td>14</td><td><span class="tag lead">48.3%</span></td><td>6</td><td><span class="tag won">42.9%</span></td><td>$1,292</td><td>$44.56</td><td>$9,000</td><td>$3,370</td></tr>
+          <tr><td style="color:var(--text)">Apr 6–12</td><td>120</td><td>75</td><td>45</td><td>23</td><td><span class="tag lead">51.1%</span></td><td>5</td><td><span class="tag lead">21.7%</span></td><td>$1,842</td><td>$40.94</td><td>$7,500</td><td>$3,850</td></tr>
+          <tr><td style="color:var(--text)">Apr 13–19</td><td>88</td><td>51</td><td>37</td><td>15</td><td><span class="tag cancelled">40.5%</span></td><td>5</td><td><span class="tag lead">33.3%</span></td><td>$1,626</td><td>$43.95</td><td>$7,500</td><td>$4,250</td></tr>
+          <tr><td style="color:var(--text)">Apr 20–26</td><td>73</td><td>36</td><td>37</td><td>21</td><td><span class="tag booked">56.8%</span></td><td>6</td><td><span class="tag lead">28.6%</span></td><td>$1,509</td><td>$40.78</td><td>$9,000</td><td>$4,650</td></tr>
+          <tr><td style="color:var(--text)">Apr 27–30</td><td>48</td><td>23</td><td>25</td><td>11</td><td><span class="tag lead">44.0%</span></td><td>4</td><td><span class="tag won">36.4%</span></td><td>$909</td><td>$36.37</td><td>$6,000</td><td>$2,300</td></tr>
+          <tr style="background:rgba(108,99,255,.05);">
+            <td style="color:var(--accent2);font-weight:700;font-family:'Syne',sans-serif;">TOTAL</td>
+            <td style="color:var(--text);font-weight:700;">408</td><td>235</td><td>173</td>
+            <td style="color:var(--text);font-weight:700;">84</td><td><span class="tag booked">48.5%</span></td>
+            <td style="color:var(--text);font-weight:700;">26</td><td><span class="tag lead">30.9%</span></td>
+            <td>$7,179</td><td>$41.50</td>
+            <td style="color:var(--gold);font-weight:700;font-family:'Syne',sans-serif;">$39,000</td>
+            <td style="color:var(--green2);font-weight:700;">$18,420</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TASK CENTER
+═══════════════════════════════════════════ -->
+<div id="tab-tasks" class="content">
+  <div class="section-title">Task Assignment Center
+    <div class="section-sub">Assign tasks with deadlines · Staff view their column · Mark complete · Reset period refreshes recurring tasks</div>
+  </div>
+
+  <div class="info-box">
+    <strong>💾 Saving:</strong> Tasks save in your browser (localStorage). On a single device/browser they persist between sessions. For team-wide sync across devices, you need to host this on a server with a database (Supabase free tier recommended — ask for setup guide).
+  </div>
+
+  <div class="reset-banner">
+    <div class="reset-banner-text"><strong>⚡ Period Reset</strong> — Clears all completed tasks and reloads the default recurring tasks for the new period. One-time tasks are removed. Use at the start of each week or month.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-ghost btn-sm" onclick="resetPeriod('week')">Reset Week</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetPeriod('month')">Reset Month</button>
+    </div>
+  </div>
+
+  <div class="task-board" id="taskBoard">
+
+    <!-- HANADI -->
+    <div class="team-col">
+      <div class="team-col-header">
+        <div class="avatar av-purple">HH</div>
+        <div><div class="team-name">Hanadi Hammoud</div><div class="team-role">Operations Manager</div></div>
+        <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);" id="stat-hanadi">–</div>
+      </div>
+      <div class="task-list" id="tasks-hanadi"></div>
+      <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('hanadi')">+ Add Task</button></div>
+    </div>
+
+    <!-- FATIMA -->
+    <div class="team-col">
+      <div class="team-col-header">
+        <div class="avatar av-gold">FR</div>
+        <div><div class="team-name">Fatima Rajab</div><div class="team-role">Student Success Manager</div></div>
+        <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);" id="stat-fatima">–</div>
+      </div>
+      <div class="task-list" id="tasks-fatima"></div>
+      <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('fatima')">+ Add Task</button></div>
+    </div>
+
+    <!-- MAYA -->
+    <div class="team-col">
+      <div class="team-col-header">
+        <div class="avatar av-cyan">MT</div>
+        <div><div class="team-name">Maya Timani</div><div class="team-role">Data Analyst & Setters Mgr</div></div>
+        <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);" id="stat-maya">–</div>
+      </div>
+      <div class="task-list" id="tasks-maya"></div>
+      <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('maya')">+ Add Task</button></div>
+    </div>
+
+    <!-- AYA -->
+    <div class="team-col">
+      <div class="team-col-header">
+        <div class="avatar av-green">AS</div>
+        <div><div class="team-name">Aya Saiid</div><div class="team-role">Appointment Setter</div></div>
+        <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);" id="stat-aya">–</div>
+      </div>
+      <div class="task-list" id="tasks-aya"></div>
+      <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('aya')">+ Add Task</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal-box">
+    <div class="modal-title">➕ Add Task</div>
+    <div class="form-group">
+      <label class="form-label">Assign To</label>
+      <select class="form-select" id="modalAssignee">
+        <option value="hanadi">Hanadi Hammoud — Operations Manager</option>
+        <option value="fatima">Fatima Rajab — Student Success</option>
+        <option value="maya">Maya Timani — Data & Setters</option>
+        <option value="aya">Aya Saiid — Appointment Setter</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Task Description</label>
+      <input class="form-input" id="modalTaskText" placeholder="Describe the task..." />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label class="form-label">Priority</label>
+        <select class="form-select" id="modalPriority">
+          <option value="pri-high">🔴 High</option>
+          <option value="pri-med">🟠 Medium</option>
+          <option value="pri-low">⚪ Low</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Deadline</label>
+        <input class="form-input" type="date" id="modalDeadline" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Recurring?</label>
+      <select class="form-select" id="modalRecurring">
+        <option value="none">One-time task</option>
+        <option value="daily">Daily (resets each day)</option>
+        <option value="weekly">Weekly (resets each week)</option>
+        <option value="monthly">Monthly (resets each month)</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="addTask()">Add Task</button>
+      <button class="btn btn-ghost" onclick="closeTaskModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TEAM KPIs
+═══════════════════════════════════════════ -->
+<div id="tab-kpis" class="content">
+  <div class="section-title">Team KPI Dashboard
+    <div class="section-sub">Targets and performance benchmarks · KPI entries save in browser</div>
+  </div>
+
+  <div class="info-box">
+    <strong>💾 Saving note:</strong> KPI logs (wins, insights, improvements, daily numbers) are saved in your browser's localStorage. They persist on the same device/browser. For cross-device team access, the Supabase integration is needed.
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+        <div class="avatar av-green" style="width:40px;height:40px;font-size:15px;">AS</div>
+        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Aya Saiid</div><div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">Appointment Setter</div></div>
+        <div style="margin-left:auto;"><span class="status-badge badge-yellow"><span class="badge-dot"></span>Tracking</span></div>
+      </div>
+      <div class="kpi-target-row"><span class="kpi-target-label">📞 Outbound Calls / Day</span><span class="kpi-target-range">Target: 80–120</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">📅 Total Bookings / Day</span><span class="kpi-target-range">Target: 4–8</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">🎯 Outbound Bookings / Day</span><span class="kpi-target-range">Target: 3–8</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">💬 Message → Booking Rate</span><span class="kpi-target-range">Min 10% · Best 15%</span><span class="kpi-target-val" style="color:var(--accent2);">Log daily</span></div>
+      <div class="divider"></div>
+      <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Daily KPI Logger</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div><label class="form-label">Calls Today</label><input class="form-input" type="number" id="kpi-calls" placeholder="0" oninput="updateAyaKPI()"/></div>
+        <div><label class="form-label">Total Bookings</label><input class="form-input" type="number" id="kpi-bookings" placeholder="0" oninput="updateAyaKPI()"/></div>
+        <div><label class="form-label">Outbound Bookings</label><input class="form-input" type="number" id="kpi-outbound" placeholder="0" oninput="updateAyaKPI()"/></div>
+        <div><label class="form-label">Messages Sent</label><input class="form-input" type="number" id="kpi-msgs" placeholder="0" oninput="updateAyaKPI()"/></div>
+      </div>
+      <div id="ayaKPIResult" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+        <div class="avatar av-gold" style="width:40px;height:40px;font-size:15px;">FR</div>
+        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Fatima Rajab</div><div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">Student Success Manager</div></div>
+        <div style="margin-left:auto;"><span class="status-badge badge-green"><span class="badge-dot"></span>Active</span></div>
+      </div>
+      <div class="kpi-target-row"><span class="kpi-target-label">📬 Follow-up Rate</span><span class="kpi-target-range">Target: 100%</span><span class="kpi-target-val" style="color:var(--green2);">Log weekly</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">🔒 Retention Rate</span><span class="kpi-target-range">Target: 85–95%</span><span class="kpi-target-val" style="color:var(--gold);">Monthly</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">🔄 Reactivation Rate</span><span class="kpi-target-range">Target: 20–30%</span><span class="kpi-target-val" style="color:var(--gold);">Monthly</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">📚 Completion Rate</span><span class="kpi-target-range">Target: 70–85%</span><span class="kpi-target-val" style="color:var(--accent2);">Monthly</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">🏆 Goal Achievement Rate</span><span class="kpi-target-range">Target: 60–75%</span><span class="kpi-target-val" style="color:var(--accent2);">Monthly</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">⭐ Wins / Success Stories</span><span class="kpi-target-range">Min: 1 / week</span><span class="kpi-target-val" style="color:var(--green2);" id="winsCount">0 logged</span></div>
+      <div class="divider"></div>
+      <label class="form-label">Log a Student Win</label>
+      <textarea class="form-textarea" id="winLog" placeholder="Student name + milestone achieved..."></textarea>
+      <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="logWin()">Record Win 🏆</button>
+      <div id="winsDisplay" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+        <div class="avatar av-cyan" style="width:40px;height:40px;font-size:15px;">MT</div>
+        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Maya Timani</div><div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">Data Analyst & Setters Manager</div></div>
+        <div style="margin-left:auto;"><span class="status-badge badge-green"><span class="badge-dot"></span>Active</span></div>
+      </div>
+      <div class="kpi-target-row"><span class="kpi-target-label">🗄 CRM Data Accuracy</span><span class="kpi-target-range">Target: >95%</span><span class="kpi-target-val" style="color:var(--green2);">Audit weekly</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">📊 Weekly Reports</span><span class="kpi-target-range">1 / week</span><span class="kpi-target-val" style="color:var(--cyan);" id="insightsCount">0 logged</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">💡 Insights / Actions</span><span class="kpi-target-range">Min: 3–4 / week</span><span class="kpi-target-val" style="color:var(--cyan);">Log below</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">🎯 Aya Hitting KPIs</span><span class="kpi-target-range">Target: 100%</span><span class="kpi-target-val" style="color:var(--gold);">Track daily</span></div>
+      <div class="divider"></div>
+      <label class="form-label">Log Weekly Insight</label>
+      <textarea class="form-textarea" id="insightLog" placeholder="Data insight + recommended action..."></textarea>
+      <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="logInsight()">Add Insight 💡</button>
+      <div id="insightsDisplay" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+        <div class="avatar av-purple" style="width:40px;height:40px;font-size:15px;">HH</div>
+        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Hanadi Hammoud</div><div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">Operations Manager</div></div>
+        <div style="margin-left:auto;"><span class="status-badge badge-yellow"><span class="badge-dot"></span>In Review</span></div>
+      </div>
+      <div class="kpi-target-row"><span class="kpi-target-label">✅ Tasks On Time</span><span class="kpi-target-range">Target: 80%+</span><span class="kpi-target-val" style="color:var(--accent2);" id="hanadiOnTime">—</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">🔧 Process Improvements/Month</span><span class="kpi-target-range">Min: 2–4</span><span class="kpi-target-val" style="color:var(--gold);" id="improvCount">0 logged</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">📅 Team Meetings Conducted</span><span class="kpi-target-range">Weekly cadence</span><span class="kpi-target-val" style="color:var(--cyan);">See meetings tab</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">🤝 Closer Meetings (Sales)</span><span class="kpi-target-range">Regular cadence</span><span class="kpi-target-val" style="color:var(--cyan);">Log below</span></div>
+      <div class="divider"></div>
+      <label class="form-label">Log Process Improvement</label>
+      <textarea class="form-textarea" id="improvementLog" placeholder="Process improvement implemented..."></textarea>
+      <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="logImprovement()">Record Improvement ⚡</button>
+      <div id="improvementsDisplay" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     DAILY REPORTS
+═══════════════════════════════════════════ -->
+<div id="tab-reports" class="content">
+  <div class="section-title">Daily Reports
+    <div class="section-sub">Paste WhatsApp reports directly · Choose the person · Saved in browser</div>
+  </div>
+
+  <div class="info-box">
+    <strong>How to use:</strong> Click "New Report" → select the team member → paste their WhatsApp message as-is in the text area → Save. The report is stored and displayed with the date and name. No formatting needed.
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+    <button class="btn btn-primary" onclick="toggleReportForm(true)">+ New Report</button>
+    <select class="form-select" style="width:160px;" id="reportFilterPerson" onchange="renderReports()">
+      <option value="">All Team Members</option>
+      <option value="Hanadi Hammoud">Hanadi Hammoud</option>
+      <option value="Fatima Rajab">Fatima Rajab</option>
+      <option value="Maya Timani">Maya Timani</option>
+      <option value="Aya Saiid">Aya Saiid</option>
+    </select>
+    <input class="form-input" style="width:160px;" type="month" id="reportFilterMonth" onchange="renderReports()" />
+  </div>
+
+  <!-- New report form -->
+  <div id="reportForm" style="display:none;" class="panel" style="margin-bottom:20px;">
+    <div class="panel-title">📝 Paste Report</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <label class="form-label">Date</label>
+        <input class="form-input" type="date" id="rDate" />
+      </div>
+      <div>
+        <label class="form-label">Team Member</label>
+        <select class="form-select" id="rAuthor">
+          <option value="Hanadi Hammoud">Hanadi Hammoud</option>
+          <option value="Fatima Rajab">Fatima Rajab</option>
+          <option value="Maya Timani">Maya Timani</option>
+          <option value="Aya Saiid">Aya Saiid</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Report Type</label>
+        <select class="form-select" id="rType">
+          <option value="daily">Daily Report</option>
+          <option value="weekly">Weekly Summary</option>
+          <option value="incident">Issue / Incident</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Paste WhatsApp Message (raw — no formatting needed)</label>
+      <textarea class="form-textarea" id="rContent" style="min-height:160px;" placeholder="Paste the full WhatsApp message here..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="saveReport()">Save Report</button>
+      <button class="btn btn-ghost" onclick="toggleReportForm(false)">Cancel</button>
+    </div>
+  </div>
+
+  <div id="reportsList"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MEETING NOTES
+═══════════════════════════════════════════ -->
+<div id="tab-meetings" class="content">
+  <div class="section-title">Meeting Notes
+    <div class="section-sub">Paste Gemini notes directly · Searchable archive · Saved in browser</div>
+  </div>
+
+  <div class="info-box">
+    <strong>Gemini import:</strong> After your Google Meet, Gemini auto-generates notes. Open the notes → copy all text → click "Add Meeting Notes" below → paste in the field. There is no direct API integration possible for free, but paste-in is one step. <strong>Direct Gemini API</strong> would require Google Workspace API access (paid).
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+    <button class="btn btn-primary" onclick="toggleMeetingForm(true)">+ Add Meeting Notes</button>
+    <input class="form-input" style="width:260px;" id="meetingSearch" placeholder="Search by title, attendee, keyword..." oninput="renderMeetings()" />
+  </div>
+
+  <div id="meetingForm" style="display:none;" class="panel" style="margin-bottom:20px;">
+    <div class="panel-title">📋 Add Meeting Notes</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div><label class="form-label">Date</label><input class="form-input" type="date" id="mDate" /></div>
+      <div><label class="form-label">Meeting Title</label><input class="form-input" id="mTitle" placeholder="e.g. Weekly Ops Review" /></div>
+      <div><label class="form-label">Attendees</label><input class="form-input" id="mAttendees" placeholder="Elie, Hanadi, Fatima..." /></div>
+      <div>
+        <label class="form-label">Program</label>
+        <select class="form-select" id="mProgram">
+          <option value="General">General / Ops</option>
+          <option value="Genesis">Genesis</option>
+          <option value="MDP">MDP</option>
+          <option value="Sales">Sales / Closers</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Paste Full Notes (from Gemini or manual)</label>
+      <textarea class="form-textarea" id="mContent" style="min-height:200px;" placeholder="Paste the full meeting notes here — Gemini notes, manual notes, anything..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="saveMeeting()">Save Meeting Notes</button>
+      <button class="btn btn-ghost" onclick="toggleMeetingForm(false)">Cancel</button>
+    </div>
+  </div>
+
+  <div id="meetingsList"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ERRORS & FIXES
+═══════════════════════════════════════════ -->
+<div id="tab-errors" class="content">
+  <div class="section-title">Errors & Suggested Resolutions
+    <div class="section-sub">Identified from CRM data, meeting notes, and daily reports</div>
+  </div>
+
+  <div class="error-card">
+    <div class="error-title">🚨 Multi-Funnel Follow-up Leakage</div>
+    <div class="error-desc">Leads from 8+ different sources (VSL, Outbound Genesis, MDP Lead Form, MENA Campaign, Instagram, WhatsApp, Remote Job Funnel, Web Download) are entering the CRM without a unified follow-up protocol. April data: 87 no-shows in Genesis alone with no structured reactivation tracking. MDP leads also sitting unworked.</div>
+    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Create a daily priority queue in Zoho filtered by Stage = "No Show" + "Booked > 3 days" + "Needs Follow Up". Assign to Aya for reactivation calls. Maya audits the queue daily. Tag all business-owner Genesis leads for MDP outreach separately.</div></div>
+  </div>
+
+  <div class="error-card">
+    <div class="error-title">⚠️ Show-Up Rate Below Target (48.5% vs 60%+ goal)</div>
+    <div class="error-desc">April: consistent show-up of 40–57% across all weeks, vs the 60–70% target from February planning. Week of Apr 13–19 dropped to 40.5%. At current show rate, this is the single biggest revenue bottleneck — each +5% show rate = ~4 additional closes per month.</div>
+    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">3-touch confirmation sequence: booking confirm → 24hr reminder → 2hr reminder. Aya calls non-confirmed bookings the day before. Add urgency framing ("your spot is reserved but we need confirmation"). Target: 55%+ by Week 2 May. Maya tracks weekly.</div></div>
+  </div>
+
+  <div class="error-card">
+    <div class="error-title">⚠️ Cancellation Rate 57.6% of Raw Bookings</div>
+    <div class="error-desc">235 of 408 April bookings cancelled before confirmation. This wastes ad spend and setter time. Root cause: low-intent leads booking without commitment, possibly due to low-friction booking flow.</div>
+    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Add pre-booking qualifier in setter script (income level, timeline, decision authority). Consider a micro-commitment step (answer 2 questions before booking confirms). Maya tracks cancellation rate weekly — flag if above 50%.</div></div>
+  </div>
+
+  <div class="error-card">
+    <div class="error-title">⚠️ No Dedicated MDP Funnel Tracking</div>
+    <div class="error-desc">MDP leads exist in Zoho with the MDP tag but no dedicated pipeline view showing its own show rates, close rates, revenue. The 15% Genesis-to-MDP business owner crossover is not systematically identified or routed.</div>
+    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Create a Zoho CRM view: Tag = MDP, with its own weekly KPI columns. Add a "Business Owner?" qualifier in the Genesis setter script to auto-tag MDP crossover leads. Maya produces a separate MDP report starting Week 1 May.</div></div>
+  </div>
+
+  <div class="error-card">
+    <div class="error-title">⚠️ CRM Export: Dates as Excel Serial Numbers</div>
+    <div class="error-desc">Zoho CRM XLSX export stores Created_Time, Meeting_Date, Closing_Date as floats (e.g. 46143.0) instead of readable dates. Makes date-based analysis and filtering unreliable.</div>
+    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Export from Zoho as CSV instead of XLSX — Zoho uses ISO dates in CSV. In Google Sheets, convert with =DATE(1899,12,30)+A2 to convert serial numbers. Maya implements this in the master tracking sheet.</div></div>
+  </div>
+
+  <div class="error-card">
+    <div class="error-title">📋 No Setter KPI Accountability System</div>
+    <div class="error-desc">Aya's daily KPIs (calls, bookings, outbound bookings) have no current logging or accountability beyond informal check-ins. Feb meeting confirmed setter performance is the #1 growth blocker.</div>
+    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Use the KPI Logger in Team KPIs tab. Aya fills in daily. Maya verifies against CRM. 2 consecutive days below KPI triggers a notification to Hanadi. Weekly % hitting KPI is Maya's own performance metric.</div></div>
+  </div>
+
+  <div class="error-card">
+    <div class="error-title">📋 Data Persistence: Dashboard Is Single-Device Only</div>
+    <div class="error-desc">Tasks, reports, KPI logs, and meeting notes currently save in browser localStorage. This means each team member sees their own version on their own device — changes don't sync across the team.</div>
+    <div class="resolution-card"><div class="resolution-title">✅ Resolution (Free)</div><div class="resolution-text">Host on GitHub Pages (free) + integrate Supabase (free tier: 500MB, unlimited API calls). Supabase gives you a real database with user accounts and real-time sync. Setup takes ~2 hours and is fully free for this scale. Ask for the implementation guide when ready.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCENARIO SIMULATOR
+═══════════════════════════════════════════ -->
+<div id="tab-simulator" class="content">
+  <div class="section-title">Scenario Simulator
+    <div class="section-sub">Revenue modeling · Select month · Genesis April actuals as baseline · 15% MDP crossover from Genesis business owners</div>
+  </div>
+
+  <div class="sim-grid">
+    <div>
+      <div class="sim-panel" style="margin-bottom:16px;">
+        <div class="sim-title">🗓 Target Month</div>
+        <div class="month-picker" style="margin-bottom:0;">
+          <div>
+            <label class="form-label">Month</label>
+            <select class="form-select" id="sim-month" onchange="updateCalendarDays();runSimulator()">
+              <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+              <option value="4">April</option><option value="5" selected>May</option><option value="6">June</option>
+              <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+              <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Year</label>
+            <select class="form-select" id="sim-year" onchange="updateCalendarDays();runSimulator()">
+              <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
+            </select>
+          </div>
+          <div style="align-self:flex-end;padding-bottom:2px;">
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);">Calendar days</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--accent2);" id="calDaysDisplay">31</div>
+          </div>
+        </div>
+
+        <div class="slider-row" style="margin-top:18px;margin-bottom:0;">
+          <div class="slider-header">
+            <span class="slider-label">📅 Working Days in Month</span>
+            <span class="slider-val" id="val-workdays">22</span>
+          </div>
+          <input type="range" id="sl-workdays" min="1" max="31" value="22" oninput="syncVal('workdays','');runSimulator()">
+          <div class="slider-desc">Adjust for weekends, public holidays · April had ~22 working days · Max auto-updates per selected month</div>
+        </div>
+      </div>
+
+      <div class="sim-panel" style="margin-bottom:16px;">
+        <div class="sim-title">🎯 Revenue Target</div>
+        <div style="background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Target Revenue (USD)</div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--text3);">$</span>
+            <input style="background:none;border:none;outline:none;font-family:'Syne',sans-serif;font-weight:800;font-size:32px;color:var(--text);width:100%;" type="number" id="simTarget" value="100000" oninput="runSimulator()"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="sim-panel" style="margin-bottom:16px;">
+        <div class="sim-title">📊 Program Split</div>
+
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-label">Genesis Revenue Share</span><span class="slider-val" id="val-genesisShare">85%</span></div>
+          <input type="range" id="sl-genesisShare" min="60" max="95" value="85" oninput="syncVal('genesisShare','%');runSimulator()">
+          <div class="slider-desc">Remaining % = MDP share</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-label">Genesis Deal Value</span><span class="slider-val" id="val-genesis-price">$1,500</span></div>
+          <input type="range" id="sl-genesis-price" min="1000" max="2500" step="50" value="1500" oninput="syncVal('genesis-price','$');runSimulator()">
+          <div class="slider-desc">Range: $1,000 – $2,500 · April avg: $1,500</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-label">MDP Deal Value</span><span class="slider-val" id="val-mdp-price">$750</span></div>
+          <input type="range" id="sl-mdp-price" min="500" max="1500" step="50" value="750" oninput="syncVal('mdp-price','$');runSimulator()">
+          <div class="slider-desc">Range: $500 – $1,500 · Default: $750</div>
+        </div>
+      </div>
+
+      <div class="sim-panel" style="margin-bottom:16px;">
+        <div class="sim-title">⚙️ Funnel Variables</div>
+
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-label">Daily Confirmed Bookings</span><span class="slider-val" id="val-bookings">8</span></div>
+          <input type="range" id="sl-bookings" min="4" max="30" value="8" oninput="syncVal('bookings','');runSimulator()">
+          <div class="slider-desc">April avg: 7.9/day (173 confirmed ÷ 22 days)</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-label">Show-up Rate</span><span class="slider-val" id="val-showup">55%</span></div>
+          <input type="range" id="sl-showup" min="35" max="80" value="55" oninput="syncVal('showup','%');runSimulator()">
+          <div class="slider-desc">April avg: 48.5% · Feb target: 60–70%</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-label">Genesis Close Rate</span><span class="slider-val" id="val-genesis-close">32%</span></div>
+          <input type="range" id="sl-genesis-close" min="15" max="60" value="32" oninput="syncVal('genesis-close','%');runSimulator()">
+          <div class="slider-desc">April avg: 30.9% · Feb target: 35–40%</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-label">MDP Close Rate</span><span class="slider-val" id="val-mdp-close">40%</span></div>
+          <input type="range" id="sl-mdp-close" min="15" max="70" value="40" oninput="syncVal('mdp-close','%');runSimulator()">
+          <div class="slider-desc">MDP leads are higher-intent business owners</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-label">Cost Per Booking</span><span class="slider-val" id="val-cpb">$41</span></div>
+          <input type="range" id="sl-cpb" min="20" max="100" value="41" oninput="syncVal('cpb','$');runSimulator()">
+          <div class="slider-desc">April avg: $41.50 · optimize toward $35</div>
+        </div>
+      </div>
+
+      <!-- April Benchmark -->
+      <div class="sim-panel">
+        <div class="sim-title">📊 April Actuals (Benchmark)</div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;">
+          <div class="kpi-card purple" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Confirmed</div><div class="kpi-value purple" style="font-size:20px;">173</div></div>
+          <div class="kpi-card cyan" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Show Rate</div><div class="kpi-value cyan" style="font-size:20px;">48.5%</div></div>
+          <div class="kpi-card green" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Close Rate</div><div class="kpi-value green" style="font-size:20px;">30.9%</div></div>
+          <div class="kpi-card gold" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:18px;">$39K</div></div>
+          <div class="kpi-card orange" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Ad Spend</div><div class="kpi-value orange" style="font-size:18px;">$7.2K</div></div>
+          <div class="kpi-card green" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">CPB</div><div class="kpi-value green" style="font-size:18px;">$41.5</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-panel">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:16px;" id="simMonthLabel">May 2026 Projection</div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;margin-bottom:14px;">
+        <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Projected Revenue</div>
+        <div class="kpi-value green" style="font-size:36px;" id="projRevenue">$–</div>
+      </div>
+
+      <div id="gapCard" class="gap-indicator gap-under" style="margin-bottom:16px;">—</div>
+
+      <div class="result-row"><span class="result-label">Calendar Days</span><span class="result-value" id="projCalDays">–</span></div>
+      <div class="result-row"><span class="result-label">Total Confirms</span><span class="result-value" id="projConfirms">–</span></div>
+      <div class="result-row"><span class="result-label">Total Shows</span><span class="result-value" id="projShows">–</span></div>
+      <div class="result-row"><span class="result-label">Genesis Shows</span><span class="result-value" id="projGenesisShows">–</span></div>
+      <div class="result-row"><span class="result-label">MDP Shows (15%)</span><span class="result-value" id="projMdpShows">–</span></div>
+      <div class="result-row"><span class="result-label">Genesis Closes</span><span class="result-value" id="projGenesisClose">–</span></div>
+      <div class="result-row"><span class="result-label">MDP Closes</span><span class="result-value" id="projMdpClose">–</span></div>
+      <div style="border-top:1px solid var(--border2);margin:8px 0;"></div>
+      <div class="result-row"><span class="result-label">Genesis Revenue</span><span class="result-value" style="color:var(--accent2);" id="projGenesisRev">–</span></div>
+      <div class="result-row"><span class="result-label">MDP Revenue</span><span class="result-value" style="color:var(--gold);" id="projMdpRev">–</span></div>
+      <div class="result-row"><span class="result-label">Est. Ad Spend</span><span class="result-value" style="color:var(--orange);" id="projAdSpend">–</span></div>
+      <div class="result-row"><span class="result-label">ROAS</span><span class="result-value" style="color:var(--green2);" id="projROAS">–</span></div>
+      <div class="result-row"><span class="result-label">Bookings Needed / Day</span><span class="result-value" id="projBookPerDay">–</span></div>
+
+      <div style="margin-top:14px;padding:12px;background:rgba(108,99,255,.07);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;font-family:'DM Mono',monospace;" id="simNote">
+        15% of shows = MDP business owners routed through MDP close rate and deal value.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+// ── DATE ──
+const today = new Date();
+document.getElementById('topDate').textContent = today.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+
+// ── TABS ──
+function switchTab(name, btn) {
+  document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ── APRIL FUNNEL ──
+const aprilData = [
+  {label:'Apr 1–5',booked:79,shows:14,closed:6},
+  {label:'Apr 6–12',booked:120,shows:23,closed:5},
+  {label:'Apr 13–19',booked:88,shows:15,closed:5},
+  {label:'Apr 20–26',booked:73,shows:21,closed:6},
+  {label:'Apr 27–30',booked:48,shows:11,closed:4},
+];
+(function buildFunnel(){
+  const el = document.getElementById('aprilFunnel');
+  if(!el) return;
+  const maxB = Math.max(...aprilData.map(w=>w.booked));
+  aprilData.forEach(w => {
+    const col = document.createElement('div');
+    col.className = 'funnel-bar-col';
+    const bh = Math.round((w.booked/maxB)*72);
+    const sh = Math.round((w.shows/maxB)*72);
+    const ch = Math.round((w.closed/maxB)*72);
+    col.innerHTML = `
+      <div style="display:flex;gap:2px;align-items:flex-end;width:100%;height:72px;">
+        <div style="flex:1;height:${bh}px;background:rgba(108,99,255,.4);border-radius:3px 3px 0 0;"></div>
+        <div style="flex:1;height:${sh}px;background:rgba(34,211,238,.5);border-radius:3px 3px 0 0;"></div>
+        <div style="flex:1;height:${ch}px;background:rgba(34,197,94,.6);border-radius:3px 3px 0 0;"></div>
+      </div>
+      <div style="font-size:9px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;margin-top:4px;">${w.label.split('–')[0]}</div>`;
+    el.appendChild(col);
+  });
+})();
+
+// ════════════════════════════════
+// TASK SYSTEM
+// ════════════════════════════════
+const DEFAULT_TASKS = {
+  hanadi:[
+    {text:'Finalize and implement May operations plan',pri:'pri-high',recurring:'monthly',deadline:''},
+    {text:'Performance review — Aya KPI dashboard review',pri:'pri-high',recurring:'weekly',deadline:''},
+    {text:'Growth gap analysis — show rate improvement actions',pri:'pri-med',recurring:'weekly',deadline:''},
+    {text:'Team alignment meeting',pri:'pri-med',recurring:'weekly',deadline:''},
+    {text:'Meeting with closers (Stephan / Abdallah)',pri:'pri-med',recurring:'weekly',deadline:''},
+    {text:'Daily lead tracking check',pri:'pri-low',recurring:'daily',deadline:''},
+  ],
+  fatima:[
+    {text:'Onboard new students from this week\'s closes',pri:'pri-high',recurring:'weekly',deadline:''},
+    {text:'100% follow-up on all assigned students this week',pri:'pri-high',recurring:'weekly',deadline:''},
+    {text:'Discord — answer pending student questions',pri:'pri-med',recurring:'daily',deadline:''},
+    {text:'1-on-1 student meetings',pri:'pri-med',recurring:'weekly',deadline:''},
+    {text:'Reactivation outreach — students at risk of churn',pri:'pri-med',recurring:'weekly',deadline:''},
+    {text:'Collect 1 win / success story this week',pri:'pri-low',recurring:'weekly',deadline:''},
+  ],
+  maya:[
+    {text:'Daily CRM accuracy audit — flag errors in Zoho',pri:'pri-high',recurring:'daily',deadline:''},
+    {text:'Follow up with Aya — review KPI log vs target',pri:'pri-high',recurring:'daily',deadline:''},
+    {text:'Weekly data analysis report — produce & share',pri:'pri-med',recurring:'weekly',deadline:''},
+    {text:'3–4 insights/action items from actuals',pri:'pri-med',recurring:'weekly',deadline:''},
+    {text:'Lead categorization audit — hot / no-show / dead',pri:'pri-low',recurring:'weekly',deadline:''},
+  ],
+  aya:[
+    {text:'80–120 outbound calls today',pri:'pri-high',recurring:'daily',deadline:''},
+    {text:'4–8 confirmed bookings (inbound + outbound)',pri:'pri-high',recurring:'daily',deadline:''},
+    {text:'3–8 outbound-sourced bookings',pri:'pri-high',recurring:'daily',deadline:''},
+    {text:'Lead reactivation — work through no-shows & dead leads',pri:'pri-med',recurring:'daily',deadline:''},
+    {text:'Update CRM — categorize hot / cold / no-show leads',pri:'pri-med',recurring:'daily',deadline:''},
+    {text:'End-of-day KPI report to Maya',pri:'pri-low',recurring:'daily',deadline:''},
+  ]
+};
+
+function getDeadlineClass(deadline){
+  if(!deadline) return '';
+  const d = new Date(deadline);
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.round((d-now)/(1000*60*60*24));
+  if(diff < 0) return 'overdue';
+  if(diff <= 2) return 'due-soon';
+  return '';
+}
+
+function formatDeadline(deadline){
+  if(!deadline) return '';
+  const d = new Date(deadline);
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.round((d-now)/(1000*60*60*24));
+  const dateStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  if(diff < 0) return `⚠ Overdue (${dateStr})`;
+  if(diff === 0) return `🔴 Due Today`;
+  if(diff === 1) return `🟠 Due Tomorrow`;
+  if(diff <= 3) return `🟡 Due ${dateStr}`;
+  return `📅 ${dateStr}`;
+}
+
+function renderTaskItem(task, idx, key){
+  const dlClass = getDeadlineClass(task.deadline);
+  const dlText = formatDeadline(task.deadline);
+  const recurIcon = task.recurring === 'daily' ? '🔁' : task.recurring === 'weekly' ? '📆' : task.recurring === 'monthly' ? '📅' : '';
+  return `<div class="task-item${task.done?' done':''}" data-idx="${idx}" data-key="${key}" onclick="toggleTask(this)">
+    <div class="task-check"></div>
+    <div class="task-priority ${task.pri}"></div>
+    <div style="flex:1;">
+      <div class="task-text">${task.text}</div>
+      <div class="task-meta-row">
+        ${dlText ? `<span class="task-deadline ${dlClass}">${dlText}</span>` : ''}
+        ${recurIcon ? `<span style="font-size:10px;color:var(--text3);">${recurIcon} ${task.recurring}</span>` : ''}
+      </div>
+    </div>
+    <button onclick="event.stopPropagation();deleteTask('${key}',${idx})" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:2px 4px;font-size:12px;" title="Delete">✕</button>
+  </div>`;
+}
+
+function loadTasks(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('ea_tasks_v2'));
+    if(saved) return saved;
+  }catch(e){}
+  // First load: use defaults
+  const data = {};
+  Object.keys(DEFAULT_TASKS).forEach(k => {
+    data[k] = DEFAULT_TASKS[k].map(t => ({...t, done:false}));
+  });
+  return data;
+}
+
+function saveTasks(data){
+  try{ localStorage.setItem('ea_tasks_v2', JSON.stringify(data)); }catch(e){}
+}
+
+function renderTasks(){
+  const data = loadTasks();
+  ['hanadi','fatima','maya','aya'].forEach(key => {
+    const list = document.getElementById('tasks-' + key);
+    if(!list) return;
+    const tasks = data[key] || [];
+    list.innerHTML = tasks.map((t,i) => renderTaskItem(t, i, key)).join('');
+    // Stats
+    const done = tasks.filter(t=>t.done).length;
+    const total = tasks.length;
+    const pct = total > 0 ? Math.round((done/total)*100) : 0;
+    const stat = document.getElementById('stat-' + key);
+    if(stat) stat.textContent = `${done}/${total} (${pct}%)`;
+  });
+  updateHanadiKPI();
+}
+
+function toggleTask(el){
+  const key = el.dataset.key;
+  const idx = parseInt(el.dataset.idx);
+  const data = loadTasks();
+  data[key][idx].done = !data[key][idx].done;
+  saveTasks(data);
+  renderTasks();
+}
+
+function deleteTask(key, idx){
+  if(!confirm('Delete this task?')) return;
+  const data = loadTasks();
+  data[key].splice(idx, 1);
+  saveTasks(data);
+  renderTasks();
+}
+
+function resetPeriod(type){
+  const label = type === 'week' ? 'weekly' : 'monthly';
+  const msg = type === 'week'
+    ? 'Reset week? This will:\n• Remove all completed tasks\n• Reload recurring weekly + daily tasks\n• Keep uncompleted one-time tasks'
+    : 'Reset month? This will:\n• Remove all completed tasks\n• Reload all recurring tasks (daily, weekly, monthly)\n• Remove completed one-time tasks';
+  if(!confirm(msg)) return;
+  const data = loadTasks();
+  Object.keys(data).forEach(key => {
+    const def = DEFAULT_TASKS[key] || [];
+    // Keep: incomplete one-time tasks + all recurring
+    const kept = data[key].filter(t => !t.done && t.recurring === 'none');
+    // Re-add recurring default tasks (un-done)
+    const recurring = def.filter(t => {
+      if(type === 'week') return t.recurring === 'daily' || t.recurring === 'weekly';
+      return t.recurring === 'daily' || t.recurring === 'weekly' || t.recurring === 'monthly';
+    }).map(t => ({...t, done:false}));
+    data[key] = [...recurring, ...kept];
+  });
+  saveTasks(data);
+  renderTasks();
+  alert('Period reset complete ✓');
+}
+
+let addTaskTarget = 'hanadi';
+function openAddTask(key){
+  addTaskTarget = key;
+  document.getElementById('modalAssignee').value = key;
+  document.getElementById('modalTaskText').value = '';
+  document.getElementById('modalDeadline').value = '';
+  document.getElementById('taskModal').classList.add('show');
+}
+function closeTaskModal(){ document.getElementById('taskModal').classList.remove('show'); }
+function addTask(){
+  const key = document.getElementById('modalAssignee').value;
+  const text = document.getElementById('modalTaskText').value.trim();
+  const pri = document.getElementById('modalPriority').value;
+  const deadline = document.getElementById('modalDeadline').value;
+  const recurring = document.getElementById('modalRecurring').value;
+  if(!text) return;
+  const data = loadTasks();
+  if(!data[key]) data[key] = [];
+  data[key].push({text, pri, deadline, recurring, done:false});
+  saveTasks(data);
+  renderTasks();
+  closeTaskModal();
+}
+document.getElementById('taskModal').addEventListener('click', function(e){ if(e.target===this) closeTaskModal(); });
+renderTasks();
+
+// ════════════════════════════════
+// KPI LOGGERS
+// ════════════════════════════════
+function loadKPIData(key){ try{ return JSON.parse(localStorage.getItem('ea_kpi_'+key))||[]; }catch(e){ return []; } }
+function saveKPIData(key,data){ try{ localStorage.setItem('ea_kpi_'+key, JSON.stringify(data)); }catch(e){} }
+
+let wins = loadKPIData('wins');
+let insights = loadKPIData('insights');
+let improvements = loadKPIData('improvements');
+
+function renderKPIList(items, containerId){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = items.slice(-5).reverse().map(i => `
+    <div class="kpi-target-row" style="margin-top:4px;">
+      <span class="kpi-target-label" style="flex:1;">${i.text}</span>
+      <span class="kpi-target-range">${i.date}</span>
+    </div>`).join('') || '<div style="font-size:11px;color:var(--text3);padding:8px 0;">No entries yet.</div>';
+}
+
+function logWin(){
+  const t = document.getElementById('winLog').value.trim();
+  if(!t) return;
+  wins.push({text:t, date:new Date().toLocaleDateString()});
+  saveKPIData('wins', wins);
+  document.getElementById('winLog').value = '';
+  const el = document.getElementById('winsCount');
+  if(el) el.textContent = wins.length + ' logged';
+  renderKPIList(wins, 'winsDisplay');
+}
+function logInsight(){
+  const t = document.getElementById('insightLog').value.trim();
+  if(!t) return;
+  insights.push({text:t, date:new Date().toLocaleDateString()});
+  saveKPIData('insights', insights);
+  document.getElementById('insightLog').value = '';
+  const el = document.getElementById('insightsCount');
+  if(el) el.textContent = insights.length + ' logged';
+  renderKPIList(insights, 'insightsDisplay');
+}
+function logImprovement(){
+  const t = document.getElementById('improvementLog').value.trim();
+  if(!t) return;
+  improvements.push({text:t, date:new Date().toLocaleDateString()});
+  saveKPIData('improvements', improvements);
+  document.getElementById('improvementLog').value = '';
+  const el = document.getElementById('improvCount');
+  if(el) el.textContent = improvements.length + ' logged';
+  renderKPIList(improvements, 'improvementsDisplay');
+}
+
+// Init displays
+renderKPIList(wins, 'winsDisplay');
+renderKPIList(insights, 'insightsDisplay');
+renderKPIList(improvements, 'improvementsDisplay');
+const wc = document.getElementById('winsCount'); if(wc && wins.length) wc.textContent = wins.length + ' logged';
+const ic = document.getElementById('insightsCount'); if(ic && insights.length) ic.textContent = insights.length + ' logged';
+const imc = document.getElementById('improvCount'); if(imc && improvements.length) imc.textContent = improvements.length + ' logged';
+
+function updateHanadiKPI(){
+  const tasks = document.querySelectorAll('#tasks-hanadi .task-item');
+  if(!tasks.length) return;
+  const done = document.querySelectorAll('#tasks-hanadi .task-item.done').length;
+  const pct = Math.round((done/tasks.length)*100);
+  const el = document.getElementById('hanadiOnTime');
+  if(el){
+    el.textContent = pct + '%';
+    el.style.color = pct>=80 ? 'var(--green2)' : pct>=60 ? 'var(--gold)' : 'var(--red2)';
+  }
+}
+
+function updateAyaKPI(){
+  const calls = parseInt(document.getElementById('kpi-calls').value)||0;
+  const book = parseInt(document.getElementById('kpi-bookings').value)||0;
+  const out = parseInt(document.getElementById('kpi-outbound').value)||0;
+  const msgs = parseInt(document.getElementById('kpi-msgs').value)||0;
+  const cOK = calls>=80&&calls<=120;
+  const bOK = book>=4&&book<=8;
+  const oOK = out>=3&&out<=8;
+  const rate = msgs>0?((book/msgs)*100).toFixed(1):0;
+  const rOK = rate>=10;
+  document.getElementById('ayaKPIResult').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+      <span class="status-badge ${cOK?'badge-green':'badge-red'}"><span class="badge-dot"></span>Calls: ${calls} ${cOK?'✓':'⚠ 80–120'}</span>
+      <span class="status-badge ${bOK?'badge-green':'badge-red'}"><span class="badge-dot"></span>Bookings: ${book} ${bOK?'✓':'⚠ 4–8'}</span>
+      <span class="status-badge ${oOK?'badge-green':'badge-red'}"><span class="badge-dot"></span>Outbound: ${out} ${oOK?'✓':'⚠ 3–8'}</span>
+      <span class="status-badge ${rOK?'badge-green':'badge-red'}"><span class="badge-dot"></span>Rate: ${rate}% ${rOK?'✓':'⚠ min 10%'}</span>
+    </div>
+    <div style="margin-top:8px;padding:8px 10px;border-radius:6px;font-size:12px;${(cOK&&bOK&&oOK&&rOK)?'background:rgba(34,197,94,.1);color:var(--green2);border:1px solid rgba(34,197,94,.2);':'background:rgba(249,115,22,.07);color:var(--orange);border:1px solid rgba(249,115,22,.2);'}">
+      ${(cOK&&bOK&&oOK&&rOK)?'🎯 All KPIs hit today!':'⚠ Some KPIs below target — needs attention'}
+    </div>`;
+}
+
+// ════════════════════════════════
+// DAILY REPORTS
+// ════════════════════════════════
+function loadReports(){ try{ return JSON.parse(localStorage.getItem('ea_reports_v2'))||[defaultReport]; }catch(e){ return [defaultReport]; } }
+function saveReports(data){ try{ localStorage.setItem('ea_reports_v2', JSON.stringify(data)); }catch(e){} }
+
+const defaultReport = {
+  id: Date.now(),
+  date: '2026-04-29',
+  author: 'Hanadi Hammoud',
+  type: 'daily',
+  content: `Daily Report\nDate: Wednesday, 29 April 2026\n\nSummary of Activities:\n• Conducted a meeting with Aya (new setter).\n• Attended a meeting with Elie, Fatima, and Maya.\n• Held a meeting with Jinane.\n• Conducted a follow-up meeting with Fatima and Maya.\n• Checked and reviewed yesterday's leads.\n• Continued updating the May plan and new tracking sheets.\n• Attended the RVO meeting.\n• Focused on optimization and building a structured plan moving forward.\n\nChallenges:\n• Aligning optimization efforts with ongoing operations requires clear prioritization and structured execution.\n\nAction Points:\n• Finalize and implement the May plan.\n• Ensure alignment across the team on optimization strategy.\n• Continue monitoring lead tracking and performance closely.`
+};
+
+function toggleReportForm(show){
+  document.getElementById('reportForm').style.display = show ? 'block' : 'none';
+  if(show){
+    const d = new Date();
+    document.getElementById('rDate').value = d.toISOString().split('T')[0];
+  }
+}
+
+function saveReport(){
+  const date = document.getElementById('rDate').value;
+  const author = document.getElementById('rAuthor').value;
+  const type = document.getElementById('rType').value;
+  const content = document.getElementById('rContent').value.trim();
+  if(!content){ alert('Please paste the report content.'); return; }
+  const reports = loadReports();
+  reports.unshift({ id: Date.now(), date, author, type, content });
+  saveReports(reports);
+  document.getElementById('rContent').value = '';
+  toggleReportForm(false);
+  renderReports();
+}
+
+const AUTHOR_COLORS = {
+  'Hanadi Hammoud':'var(--accent2)',
+  'Fatima Rajab':'var(--gold)',
+  'Maya Timani':'var(--cyan)',
+  'Aya Saiid':'var(--green2)'
+};
+const TYPE_LABELS = {daily:'Daily Report',weekly:'Weekly Summary',incident:'Issue / Incident',other:'Other'};
+
+function renderReports(){
+  const filterPerson = document.getElementById('reportFilterPerson').value;
+  const filterMonth = document.getElementById('reportFilterMonth').value;
+  let reports = loadReports();
+  if(filterPerson) reports = reports.filter(r => r.author === filterPerson);
+  if(filterMonth) reports = reports.filter(r => r.date && r.date.startsWith(filterMonth));
+
+  document.getElementById('reportsList').innerHTML = reports.length === 0
+    ? '<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'DM Mono\',monospace;font-size:12px;">No reports found.</div>'
+    : reports.map(r => {
+        const dObj = new Date(r.date);
+        const dateStr = r.date ? dObj.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) : '—';
+        const color = AUTHOR_COLORS[r.author] || 'var(--text2)';
+        return `<div class="report-card">
+          <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
+            <div>
+              <div class="report-date-chip">${dateStr}</div>
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-top:3px;">${TYPE_LABELS[r.type]||r.type} <span style="color:${color};font-weight:600;">— ${r.author}</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="status-badge badge-green"><span class="badge-dot"></span>Saved</span>
+              <button onclick="event.stopPropagation();deleteReport(${r.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
+              <span class="chevron">▶</span>
+            </div>
+          </div>
+          <div class="report-body">
+            <div class="report-raw">${escHtml(r.content)}</div>
+          </div>
+        </div>`;
+      }).join('');
+}
+
+function deleteReport(id){
+  if(!confirm('Delete this report?')) return;
+  const reports = loadReports().filter(r => r.id !== id);
+  saveReports(reports);
+  renderReports();
+}
+
+renderReports();
+
+// ════════════════════════════════
+// MEETING NOTES
+// ════════════════════════════════
+function loadMeetings(){ try{ return JSON.parse(localStorage.getItem('ea_meetings_v2'))||[defaultMeeting]; }catch(e){ return [defaultMeeting]; } }
+function saveMeetings(data){ try{ localStorage.setItem('ea_meetings_v2', JSON.stringify(data)); }catch(e){} }
+
+const defaultMeeting = {
+  id: 1,
+  date: '2026-02-05',
+  title: 'Setter Performance & MDP Scaling Goals — EAXRVO',
+  attendees: 'Elie Ashkar · Stephan Z · Abdallah Staitieh · Hanadi Hammoud',
+  program: 'Genesis',
+  content: `Feb 5, 2026 — EAXRVO Meeting
+
+SUMMARY
+Elie Ashkar and Stephan Z discussed scaling MDP to 70–90 students and achieving $78K–$113K monthly revenue. Scaling identified as a "setter game" — setters must hit 10–12 bookings/day and 10% message-to-booking rate minimum.
+
+KEY POINTS
+• Pessimistic: 55% show-up + 35% close = $78K revenue
+• Average: 60% show-up + 35% close = $85K revenue
+• Optimistic: 65% show-up + 35% close = $92K revenue
+• Best case: 70% show-up + 40% close = $113K revenue (132–151 students)
+• Need 540 bookings/month = 18–24/day from 2 setters
+• Setters can earn $2K+/month with bonuses if KPIs hit
+• Lead center must be cleaned daily — categorize hot/no-show/dead
+• 15% of Genesis leads are business owners → good MDP prospects
+• Content creation + Google Ads to make MDP easier to close at $1.5K
+• Out of 59 students, 58 were not "super sophisticated" — focus on freelancers
+
+NEXT STEPS
+• Elie to review lead center and ensure document is updated
+• Send content creation brief based on pain points to group
+• Talk to lead center team on daily KPI dashboard setup
+• Find common ground with setters on booking targets for May`
+};
+
+function toggleMeetingForm(show){
+  document.getElementById('meetingForm').style.display = show ? 'block' : 'none';
+  if(show){ document.getElementById('mDate').value = new Date().toISOString().split('T')[0]; }
+}
+
+function saveMeeting(){
+  const date = document.getElementById('mDate').value;
+  const title = document.getElementById('mTitle').value.trim();
+  const attendees = document.getElementById('mAttendees').value.trim();
+  const program = document.getElementById('mProgram').value;
+  const content = document.getElementById('mContent').value.trim();
+  if(!title){ alert('Please enter a meeting title.'); return; }
+  if(!content){ alert('Please paste the meeting notes.'); return; }
+  const meetings = loadMeetings();
+  meetings.unshift({ id: Date.now(), date, title, attendees, program, content });
+  saveMeetings(meetings);
+  ['mDate','mTitle','mAttendees','mContent'].forEach(id => document.getElementById(id).value = '');
+  toggleMeetingForm(false);
+  renderMeetings();
+}
+
+const PROG_TAG_CLASS = {Genesis:'genesis',MDP:'mdp',Sales:'booked','General':'lead'};
+
+function renderMeetings(){
+  const q = (document.getElementById('meetingSearch').value || '').toLowerCase();
+  let meetings = loadMeetings();
+  if(q) meetings = meetings.filter(m =>
+    (m.title||'').toLowerCase().includes(q) ||
+    (m.attendees||'').toLowerCase().includes(q) ||
+    (m.content||'').toLowerCase().includes(q)
+  );
+  document.getElementById('meetingsList').innerHTML = meetings.length === 0
+    ? '<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'DM Mono\',monospace;font-size:12px;">No meetings found.</div>'
+    : meetings.map(m => {
+        const dateStr = m.date ? new Date(m.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '—';
+        const tagCls = PROG_TAG_CLASS[m.program] || 'lead';
+        return `<div class="report-card">
+          <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
+            <div>
+              <div class="report-date-chip">${dateStr}</div>
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-top:3px;">${escHtml(m.title)}</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:3px;">${escHtml(m.attendees||'')}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="tag ${tagCls}">${m.program}</span>
+              <button onclick="event.stopPropagation();deleteMeeting(${m.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
+              <span class="chevron">▶</span>
+            </div>
+          </div>
+          <div class="report-body">
+            <div class="report-raw">${escHtml(m.content)}</div>
+          </div>
+        </div>`;
+      }).join('');
+}
+
+function deleteMeeting(id){
+  if(!confirm('Delete this meeting note?')) return;
+  const meetings = loadMeetings().filter(m => m.id !== id);
+  saveMeetings(meetings);
+  renderMeetings();
+}
+
+renderMeetings();
+
+// ════════════════════════════════
+// GOOGLE SHEETS
+// ════════════════════════════════
+function connectSheet(){
+  const url = document.getElementById('sheetUrl').value.trim();
+  if(!url){ alert('Please paste a valid Google Sheets published CSV URL.'); return; }
+  const banner = document.querySelector('.sheets-banner');
+  fetch(url)
+    .then(r => { if(!r.ok) throw new Error(); return r.text(); })
+    .then(csv => {
+      banner.style.background='rgba(34,197,94,.06)';
+      banner.style.borderColor='rgba(34,197,94,.25)';
+      banner.querySelector('strong').textContent='✅ Sheet connected — data loaded';
+      banner.querySelector('span').textContent=url.substring(0,70)+'...';
+      try{ localStorage.setItem('ea_sheetUrl',url); }catch(e){}
+      console.log('Sheet CSV loaded, first 200 chars:', csv.substring(0,200));
+    })
+    .catch(() => {
+      banner.querySelector('strong').textContent='⚠️ Could not fetch — check Publish settings (must be published as CSV, not web page)';
+    });
+}
+try{
+  const saved = localStorage.getItem('ea_sheetUrl');
+  if(saved) document.getElementById('sheetUrl').value = saved;
+}catch(e){}
+
+// ════════════════════════════════
+// SIMULATOR
+// ════════════════════════════════
+function getDaysInMonth(month, year){
+  return new Date(year, month, 0).getDate();
+}
+function updateCalendarDays(){
+  const m = parseInt(document.getElementById('sim-month').value);
+  const y = parseInt(document.getElementById('sim-year').value);
+  const calDays = getDaysInMonth(m, y);
+  document.getElementById('calDaysDisplay').textContent = calDays;
+
+  // Update working days slider: max = calendar days, sensible default ~weekdays
+  const wdSlider = document.getElementById('sl-workdays');
+  if(wdSlider){
+    wdSlider.max = calDays;
+    // Default: calendar days minus weekends (approx 4 weekends × 2 = 8 off, minus ~2 holidays)
+    const defaultWD = Math.min(parseInt(wdSlider.value), calDays);
+    wdSlider.value = defaultWD;
+    document.getElementById('val-workdays').textContent = defaultWD;
+  }
+
+  // Update month label
+  const mNames = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+  const lbl = document.getElementById('simMonthLabel');
+  if(lbl) lbl.textContent = mNames[m] + ' ' + y + ' Projection';
+  runSimulator();
+}
+
+function syncVal(key, unit){
+  const el = document.getElementById('sl-'+key);
+  const disp = document.getElementById('val-'+key);
+  if(!el || !disp) return;
+  const v = el.value;
+  if(unit === '$') disp.textContent = '$' + parseInt(v).toLocaleString();
+  else if(unit === '%') disp.textContent = v + '%';
+  else disp.textContent = v;
+}
+
+function runSimulator(){
+  const m = parseInt(document.getElementById('sim-month').value)||5;
+  const y = parseInt(document.getElementById('sim-year').value)||2026;
+  const calDays = getDaysInMonth(m, y);
+  const workDays = parseInt(document.getElementById('sl-workdays').value)||22;
+  const target = parseFloat(document.getElementById('simTarget').value)||100000;
+  const dailyConf = parseInt(document.getElementById('sl-bookings').value)||8;
+  const showup = parseInt(document.getElementById('sl-showup').value)/100;
+  const genesisClose = parseInt(document.getElementById('sl-genesis-close').value)/100;
+  const mdpClose = parseInt(document.getElementById('sl-mdp-close').value)/100;
+  const genesisPrice = parseInt(document.getElementById('sl-genesis-price').value)||1500;
+  const mdpPrice = parseInt(document.getElementById('sl-mdp-price').value)||750;
+  const cpb = parseInt(document.getElementById('sl-cpb').value)||41;
+
+  const totalConf = dailyConf * workDays;
+  const totalShows = Math.round(totalConf * showup);
+  const mdpShows = Math.round(totalShows * 0.15);
+  const genShows = totalShows - mdpShows;
+  const genClosed = Math.round(genShows * genesisClose);
+  const mdpClosed = Math.round(mdpShows * mdpClose);
+  const genRev = genClosed * genesisPrice;
+  const mdpRev = mdpClosed * mdpPrice;
+  const totalRev = genRev + mdpRev;
+  const adSpend = totalConf * cpb;
+  const roas = adSpend > 0 ? (totalRev/adSpend).toFixed(1) : '—';
+  const gap = totalRev - target;
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+
+  document.getElementById('projRevenue').textContent = fmt(totalRev);
+  document.getElementById('projCalDays').textContent = calDays + ' cal · ' + workDays + ' working';
+  document.getElementById('projConfirms').textContent = totalConf;
+  document.getElementById('projShows').textContent = totalShows;
+  document.getElementById('projGenesisShows').textContent = genShows;
+  document.getElementById('projMdpShows').textContent = mdpShows;
+  document.getElementById('projGenesisClose').textContent = genClosed;
+  document.getElementById('projMdpClose').textContent = mdpClosed;
+  document.getElementById('projGenesisRev').textContent = fmt(genRev);
+  document.getElementById('projMdpRev').textContent = fmt(mdpRev);
+  document.getElementById('projAdSpend').textContent = fmt(adSpend);
+  document.getElementById('projROAS').textContent = roas + 'x';
+  document.getElementById('projBookPerDay').textContent = dailyConf + '/day × ' + workDays + ' days';
+  document.getElementById('calDaysDisplay').textContent = calDays;
+
+  const gapEl = document.getElementById('gapCard');
+  gapEl.className = 'gap-indicator ' + (gap >= 0 ? 'gap-over' : 'gap-under');
+  gapEl.textContent = gap >= 0
+    ? `✅ ${fmt(gap)} above $${Math.round(target/1000)}K target`
+    : `⚠️ ${fmt(Math.abs(gap))} below $${Math.round(target/1000)}K target — adjust levers`;
+
+  document.getElementById('simNote').textContent =
+    `MDP: ${mdpShows} shows (15% of ${totalShows} total) × ${(mdpClose*100).toFixed(0)}% close × ${fmt(mdpPrice)} = ${fmt(mdpRev)} · Genesis: ${genShows} shows × ${(genesisClose*100).toFixed(0)}% × ${fmt(genesisPrice)} = ${fmt(genRev)}`;
+}
+
+// Init simulator
+updateCalendarDays();
+['genesisShare','bookings','showup','genesis-close','mdp-close','cpb','workdays'].forEach(k => syncVal(k, k==='workdays'?'':k.includes('close')||k==='showup'||k==='genesisShare'?'%':''));
+syncVal('genesis-price','$');
+syncVal('mdp-price','$');
+runSimulator();
+
+// ── UTIL ──
+function escHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
