@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Elie Ashkar | Operations Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--card2:#22222e;
@@ -14,26 +14,26 @@
   --text:#f0f0f8;--text2:#a0a0b8;--text3:#606075;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
 /* TOPBAR */
 .topbar{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;height:56px;gap:0;}
-.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;letter-spacing:-0.02em;margin-right:28px;white-space:nowrap;}
+.brand{font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:15px;letter-spacing:-0.02em;margin-right:28px;white-space:nowrap;}
 .brand span{color:var(--accent2);}
 .nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;}
 .nav-tabs::-webkit-scrollbar{display:none;}
-.nav-tab{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text3);background:none;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em;transition:all .15s;}
+.nav-tab{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--text3);background:none;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em;transition:all .15s;}
 .nav-tab:hover{color:var(--text2);background:var(--bg3);}
 .nav-tab.active{color:var(--accent2);background:rgba(108,99,255,.12);}
 .topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto;padding-left:16px;}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-.date-chip{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+.date-chip{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);}
 
 /* CONTENT */
 .content{display:none;padding:28px 24px;max-width:1400px;margin:0 auto;}
 .content.active{display:block;}
-.section-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:20px;letter-spacing:-.02em;}
+.section-title{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:800;color:var(--text);margin-bottom:20px;letter-spacing:-.02em;}
 .section-title span{color:var(--accent2);}
 .section-sub{font-size:13px;color:var(--text3);margin-top:4px;font-weight:400;}
 
@@ -48,8 +48,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .kpi-card.red::before{background:linear-gradient(90deg,var(--red),transparent);}
 .kpi-card.cyan::before{background:linear-gradient(90deg,var(--cyan),transparent);}
 .kpi-card.orange::before{background:linear-gradient(90deg,var(--orange),transparent);}
-.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:'DM Mono',monospace;margin-bottom:10px;}
-.kpi-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;line-height:1;}
+.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:'IBM Plex Mono',monospace;margin-bottom:10px;}
+.kpi-value{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:800;line-height:1;}
 .kpi-value.green{color:var(--green);}
 .kpi-value.purple{color:var(--accent2);}
 .kpi-value.gold{color:var(--gold);}
@@ -66,13 +66,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;}
 .table-scroll{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
-th{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:500;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+th{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:500;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
 td{padding:11px 16px;border-bottom:1px solid rgba(42,42,56,.5);color:var(--text2);white-space:nowrap;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 
 /* TAGS */
-.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.04em;font-family:'DM Mono',monospace;}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.04em;font-family:'IBM Plex Mono',monospace;}
 .tag.genesis{background:rgba(108,99,255,.15);color:var(--accent2);border:1px solid rgba(108,99,255,.3);}
 .tag.mdp{background:rgba(244,200,66,.12);color:var(--gold);border:1px solid rgba(244,200,66,.3);}
 .tag.won{background:rgba(34,197,94,.12);color:var(--green2);border:1px solid rgba(34,197,94,.3);}
@@ -82,13 +82,13 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 
 /* PANEL */
 .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
-.panel-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.panel-title{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 
 /* PROGRESS */
 .progress-bar-wrap{margin-bottom:12px;}
 .progress-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
 .progress-label .name{color:var(--text2);}
-.progress-label .val{font-family:'DM Mono',monospace;color:var(--text3);font-size:11px;}
+.progress-label .val{font-family:'IBM Plex Mono',monospace;color:var(--text3);font-size:11px;}
 .progress-track{height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
 .progress-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1);}
 .progress-fill.green{background:linear-gradient(90deg,var(--green),var(--green2));}
@@ -98,7 +98,7 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 .progress-fill.orange{background:linear-gradient(90deg,var(--orange),#fb923c);}
 
 /* BADGE */
-.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;font-family:'IBM Plex Mono',monospace;}
 .badge-green{background:rgba(34,197,94,.12);color:var(--green2);border:1px solid rgba(34,197,94,.25);}
 .badge-red{background:rgba(239,68,68,.12);color:var(--red2);border:1px solid rgba(239,68,68,.25);}
 .badge-yellow{background:rgba(244,200,66,.12);color:var(--gold);border:1px solid rgba(244,200,66,.25);}
@@ -107,12 +107,12 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 
 /* FORMS */
 .form-group{margin-bottom:14px;}
-.form-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block;}
-.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s;}
+.form-label{font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;font-family:'IBM Plex Sans',sans-serif;outline:none;transition:border-color .15s;}
 .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
 .form-select option{background:var(--card2);}
 .form-textarea{min-height:80px;resize:vertical;}
-.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;}
 .btn-primary{background:var(--accent);color:#fff;}
 .btn-primary:hover{background:#7c73ff;}
 .btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
@@ -122,7 +122,7 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 .btn-danger:hover{background:rgba(239,68,68,.25);}
 
 /* AVATAR */
-.avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'Syne',sans-serif;flex-shrink:0;}
+.avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'IBM Plex Mono',monospace;flex-shrink:0;}
 .av-purple{background:rgba(108,99,255,.2);color:var(--accent2);border:1px solid rgba(108,99,255,.3);}
 .av-gold{background:rgba(244,200,66,.15);color:var(--gold);border:1px solid rgba(244,200,66,.3);}
 .av-cyan{background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.25);}
@@ -144,15 +144,15 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 .modal-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;}
 .modal-overlay.show{display:flex;}
 .modal-box{background:var(--card2);border:1px solid var(--border2);border-radius:16px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;}
-.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:18px;}
+.modal-title{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;margin-bottom:18px;}
 .modal-btns{display:flex;gap:8px;margin-top:16px;}
 
 /* TASK BOARD */
 .task-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px;}
 .team-col{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .team-col-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.team-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
-.team-role{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em;}
+.team-name{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;}
+.team-role{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;}
 .task-list{padding:10px;display:flex;flex-direction:column;gap:5px;max-height:460px;overflow-y:auto;}
 .task-list::-webkit-scrollbar{width:3px;}
 .task-list::-webkit-scrollbar-thumb{background:var(--border2);}
@@ -169,19 +169,19 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 .pri-high{background:var(--red);}
 .pri-med{background:var(--orange);}
 .pri-low{background:var(--text3);}
-.task-deadline{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:3px;}
+.task-deadline{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:3px;}
 .task-deadline.overdue{color:var(--red2);}
 .task-deadline.due-soon{color:var(--orange);}
 .task-footer{padding:10px;border-top:1px solid var(--border);}
-.task-add-btn{width:100%;padding:8px;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--text3);font-size:12px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.task-add-btn{width:100%;padding:8px;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--text3);font-size:12px;cursor:pointer;transition:all .15s;font-family:'IBM Plex Sans',sans-serif;}
 .task-add-btn:hover{border-color:var(--border2);color:var(--text2);background:var(--bg3);}
 .task-meta-row{display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap;}
 
 /* KPIS */
 .kpi-target-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;}
 .kpi-target-label{font-size:12px;color:var(--text2);}
-.kpi-target-range{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
-.kpi-target-val{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+.kpi-target-range{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);}
+.kpi-target-val{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;}
 
 /* REPORTS */
 .report-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
@@ -190,40 +190,40 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 .report-body{padding:20px;display:none;}
 .report-body.open{display:block;}
 .report-section{margin-bottom:14px;}
-.report-section-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.report-section-title{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
 .report-list{list-style:none;}
 .report-list li{font-size:13px;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;}
 .report-list li::before{content:'→';position:absolute;left:0;color:var(--accent2);font-size:11px;top:5px;}
 .report-raw{font-size:12px;color:var(--text2);line-height:1.7;white-space:pre-wrap;background:var(--bg3);padding:14px;border-radius:8px;border:1px solid var(--border);}
-.report-date-chip{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);}
+.report-date-chip{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent2);}
 .chevron{color:var(--text3);font-size:12px;transition:transform .2s;}
 .chevron.open{transform:rotate(90deg);}
 
 /* ERRORS */
 .error-card{background:var(--card);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:18px 20px;margin-bottom:12px;border-left:3px solid var(--red);}
-.error-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--red2);margin-bottom:6px;}
+.error-title{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--red2);margin-bottom:6px;}
 .error-desc{font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5;}
 .resolution-card{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:12px 14px;}
-.resolution-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--green2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.resolution-title{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--green2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
 .resolution-text{font-size:12px;color:var(--text2);line-height:1.5;}
 
 /* SIMULATOR */
 .sim-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;}
 @media(max-width:1000px){.sim-grid{grid-template-columns:1fr;}}
 .sim-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;}
-.sim-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:20px;}
+.sim-title{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;margin-bottom:20px;}
 .slider-row{margin-bottom:16px;}
 .slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
 .slider-label{font-size:12px;color:var(--text2);}
-.slider-val{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--accent2);}
+.slider-val{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--accent2);}
 input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:99px;background:var(--border);outline:none;cursor:pointer;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(108,99,255,.5);cursor:pointer;}
-.slider-desc{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px;}
+.slider-desc{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:4px;}
 .results-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;position:sticky;top:76px;}
 .result-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
 .result-row:last-child{border-bottom:none;}
 .result-label{font-size:12px;color:var(--text3);}
-.result-value{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+.result-value{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;}
 .gap-indicator{padding:12px 14px;border-radius:8px;margin-top:12px;font-size:12px;font-weight:600;}
 .gap-over{background:rgba(34,197,94,.1);color:var(--green2);border:1px solid rgba(34,197,94,.25);}
 .gap-under{background:rgba(239,68,68,.1);color:var(--red2);border:1px solid rgba(239,68,68,.25);}
@@ -250,8 +250,68 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </head>
 <body>
 
+<!-- ── PASSWORD GATE ── -->
+<div id="pwGate" style="
+  position:fixed;inset:0;z-index:9999;
+  background:#0a0a0f;
+  display:flex;align-items:center;justify-content:center;
+">
+  <div style="
+    background:#1c1c26;border:1px solid #2a2a38;border-radius:16px;
+    padding:40px 44px;width:360px;max-width:92vw;text-align:center;
+  ">
+    <div style="
+      width:48px;height:48px;border-radius:14px;
+      background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;margin:0 auto 20px;
+    ">🔐</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:16px;color:#f0f0f8;margin-bottom:6px;">
+      Elie<span style="color:#a78bfa;">Ashkar</span> OPS
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#606075;margin-bottom:28px;letter-spacing:.04em;">
+      OPERATIONS DASHBOARD · PRIVATE
+    </div>
+    <input
+      id="pwInput"
+      type="password"
+      placeholder="Enter password"
+      onkeydown="if(event.key==='Enter')checkPassword()"
+      style="
+        width:100%;background:#18181f;border:1px solid #2a2a38;
+        border-radius:8px;padding:12px 16px;
+        color:#f0f0f8;font-size:14px;font-family:'IBM Plex Sans',sans-serif;
+        outline:none;text-align:center;letter-spacing:.1em;
+        transition:border-color .15s;margin-bottom:12px;
+      "
+      onfocus="this.style.borderColor='#6c63ff'"
+      onblur="this.style.borderColor='#2a2a38'"
+    />
+    <div id="pwError" style="
+      font-size:12px;color:#f87171;
+      font-family:'IBM Plex Mono',monospace;
+      height:16px;margin-bottom:12px;
+    "></div>
+    <button
+      onclick="checkPassword()"
+      style="
+        width:100%;padding:12px;border-radius:8px;border:none;
+        background:#6c63ff;color:#fff;font-size:13px;font-weight:600;
+        font-family:'IBM Plex Sans',sans-serif;cursor:pointer;
+        transition:background .15s;
+      "
+      onmouseover="this.style.background='#7c73ff'"
+      onmouseout="this.style.background='#6c63ff'"
+    >Enter Dashboard</button>
+    <div style="font-size:11px;color:#606075;font-family:'IBM Plex Mono',monospace;margin-top:20px;">
+      Team access only · Elie Ashkar Operations
+    </div>
+  </div>
+</div>
+
+<div id="appShell" style="display:none;">
 <div class="topbar">
-  <div class="brand">Elie<span>Ashkar</span> <span style="color:var(--text3);font-size:11px;font-family:'DM Mono',monospace;font-weight:400;margin-left:4px;">OPS</span></div>
+  <div class="brand">Elie<span>Ashkar</span> <span style="color:var(--text3);font-size:11px;font-family:'IBM Plex Mono',monospace;font-weight:400;margin-left:4px;">OPS</span></div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="switchTab('overview',this)">Overview</button>
     <button class="nav-tab" onclick="switchTab('tasks',this)">Task Center</button>
@@ -282,7 +342,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <span>File → Share → Publish to web → Select sheet → CSV format. Works on HTML file, GitHub Pages, and any browser.</span>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <input class="form-input" id="sheetUrl" style="width:280px;font-family:'DM Mono',monospace;font-size:11px;" placeholder="https://docs.google.com/spreadsheets/d/..." />
+      <input class="form-input" id="sheetUrl" style="width:280px;font-family:'IBM Plex Mono',monospace;font-size:11px;" placeholder="https://docs.google.com/spreadsheets/d/..." />
       <button class="btn btn-primary btn-sm" onclick="connectSheet()">Connect</button>
     </div>
   </div>
@@ -308,12 +368,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:20px;">$39,000</div></div>
         <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Cash Collected</div><div class="kpi-value green" style="font-size:20px;">$18,420</div></div>
       </div>
-      <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Weekly Funnel (Apr)</div>
+      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Weekly Funnel (Apr)</div>
       <div class="funnel-vis" id="aprilFunnel"></div>
       <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(108,99,255,.4);"></div>Booked</div>
-        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(34,211,238,.5);"></div>Shows</div>
-        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(34,197,94,.6);"></div>Closed</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(108,99,255,.4);"></div>Booked</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(34,211,238,.5);"></div>Shows</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(34,197,94,.6);"></div>Closed</div>
       </div>
     </div>
 
@@ -328,7 +388,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div class="progress-label"><span class="name">Fatima Rajab</span><span class="val">Supporting</span></div>
         <div class="progress-track"><div class="progress-fill gold" style="width:15%"></div></div>
       </div>
-      <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:8px;line-height:1.6;">Aya Saiid is the current assigned setter — historical CRM reflects prior team. Aya's bookings will shift attribution as May data flows in.</div>
+      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:8px;line-height:1.6;">Aya Saiid is the current assigned setter — historical CRM reflects prior team. Aya's bookings will shift attribution as May data flows in.</div>
       <div class="divider"></div>
       <div class="panel-title">🔥 Follow-up Priority</div>
       <div class="kpi-target-row"><span class="kpi-target-label">No Shows (April — reactivation pool)</span><span class="kpi-target-val" style="color:var(--red2);">87</span></div>
@@ -349,12 +409,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
           <tr><td style="color:var(--text)">Apr 20–26</td><td>73</td><td>36</td><td>37</td><td>21</td><td><span class="tag booked">56.8%</span></td><td>6</td><td><span class="tag lead">28.6%</span></td><td>$1,509</td><td>$40.78</td><td>$9,000</td><td>$4,650</td></tr>
           <tr><td style="color:var(--text)">Apr 27–30</td><td>48</td><td>23</td><td>25</td><td>11</td><td><span class="tag lead">44.0%</span></td><td>4</td><td><span class="tag won">36.4%</span></td><td>$909</td><td>$36.37</td><td>$6,000</td><td>$2,300</td></tr>
           <tr style="background:rgba(108,99,255,.05);">
-            <td style="color:var(--accent2);font-weight:700;font-family:'Syne',sans-serif;">TOTAL</td>
+            <td style="color:var(--accent2);font-weight:700;font-family:'IBM Plex Mono',monospace;">TOTAL</td>
             <td style="color:var(--text);font-weight:700;">408</td><td>235</td><td>173</td>
             <td style="color:var(--text);font-weight:700;">84</td><td><span class="tag booked">48.5%</span></td>
             <td style="color:var(--text);font-weight:700;">26</td><td><span class="tag lead">30.9%</span></td>
             <td>$7,179</td><td>$41.50</td>
-            <td style="color:var(--gold);font-weight:700;font-family:'Syne',sans-serif;">$39,000</td>
+            <td style="color:var(--gold);font-weight:700;font-family:'IBM Plex Mono',monospace;">$39,000</td>
             <td style="color:var(--green2);font-weight:700;">$18,420</td>
           </tr>
         </tbody>
@@ -390,7 +450,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="team-col-header">
         <div class="avatar av-purple">HH</div>
         <div><div class="team-name">Hanadi Hammoud</div><div class="team-role">Operations Manager</div></div>
-        <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);" id="stat-hanadi">–</div>
+        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-hanadi">–</div>
       </div>
       <div class="task-list" id="tasks-hanadi"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('hanadi')">+ Add Task</button></div>
@@ -401,7 +461,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="team-col-header">
         <div class="avatar av-gold">FR</div>
         <div><div class="team-name">Fatima Rajab</div><div class="team-role">Student Success Manager</div></div>
-        <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);" id="stat-fatima">–</div>
+        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-fatima">–</div>
       </div>
       <div class="task-list" id="tasks-fatima"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('fatima')">+ Add Task</button></div>
@@ -412,7 +472,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="team-col-header">
         <div class="avatar av-cyan">MT</div>
         <div><div class="team-name">Maya Timani</div><div class="team-role">Data Analyst & Setters Mgr</div></div>
-        <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);" id="stat-maya">–</div>
+        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-maya">–</div>
       </div>
       <div class="task-list" id="tasks-maya"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('maya')">+ Add Task</button></div>
@@ -423,7 +483,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="team-col-header">
         <div class="avatar av-green">AS</div>
         <div><div class="team-name">Aya Saiid</div><div class="team-role">Appointment Setter</div></div>
-        <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);" id="stat-aya">–</div>
+        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-aya">–</div>
       </div>
       <div class="task-list" id="tasks-aya"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('aya')">+ Add Task</button></div>
@@ -495,7 +555,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="panel">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
         <div class="avatar av-green" style="width:40px;height:40px;font-size:15px;">AS</div>
-        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Aya Saiid</div><div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">Appointment Setter</div></div>
+        <div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;">Aya Saiid</div><div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Appointment Setter</div></div>
         <div style="margin-left:auto;"><span class="status-badge badge-yellow"><span class="badge-dot"></span>Tracking</span></div>
       </div>
       <div class="kpi-target-row"><span class="kpi-target-label">📞 Outbound Calls / Day</span><span class="kpi-target-range">Target: 80–120</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
@@ -503,7 +563,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="kpi-target-row"><span class="kpi-target-label">🎯 Outbound Bookings / Day</span><span class="kpi-target-range">Target: 3–8</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">💬 Message → Booking Rate</span><span class="kpi-target-range">Min 10% · Best 15%</span><span class="kpi-target-val" style="color:var(--accent2);">Log daily</span></div>
       <div class="divider"></div>
-      <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Daily KPI Logger</div>
+      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Daily KPI Logger</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         <div><label class="form-label">Calls Today</label><input class="form-input" type="number" id="kpi-calls" placeholder="0" oninput="updateAyaKPI()"/></div>
         <div><label class="form-label">Total Bookings</label><input class="form-input" type="number" id="kpi-bookings" placeholder="0" oninput="updateAyaKPI()"/></div>
@@ -516,7 +576,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="panel">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
         <div class="avatar av-gold" style="width:40px;height:40px;font-size:15px;">FR</div>
-        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Fatima Rajab</div><div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">Student Success Manager</div></div>
+        <div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;">Fatima Rajab</div><div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Student Success Manager</div></div>
         <div style="margin-left:auto;"><span class="status-badge badge-green"><span class="badge-dot"></span>Active</span></div>
       </div>
       <div class="kpi-target-row"><span class="kpi-target-label">📬 Follow-up Rate</span><span class="kpi-target-range">Target: 100%</span><span class="kpi-target-val" style="color:var(--green2);">Log weekly</span></div>
@@ -537,7 +597,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="panel">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
         <div class="avatar av-cyan" style="width:40px;height:40px;font-size:15px;">MT</div>
-        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Maya Timani</div><div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">Data Analyst & Setters Manager</div></div>
+        <div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;">Maya Timani</div><div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Data Analyst & Setters Manager</div></div>
         <div style="margin-left:auto;"><span class="status-badge badge-green"><span class="badge-dot"></span>Active</span></div>
       </div>
       <div class="kpi-target-row"><span class="kpi-target-label">🗄 CRM Data Accuracy</span><span class="kpi-target-range">Target: >95%</span><span class="kpi-target-val" style="color:var(--green2);">Audit weekly</span></div>
@@ -554,7 +614,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="panel">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
         <div class="avatar av-purple" style="width:40px;height:40px;font-size:15px;">HH</div>
-        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Hanadi Hammoud</div><div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;">Operations Manager</div></div>
+        <div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;">Hanadi Hammoud</div><div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Operations Manager</div></div>
         <div style="margin-left:auto;"><span class="status-badge badge-yellow"><span class="badge-dot"></span>In Review</span></div>
       </div>
       <div class="kpi-target-row"><span class="kpi-target-label">✅ Tasks On Time</span><span class="kpi-target-range">Target: 80%+</span><span class="kpi-target-val" style="color:var(--accent2);" id="hanadiOnTime">—</span></div>
@@ -760,8 +820,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
             </select>
           </div>
           <div style="align-self:flex-end;padding-bottom:2px;">
-            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);">Calendar days</div>
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--accent2);" id="calDaysDisplay">31</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);">Calendar days</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--accent2);" id="calDaysDisplay">31</div>
           </div>
         </div>
 
@@ -778,10 +838,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="sim-panel" style="margin-bottom:16px;">
         <div class="sim-title">🎯 Revenue Target</div>
         <div style="background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:14px 16px;">
-          <div style="font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Target Revenue (USD)</div>
+          <div style="font-size:11px;color:var(--accent2);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Target Revenue (USD)</div>
           <div style="display:flex;align-items:center;gap:4px;">
-            <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--text3);">$</span>
-            <input style="background:none;border:none;outline:none;font-family:'Syne',sans-serif;font-weight:800;font-size:32px;color:var(--text);width:100%;" type="number" id="simTarget" value="100000" oninput="runSimulator()"/>
+            <span style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:28px;color:var(--text3);">$</span>
+            <input style="background:none;border:none;outline:none;font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:32px;color:var(--text);width:100%;" type="number" id="simTarget" value="100000" oninput="runSimulator()"/>
           </div>
         </div>
       </div>
@@ -858,10 +918,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
     <!-- Results -->
     <div class="results-panel">
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:16px;" id="simMonthLabel">May 2026 Projection</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;margin-bottom:16px;" id="simMonthLabel">May 2026 Projection</div>
 
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;margin-bottom:14px;">
-        <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Projected Revenue</div>
+        <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Projected Revenue</div>
         <div class="kpi-value green" style="font-size:36px;" id="projRevenue">$–</div>
       </div>
 
@@ -881,7 +941,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="result-row"><span class="result-label">ROAS</span><span class="result-value" style="color:var(--green2);" id="projROAS">–</span></div>
       <div class="result-row"><span class="result-label">Bookings Needed / Day</span><span class="result-value" id="projBookPerDay">–</span></div>
 
-      <div style="margin-top:14px;padding:12px;background:rgba(108,99,255,.07);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;font-family:'DM Mono',monospace;" id="simNote">
+      <div style="margin-top:14px;padding:12px;background:rgba(108,99,255,.07);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;font-family:'IBM Plex Mono',monospace;" id="simNote">
         15% of shows = MDP business owners routed through MDP close rate and deal value.
       </div>
     </div>
@@ -928,7 +988,7 @@ const aprilData = [
         <div style="flex:1;height:${sh}px;background:rgba(34,211,238,.5);border-radius:3px 3px 0 0;"></div>
         <div style="flex:1;height:${ch}px;background:rgba(34,197,94,.6);border-radius:3px 3px 0 0;"></div>
       </div>
-      <div style="font-size:9px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;margin-top:4px;">${w.label.split('–')[0]}</div>`;
+      <div style="font-size:9px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-align:center;margin-top:4px;">${w.label.split('–')[0]}</div>`;
     el.appendChild(col);
   });
 })();
@@ -1256,7 +1316,7 @@ function renderReports(){
   if(filterMonth) reports = reports.filter(r => r.date && r.date.startsWith(filterMonth));
 
   document.getElementById('reportsList').innerHTML = reports.length === 0
-    ? '<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'DM Mono\',monospace;font-size:12px;">No reports found.</div>'
+    ? '<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No reports found.</div>'
     : reports.map(r => {
         const dObj = new Date(r.date);
         const dateStr = r.date ? dObj.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) : '—';
@@ -1265,7 +1325,7 @@ function renderReports(){
           <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
             <div>
               <div class="report-date-chip">${dateStr}</div>
-              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-top:3px;">${TYPE_LABELS[r.type]||r.type} <span style="color:${color};font-weight:600;">— ${r.author}</span></div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${TYPE_LABELS[r.type]||r.type} <span style="color:${color};font-weight:600;">— ${r.author}</span></div>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
               <span class="status-badge badge-green"><span class="badge-dot"></span>Saved</span>
@@ -1357,7 +1417,7 @@ function renderMeetings(){
     (m.content||'').toLowerCase().includes(q)
   );
   document.getElementById('meetingsList').innerHTML = meetings.length === 0
-    ? '<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'DM Mono\',monospace;font-size:12px;">No meetings found.</div>'
+    ? '<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No meetings found.</div>'
     : meetings.map(m => {
         const dateStr = m.date ? new Date(m.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '—';
         const tagCls = PROG_TAG_CLASS[m.program] || 'lead';
@@ -1365,7 +1425,7 @@ function renderMeetings(){
           <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
             <div>
               <div class="report-date-chip">${dateStr}</div>
-              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-top:3px;">${escHtml(m.title)}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${escHtml(m.title)}</div>
               <div style="font-size:11px;color:var(--text3);margin-top:3px;">${escHtml(m.attendees||'')}</div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
@@ -1519,6 +1579,47 @@ runSimulator();
 function escHtml(s){
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+// ── PASSWORD GATE ──
+// Change the password below to whatever you want to share with your team
+const DASHBOARD_PASSWORD = 'elieteam2026';
+
+function checkPassword(){
+  const val = document.getElementById('pwInput').value;
+  if(val === DASHBOARD_PASSWORD){
+    // Correct — store in session so page refresh doesn't re-ask
+    sessionStorage.setItem('ea_auth','1');
+    document.getElementById('pwGate').style.display = 'none';
+    document.getElementById('appShell').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+  } else {
+    const errEl = document.getElementById('pwError');
+    errEl.textContent = 'Incorrect password. Try again.';
+    const inp = document.getElementById('pwInput');
+    inp.style.borderColor = '#ef4444';
+    inp.value = '';
+    inp.focus();
+    setTimeout(() => {
+      errEl.textContent = '';
+      inp.style.borderColor = '#2a2a38';
+    }, 2500);
+  }
+}
+
+// Auto-unlock if already authenticated this session
+(function(){
+  if(sessionStorage.getItem('ea_auth') === '1'){
+    document.getElementById('pwGate').style.display = 'none';
+    document.getElementById('appShell').style.display = 'block';
+  } else {
+    // Focus the input on load
+    setTimeout(() => {
+      const inp = document.getElementById('pwInput');
+      if(inp) inp.focus();
+    }, 100);
+  }
+})();
 </script>
+</div><!-- end appShell -->
 </body>
 </html>
