@@ -275,5 +275,14 @@
         "done": false
       }
     ]
-  }
+  },
+  "customKPIs": [
+    {
+      "id": 1777926053690,
+      "person": "Aya Saiid",
+      "name": "test kpi",
+      "target": "500",
+      "month": "2026-05"
+    }
+  ]
 }
