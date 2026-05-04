@@ -28,6 +28,16 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
 .nav-tab.active{color:var(--accent2);background:rgba(108,99,255,.12);}
 .topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto;padding-left:16px;}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+.sync-pill{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:all .2s;border:1px solid transparent;user-select:none;}
+.sync-pill.synced{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.25);color:#22c55e;}
+.sync-pill.synced:hover{background:rgba(34,197,94,.18);}
+.sync-pill.unsynced{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:#f97316;}
+.sync-pill.unsynced:hover{background:rgba(249,115,22,.18);}
+.sync-pill.connecting{background:rgba(108,99,255,.1);border-color:rgba(108,99,255,.25);color:var(--accent2);}
+.sync-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.sync-pill.synced .sync-dot{background:#22c55e;box-shadow:0 0 6px #22c55e;animation:pulse 2s infinite;}
+.sync-pill.unsynced .sync-dot{background:#f97316;}
+.sync-pill.connecting .sync-dot{background:var(--accent2);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 .date-chip{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);}
 
@@ -310,11 +320,43 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     GITHUB SYNC MODAL (global — outside appShell)
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="ghSyncModal" onclick="if(event.target===this)closeGHModal()">
+  <div class="modal-box" style="width:480px;">
+    <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:18px;">🔗</span>
+      <span>GitHub Sync Setup</span>
+      <span id="ghModalBadge" style="margin-left:auto;"></span>
+    </div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.8;">
+      All data saves to your GitHub repo as <code style="background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;">data/appdata.json</code> — free, live on every device.<br>
+      <strong style="color:var(--text);">One-time per device:</strong> Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> → Generate → tick <strong>repo</strong> → copy → paste below.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div><label class="form-label">GitHub Username</label><input class="form-input gh-input-owner" id="gh-owner" placeholder="hanadihammoud" /></div>
+      <div><label class="form-label">Repository Name</label><input class="form-input gh-input-repo" id="gh-repo" placeholder="eateam" /></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Personal Access Token</label>
+      <input class="form-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" onkeydown="if(event.key==='Enter')saveGHConfig()" />
+    </div>
+    <div style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-bottom:16px;">Token stored locally on this device only — never shared anywhere except GitHub</div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="saveGHConfig()">Connect & Save</button>
+      <button class="btn btn-ghost" onclick="closeGHModal()">Cancel</button>
+      <button class="btn btn-ghost" style="color:var(--red2);margin-left:auto;" onclick="clearGHConfig()">Disconnect</button>
+    </div>
+  </div>
+</div>
+
 <div id="appShell" style="display:none;">
 <div class="topbar">
   <div class="brand">Elie<span>Ashkar</span> <span style="color:var(--text3);font-size:11px;font-family:'IBM Plex Mono',monospace;font-weight:400;margin-left:4px;">OPS</span></div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="switchTab('overview',this)">Overview</button>
+    <button class="nav-tab" onclick="switchTab('dataentry',this)">Data Entry</button>
     <button class="nav-tab" onclick="switchTab('tasks',this)">Task Center</button>
     <button class="nav-tab" onclick="switchTab('kpis',this)">Team KPIs</button>
     <button class="nav-tab" onclick="switchTab('reports',this)">Daily Reports</button>
@@ -327,6 +369,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <button onclick="shiftMonth(-1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">◀</button>
       <div id="monthLabel" style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--accent2);background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:6px;padding:4px 12px;min-width:96px;text-align:center;"></div>
       <button onclick="shiftMonth(1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">▶</button>
+    </div>
+    <div id="topSyncPill" class="sync-pill connecting" onclick="handleSyncPillClick()" title="Click to set up GitHub sync">
+      <div class="sync-dot"></div>
+      <span id="topSyncLabel">Connecting…</span>
     </div>
     <div class="live-dot"></div>
     <div class="date-chip" id="topDate"></div>
@@ -350,59 +396,182 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 
 
+  <!-- Top KPI Cards — fed from daily data -->
   <div class="kpi-grid">
-    <div class="kpi-card purple"><div class="kpi-label">Total Leads (CRM)</div><div class="kpi-value purple" id="ov-leads">—</div><div class="kpi-meta">All stages · All sources</div></div>
-    <div class="kpi-card cyan"><div class="kpi-label">Active Bookings</div><div class="kpi-value cyan" id="ov-bookings">—</div><div class="kpi-meta" id="ov-bookings-meta"> </div></div>
-    <div class="kpi-card green"><div class="kpi-label">Total Revenue</div><div class="kpi-value green" id="ov-revenue">—</div><div class="kpi-meta" id="ov-revenue-meta"> </div></div>
-    <div class="kpi-card gold"><div class="kpi-label">Cash Collected</div><div class="kpi-value gold" id="ov-cash">—</div><div class="kpi-meta" id="ov-cash-meta"> </div></div>
+    <div class="kpi-card purple"><div class="kpi-label">Total Opt-ins</div><div class="kpi-value purple" id="ov-leads">—</div><div class="kpi-meta">Genesis + MDP</div></div>
+    <div class="kpi-card cyan"><div class="kpi-label">Total Booked</div><div class="kpi-value cyan" id="ov-bookings">—</div><div class="kpi-meta">Genesis + MDP</div></div>
+    <div class="kpi-card cyan"><div class="kpi-label">Total Confirmed</div><div class="kpi-value cyan" id="ov-confirmed">—</div><div class="kpi-meta">Genesis + MDP</div></div>
+    <div class="kpi-card cyan"><div class="kpi-label">Total Shows</div><div class="kpi-value cyan" id="ov-shows">—</div><div class="kpi-meta">Genesis + MDP</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Total Revenue</div><div class="kpi-value green" id="ov-revenue">—</div><div class="kpi-meta">Genesis + MDP</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Cash Collected</div><div class="kpi-value gold" id="ov-cash">—</div><div class="kpi-meta">Genesis + MDP</div></div>
     <div class="kpi-card orange"><div class="kpi-label">Pending Cash</div><div class="kpi-value orange" id="ov-pending">—</div><div class="kpi-meta">Revenue minus collected</div></div>
-    <div class="kpi-card green"><div class="kpi-label">Closed Won</div><div class="kpi-value green" id="ov-closed">—</div><div class="kpi-meta" id="ov-closed-meta"> </div></div>
+    <div class="kpi-card green"><div class="kpi-label">Closed Won</div><div class="kpi-value green" id="ov-closed">—</div><div class="kpi-meta">Genesis + MDP</div></div>
   </div>
 
   <div class="two-col">
-    <div class="panel">
-      <div class="panel-title">🏗 Genesis Program · <span id="ov-genesis-month">—</span></div>
-      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
-        <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Total Booked</div><div class="kpi-value purple" style="font-size:22px;" id="ov-gen-booked">—</div></div>
-        <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Shows</div><div class="kpi-value cyan" style="font-size:22px;" id="ov-gen-shows">—</div><div class="kpi-meta" id="ov-gen-showrate"> </div></div>
-        <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Closed</div><div class="kpi-value green" style="font-size:22px;" id="ov-gen-closed">—</div><div class="kpi-meta" id="ov-gen-closerate"> </div></div>
+    <!-- Genesis + MDP stacked -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <!-- GENESIS -->
+      <div class="panel">
+        <div class="panel-title">🏗 Genesis · <span id="ov-genesis-month">—</span></div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">
+          <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Opt-ins</div><div class="kpi-value purple" style="font-size:20px;" id="ov-gen-optins">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Total Booked</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-gen-booked">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Confirmed</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-gen-confirmed">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Shows</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-gen-shows">—</div><div class="kpi-meta" id="ov-gen-showrate"> </div></div>
+          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">No Shows</div><div class="kpi-value orange" style="font-size:20px;" id="ov-gen-noshows">—</div></div>
+          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Closed</div><div class="kpi-value green" style="font-size:20px;" id="ov-gen-closed">—</div><div class="kpi-meta" id="ov-gen-closerate"> </div></div>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;">
+          <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:16px;" id="ov-gen-revenue">—</div></div>
+          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Cash Collected</div><div class="kpi-value green" style="font-size:16px;" id="ov-gen-cash">—</div></div>
+          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Ad Spend</div><div class="kpi-value orange" style="font-size:16px;" id="ov-gen-adspend">—</div></div>
+        </div>
       </div>
-      <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;">
-        <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:20px;" id="ov-gen-revenue">—</div></div>
-        <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Cash Collected</div><div class="kpi-value green" style="font-size:20px;" id="ov-gen-cash">—</div></div>
-      </div>
-      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;" id="ov-funnel-label">Weekly Funnel</div>
-      <div class="funnel-vis" id="aprilFunnel"></div>
-      <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(108,99,255,.4);"></div>Booked</div>
-        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(34,211,238,.5);"></div>Shows</div>
-        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;"><div style="width:8px;height:8px;border-radius:2px;background:rgba(34,197,94,.6);"></div>Closed</div>
+      <!-- MDP -->
+      <div class="panel">
+        <div class="panel-title">🎯 MDP · <span id="ov-mdp-month">—</span></div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">
+          <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Opt-ins</div><div class="kpi-value purple" style="font-size:20px;" id="ov-mdp-optins">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Total Booked</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-mdp-booked">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Confirmed</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-mdp-confirmed">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Shows</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-mdp-shows">—</div><div class="kpi-meta" id="ov-mdp-showrate"> </div></div>
+          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">No Shows</div><div class="kpi-value orange" style="font-size:20px;" id="ov-mdp-noshows">—</div></div>
+          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Closed</div><div class="kpi-value green" style="font-size:20px;" id="ov-mdp-closed">—</div><div class="kpi-meta" id="ov-mdp-closerate"> </div></div>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;">
+          <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:16px;" id="ov-mdp-revenue">—</div></div>
+          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Cash Collected</div><div class="kpi-value green" style="font-size:16px;" id="ov-mdp-cash">—</div></div>
+          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Ad Spend</div><div class="kpi-value orange" style="font-size:16px;" id="ov-mdp-adspend">—</div></div>
+        </div>
       </div>
     </div>
 
+    <!-- Performance Metrics -->
     <div class="panel">
-      <div class="panel-title">🎯 Setter Attribution</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Attribution from Zoho CRM · Setter_Name field</div>
-      <div class="progress-bar-wrap">
-        <div class="progress-label"><span class="name">Abdallah Hamdan</span><span class="val">Primary (historical)</span></div>
-        <div class="progress-track"><div class="progress-fill purple" style="width:85%"></div></div>
+      <div class="panel-title">📐 Performance Metrics</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:14px;font-family:'IBM Plex Mono',monospace;">Select date range → pulls from Data Entry</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div><label class="form-label">Start Date</label><input class="form-input" type="date" id="calc-start" onchange="renderCalcCard()" /></div>
+        <div><label class="form-label">End Date</label><input class="form-input" type="date" id="calc-end" onchange="renderCalcCard()" /></div>
       </div>
-      <div class="progress-bar-wrap">
-        <div class="progress-label"><span class="name">Fatima Rajab</span><span class="val">Supporting</span></div>
-        <div class="progress-track"><div class="progress-fill gold" style="width:15%"></div></div>
-      </div>
-      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:8px;line-height:1.6;">Aya Saiid is the current assigned setter — historical CRM reflects prior team. Aya's bookings will shift attribution as May data flows in.</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Genesis</div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Cost per Booking</span><span class="kpi-target-val" id="calc-gen-cpb" style="color:var(--gold);">—</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Cost per Show</span><span class="kpi-target-val" id="calc-gen-cps" style="color:var(--gold);">—</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Cost per Close</span><span class="kpi-target-val" id="calc-gen-cpc" style="color:var(--gold);">—</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Show Up Rate</span><span class="kpi-target-val" id="calc-gen-sur" style="color:var(--cyan);">—</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Close Rate</span><span class="kpi-target-val" id="calc-gen-cr" style="color:var(--green2);">—</span></div>
       <div class="divider"></div>
-      <div class="panel-title">🔥 Follow-up Priority</div>
-      <div class="kpi-target-row"><span class="kpi-target-label">No Shows — reactivation pool</span><span class="kpi-target-val" style="color:var(--red2);" id="ov-noshows">—</span></div>
-      <div class="kpi-target-row"><span class="kpi-target-label">MDP crossover from Genesis (15%)</span><span class="kpi-target-val" style="color:var(--accent2);">~1,160</span></div>
-      <div class="kpi-target-row"><span class="kpi-target-label">Booked — pending confirmation</span><span class="kpi-target-val" style="color:var(--gold);" id="ov-pending-conf">—</span></div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">MDP</div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Cost per Booking</span><span class="kpi-target-val" id="calc-mdp-cpb" style="color:var(--gold);">—</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Cost per Show</span><span class="kpi-target-val" id="calc-mdp-cps" style="color:var(--gold);">—</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Cost per Close</span><span class="kpi-target-val" id="calc-mdp-cpc" style="color:var(--gold);">—</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Show Up Rate</span><span class="kpi-target-val" id="calc-mdp-sur" style="color:var(--cyan);">—</span></div>
+      <div class="kpi-target-row"><span class="kpi-target-label">Close Rate</span><span class="kpi-target-val" id="calc-mdp-cr" style="color:var(--green2);">—</span></div>
+      <div id="calc-note" style="font-size:11px;color:var(--text3);margin-top:12px;font-family:'IBM Plex Mono',monospace;"></div>
     </div>
   </div>
 
-  <div class="panel" style="margin-bottom:24px;" id="ov-weekly-panel">
-    <div class="panel-title">📊 Genesis <span id="ov-weekly-month-label"></span> — Weekly Breakdown</div>
+  <!-- Weekly Breakdowns -->
+  <div class="panel" style="margin-bottom:16px;">
+    <div class="panel-title">📊 Genesis — <span id="ov-weekly-month-label"></span> Weekly Breakdown</div>
     <div id="ov-weekly-table"></div>
+  </div>
+  <div class="panel" style="margin-bottom:24px;">
+    <div class="panel-title">📊 MDP — <span id="ov-mdp-weekly-month-label"></span> Weekly Breakdown</div>
+    <div id="ov-mdp-weekly-table"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     DATA ENTRY
+═══════════════════════════════════════════ -->
+<div id="tab-dataentry" class="content">
+
+  <!-- Password gate for data entry -->
+  <div id="de-gate" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:340px;gap:16px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text2);">🔒 Data Entry is restricted</div>
+    <input class="form-input" type="password" id="de-pw-input" style="width:240px;text-align:center;" placeholder="Enter data entry password" onkeydown="if(event.key==='Enter')checkDePassword()" />
+    <button class="btn btn-primary" onclick="checkDePassword()">Unlock</button>
+    <div id="de-pw-error" style="font-size:11px;color:var(--red2);font-family:'IBM Plex Mono',monospace;"></div>
+  </div>
+
+  <!-- Actual content, shown after password -->
+  <div id="de-content" style="display:none;">
+    <div class="section-title">Daily Data Entry
+      <div class="section-sub">Enter daily actuals for Genesis & MDP · Edit any past date · Synced to GitHub</div>
+    </div>
+
+    <!-- Date Selector -->
+    <div class="panel" style="margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div>
+          <label class="form-label">Select Date</label>
+          <input class="form-input" type="date" id="de-date" style="width:180px;" onchange="loadDayData()" />
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="shiftDeDate(-1)">◀ Prev Day</button>
+          <button class="btn btn-ghost btn-sm" onclick="setDeToday()">Today</button>
+          <button class="btn btn-ghost btn-sm" onclick="shiftDeDate(1)">Next Day ▶</button>
+        </div>
+        <button class="btn btn-primary" style="margin-left:auto;" onclick="saveDayData()">💾 Save Entry</button>
+        <div id="de-save-status" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);"></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <!-- GENESIS -->
+      <div class="panel">
+        <div class="panel-title" style="color:var(--accent2);">🏗 Genesis</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div><label class="form-label">Opt-ins</label><input class="form-input" type="number" id="de-gen-optins" placeholder="0" /></div>
+          <div><label class="form-label">Total Booked</label><input class="form-input" type="number" id="de-gen-booked" placeholder="0" /></div>
+          <div><label class="form-label">Confirmed</label><input class="form-input" type="number" id="de-gen-confirmed" placeholder="0" oninput="calcNoShows('gen')" /></div>
+          <div><label class="form-label">Shows</label><input class="form-input" type="number" id="de-gen-shows" placeholder="0" oninput="calcNoShows('gen')" /></div>
+          <div>
+            <label class="form-label">No Shows <span style="color:var(--text3);font-size:10px;">(auto)</span></label>
+            <input class="form-input" type="number" id="de-gen-noshows" placeholder="0" readonly style="opacity:.6;cursor:not-allowed;" />
+          </div>
+          <div><label class="form-label">Closed</label><input class="form-input" type="number" id="de-gen-closed" placeholder="0" /></div>
+          <div><label class="form-label">Revenue ($)</label><input class="form-input" type="number" id="de-gen-revenue" placeholder="0" /></div>
+          <div><label class="form-label">Deposits ($)</label><input class="form-input" type="number" id="de-gen-deposits" placeholder="0" /></div>
+          <div style="grid-column:span 2;">
+            <label class="form-label">Cash Collected ($) <span style="color:var(--red2);font-size:10px;">including deposits</span></label>
+            <input class="form-input" type="number" id="de-gen-cash" placeholder="0" />
+          </div>
+          <div style="grid-column:span 2;"><label class="form-label">Ad Spend ($)</label><input class="form-input" type="number" id="de-gen-adspend" placeholder="0" /></div>
+        </div>
+      </div>
+
+      <!-- MDP -->
+      <div class="panel">
+        <div class="panel-title" style="color:var(--gold);">🎯 MDP</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div><label class="form-label">Opt-ins</label><input class="form-input" type="number" id="de-mdp-optins" placeholder="0" /></div>
+          <div><label class="form-label">Total Booked</label><input class="form-input" type="number" id="de-mdp-booked" placeholder="0" /></div>
+          <div><label class="form-label">Confirmed</label><input class="form-input" type="number" id="de-mdp-confirmed" placeholder="0" oninput="calcNoShows('mdp')" /></div>
+          <div><label class="form-label">Shows</label><input class="form-input" type="number" id="de-mdp-shows" placeholder="0" oninput="calcNoShows('mdp')" /></div>
+          <div>
+            <label class="form-label">No Shows <span style="color:var(--text3);font-size:10px;">(auto)</span></label>
+            <input class="form-input" type="number" id="de-mdp-noshows" placeholder="0" readonly style="opacity:.6;cursor:not-allowed;" />
+          </div>
+          <div><label class="form-label">Closed</label><input class="form-input" type="number" id="de-mdp-closed" placeholder="0" /></div>
+          <div><label class="form-label">Revenue ($)</label><input class="form-input" type="number" id="de-mdp-revenue" placeholder="0" /></div>
+          <div><label class="form-label">Deposits ($)</label><input class="form-input" type="number" id="de-mdp-deposits" placeholder="0" /></div>
+          <div style="grid-column:span 2;">
+            <label class="form-label">Cash Collected ($) <span style="color:var(--red2);font-size:10px;">including deposits</span></label>
+            <input class="form-input" type="number" id="de-mdp-cash" placeholder="0" />
+          </div>
+          <div style="grid-column:span 2;"><label class="form-label">Ad Spend ($)</label><input class="form-input" type="number" id="de-mdp-adspend" placeholder="0" /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Entries -->
+    <div class="panel">
+      <div class="panel-title">📅 Recent Entries <span style="font-size:11px;color:var(--text3);font-weight:400;">· Click any row to edit</span></div>
+      <div id="de-recent">Loading…</div>
+    </div>
   </div>
 </div>
 
@@ -414,9 +583,22 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="section-sub">Assign tasks with deadlines · Mark complete · Synced across all devices</div>
   </div>
 
+  <div style="margin-bottom:16px;">
+    <button class="btn btn-ghost btn-sm" onclick="openAddPersonModal()">+ Add Person</button>
+  </div>
+
   <div class="task-board" id="taskBoard">
 
-    <!-- HANADI -->
+    <!-- ELIE -->
+    <div class="team-col" id="col-elie">
+      <div class="team-col-header">
+        <div class="avatar" style="background:linear-gradient(135deg,#6c63ff,#a78bfa);">EA</div>
+        <div><div class="team-name">Elie Ashkar</div><div class="team-role">CEO</div></div>
+        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-elie">–</div>
+      </div>
+      <div class="task-list" id="tasks-elie"></div>
+      <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('elie')">+ Add Task</button></div>
+    </div>
     <div class="team-col">
       <div class="team-col-header">
         <div class="avatar av-purple">HH</div>
@@ -463,13 +645,65 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   </div>
 </div>
 
-<!-- ADD TASK MODAL -->
+<!-- ADD PERSON MODAL -->
+<div class="modal-overlay" id="addPersonModal" onclick="if(event.target===this)closeAddPersonModal()">
+  <div class="modal-box">
+    <div class="modal-title">➕ Add New Person</div>
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input class="form-input" id="newPersonName" placeholder="e.g. Sarah Khoury" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Role / Title</label>
+      <input class="form-input" id="newPersonRole" placeholder="e.g. Marketing Manager" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Initials (2 letters)</label>
+      <input class="form-input" id="newPersonInitials" placeholder="e.g. SK" maxlength="2" style="width:80px;" />
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="addNewPerson()">Add Person</button>
+      <button class="btn btn-ghost" onclick="closeAddPersonModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMMENT MODAL -->
+<div class="modal-overlay" id="commentModal" onclick="if(event.target===this)closeCommentModal()">
+  <div class="modal-box">
+    <div class="modal-title">💬 Task Comment</div>
+    <div id="commentTaskLabel" style="font-size:12px;color:var(--text2);margin-bottom:14px;padding:8px 12px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent2);"></div>
+    <div class="form-group">
+      <label class="form-label">Added By</label>
+      <select class="form-select" id="commentAuthor">
+        <option value="Elie Ashkar">Elie Ashkar</option>
+        <option value="Hanadi Hammoud">Hanadi Hammoud</option>
+        <option value="Fatima Rajab">Fatima Rajab</option>
+        <option value="Maya Timani">Maya Timani</option>
+        <option value="Aya Saiid">Aya Saiid</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Comment</label>
+      <textarea class="form-textarea" id="commentText" style="min-height:100px;" placeholder="Add a note, update, or context..."></textarea>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <input type="checkbox" id="commentResolved" style="width:14px;height:14px;accent-color:var(--green2);" />
+      <label for="commentResolved" style="font-size:12px;color:var(--text2);cursor:pointer;">Mark as Resolved</label>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="saveComment()">Save Comment</button>
+      <button class="btn btn-ghost" onclick="closeCommentModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="taskModal">
   <div class="modal-box">
     <div class="modal-title">➕ Add Task</div>
     <div class="form-group">
       <label class="form-label">Assign To</label>
       <select class="form-select" id="modalAssignee">
+        <option value="elie">Elie Ashkar — CEO</option>
         <option value="hanadi">Hanadi Hammoud — Operations Manager</option>
         <option value="fatima">Fatima Rajab — Student Success</option>
         <option value="maya">Maya Timani — Data & Setters</option>
@@ -527,16 +761,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       </div>
       <div class="kpi-target-row"><span class="kpi-target-label">📞 Outbound Calls / Day</span><span class="kpi-target-range">Target: 80–120</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">📅 Total Bookings / Day</span><span class="kpi-target-range">Target: 4–8</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
-      <div class="kpi-target-row"><span class="kpi-target-label">🎯 Outbound Bookings / Day</span><span class="kpi-target-range">Target: 3–8</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
-      <div class="kpi-target-row"><span class="kpi-target-label">💬 Message → Booking Rate</span><span class="kpi-target-range">Min 10% · Best 15%</span><span class="kpi-target-val" style="color:var(--accent2);">Log daily</span></div>
       <div class="divider"></div>
       <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Daily KPI Logger</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div><label class="form-label">Calls Today</label><input class="form-input" type="number" id="kpi-calls" placeholder="0" oninput="updateAyaKPI()"/></div>
-        <div><label class="form-label">Total Bookings</label><input class="form-input" type="number" id="kpi-bookings" placeholder="0" oninput="updateAyaKPI()"/></div>
-        <div><label class="form-label">Outbound Bookings</label><input class="form-input" type="number" id="kpi-outbound" placeholder="0" oninput="updateAyaKPI()"/></div>
-        <div><label class="form-label">Messages Sent</label><input class="form-input" type="number" id="kpi-msgs" placeholder="0" oninput="updateAyaKPI()"/></div>
+        <div><label class="form-label">Calls Today</label><input class="form-input" type="number" id="kpi-calls" placeholder="0" /></div>
+        <div><label class="form-label">Total Bookings</label><input class="form-input" type="number" id="kpi-bookings" placeholder="0" /></div>
       </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:10px;width:100%;" onclick="saveAyaKPI()">💾 Save KPI Entry</button>
       <div id="ayaKPIResult" style="margin-top:10px;"></div>
     </div>
 
@@ -587,13 +818,41 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="kpi-target-row"><span class="kpi-target-label">✅ Tasks On Time</span><span class="kpi-target-range">Target: 80%+</span><span class="kpi-target-val" style="color:var(--accent2);" id="hanadiOnTime">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">🔧 Process Improvements/Month</span><span class="kpi-target-range">Min: 2–4</span><span class="kpi-target-val" style="color:var(--gold);" id="improvCount">0 logged</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">📅 Team Meetings Conducted</span><span class="kpi-target-range">Weekly cadence</span><span class="kpi-target-val" style="color:var(--cyan);">See meetings tab</span></div>
-      <div class="kpi-target-row"><span class="kpi-target-label">🤝 Closer Meetings (Sales)</span><span class="kpi-target-range">Regular cadence</span><span class="kpi-target-val" style="color:var(--cyan);">Log below</span></div>
       <div class="divider"></div>
       <label class="form-label">Log Process Improvement</label>
       <textarea class="form-textarea" id="improvementLog" placeholder="Process improvement implemented..."></textarea>
       <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="logImprovement()">Record Improvement ⚡</button>
       <div id="improvementsDisplay" style="margin-top:10px;"></div>
     </div>
+  </div>
+
+  <!-- Custom KPIs -->
+  <div class="panel" style="margin-top:8px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div class="panel-title" style="margin-bottom:0;">📌 Custom KPIs</div>
+      <button class="btn btn-ghost btn-sm" onclick="toggleCustomKPIForm(true)">+ Add KPI</button>
+    </div>
+    <div id="customKPIForm" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:14px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div>
+          <label class="form-label">Staff Member</label>
+          <select class="form-select" id="kpi-person">
+            <option value="Elie Ashkar">Elie Ashkar</option>
+            <option value="Hanadi Hammoud">Hanadi Hammoud</option>
+            <option value="Fatima Rajab">Fatima Rajab</option>
+            <option value="Maya Timani">Maya Timani</option>
+            <option value="Aya Saiid">Aya Saiid</option>
+          </select>
+        </div>
+        <div><label class="form-label">KPI Name</label><input class="form-input" id="kpi-name" placeholder="e.g. Calls / Week" /></div>
+        <div><label class="form-label">Target</label><input class="form-input" id="kpi-target" placeholder="e.g. 100+" /></div>
+      </div>
+      <div class="modal-btns">
+        <button class="btn btn-primary" onclick="saveCustomKPI()">Save KPI</button>
+        <button class="btn btn-ghost" onclick="toggleCustomKPIForm(false)">Cancel</button>
+      </div>
+    </div>
+    <div id="customKPIList"><div style="color:var(--text3);font-size:12px;font-family:'IBM Plex Mono',monospace;">No custom KPIs added yet.</div></div>
   </div>
 </div>
 
@@ -605,30 +864,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="section-sub">Paste WhatsApp reports directly · Synced to GitHub · <span id="reportsMonthLabel"></span></div>
   </div>
 
-  <!-- GitHub Setup Panel -->
-  <div class="gh-setup-panel panel" style="margin-bottom:20px;border-color:rgba(108,99,255,.3);">
-    <div class="panel-title" style="color:var(--accent2);">🔗 Connect GitHub — sync everything across all devices</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.7;">All data saves to your repo as <code style="background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;">data/appdata.json</code> — free, permanent, visible on every device.<br>
-    <strong style="color:var(--text);">One-time setup per device:</strong> Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> → Generate → tick <strong>repo</strong> → copy token → paste below.</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-      <div><label class="form-label">GitHub Username</label><input class="form-input gh-input-owner" id="gh-owner" placeholder="e.g. hanadihammoud" /></div>
-      <div><label class="form-label">Repository Name</label><input class="form-input gh-input-repo" id="gh-repo" placeholder="e.g. eateam" /></div>
-    </div>
-    <div class="form-group"><label class="form-label">Personal Access Token</label><input class="form-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" /></div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <button class="btn btn-primary" onclick="saveGHConfig()">Connect & Save</button>
-      <span style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Token stored on this device only</span>
-    </div>
-  </div>
-
-  <!-- Status bar -->
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap;">
-    <span style="font-size:12px;color:var(--text2);">Sync:</span>
-    <span class="gh-status-badge"></span>
-    <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display=p.style.display==='none'?'block':'none')">⚙ Setup</button>
-    <button class="btn btn-ghost btn-sm" style="color:var(--red2);" onclick="clearGHConfig()">Disconnect</button>
-  </div>
-
   <div class="info-box">
     <strong>How to use:</strong> Click "New Report" → select team member → paste WhatsApp message → Save. Synced instantly and visible on every device.
   </div>
@@ -637,6 +872,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <button class="btn btn-primary" onclick="toggleReportForm(true)">+ New Report</button>
     <select class="form-select" style="width:160px;" id="reportFilterPerson" onchange="renderReports()">
       <option value="">All Team Members</option>
+      <option value="Elie Ashkar">Elie Ashkar</option>
       <option value="Hanadi Hammoud">Hanadi Hammoud</option>
       <option value="Fatima Rajab">Fatima Rajab</option>
       <option value="Maya Timani">Maya Timani</option>
@@ -655,6 +891,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div>
         <label class="form-label">Team Member</label>
         <select class="form-select" id="rAuthor">
+          <option value="Elie Ashkar">Elie Ashkar</option>
           <option value="Hanadi Hammoud">Hanadi Hammoud</option>
           <option value="Fatima Rajab">Fatima Rajab</option>
           <option value="Maya Timani">Maya Timani</option>
@@ -721,9 +958,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <label class="form-label">Paste Full Notes (from Gemini or manual)</label>
       <textarea class="form-textarea" id="mContent" style="min-height:200px;" placeholder="Paste the full meeting notes here — Gemini notes, manual notes, anything..."></textarea>
     </div>
-    <div class="modal-btns">
+    <div class="modal-btns" style="align-items:center;">
       <button class="btn btn-primary" onclick="saveMeeting()">Save Meeting Notes</button>
       <button class="btn btn-ghost" onclick="toggleMeetingForm(false)">Cancel</button>
+      <label style="display:flex;align-items:center;gap:8px;margin-left:auto;cursor:pointer;font-size:12px;color:var(--text2);">
+        <input type="checkbox" id="mPrivate" style="width:14px;height:14px;accent-color:var(--red2);" />
+        <span>🔒 Private meeting <span style="color:var(--text3);font-size:10px;">(password required to view)</span></span>
+      </label>
     </div>
   </div>
 
@@ -735,46 +976,89 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-errors" class="content">
   <div class="section-title">Errors & Suggested Resolutions
-    <div class="section-sub">Identified from CRM data, meeting notes, and daily reports</div>
+    <div class="section-sub">Log issues and fixes · Synced to GitHub</div>
   </div>
 
-  <div class="error-card">
-    <div class="error-title">🚨 Multi-Funnel Follow-up Leakage</div>
-    <div class="error-desc">Leads from 8+ different sources (VSL, Outbound Genesis, MDP Lead Form, MENA Campaign, Instagram, WhatsApp, Remote Job Funnel, Web Download) are entering the CRM without a unified follow-up protocol. April data: 87 no-shows in Genesis alone with no structured reactivation tracking. MDP leads also sitting unworked.</div>
-    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Create a daily priority queue in Zoho filtered by Stage = "No Show" + "Booked > 3 days" + "Needs Follow Up". Assign to Aya for reactivation calls. Maya audits the queue daily. Tag all business-owner Genesis leads for MDP outreach separately.</div></div>
+  <div style="margin-bottom:20px;">
+    <button class="btn btn-primary" onclick="toggleErrorForm(true)">+ Log New Error</button>
   </div>
 
-  <div class="error-card">
-    <div class="error-title">⚠️ Show-Up Rate Below Target (48.5% vs 60%+ goal)</div>
-    <div class="error-desc">April: consistent show-up of 40–57% across all weeks, vs the 60–70% target from February planning. Week of Apr 13–19 dropped to 40.5%. At current show rate, this is the single biggest revenue bottleneck — each +5% show rate = ~4 additional closes per month.</div>
-    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">3-touch confirmation sequence: booking confirm → 24hr reminder → 2hr reminder. Aya calls non-confirmed bookings the day before. Add urgency framing ("your spot is reserved but we need confirmation"). Target: 55%+ by Week 2 May. Maya tracks weekly.</div></div>
+  <div id="errorForm" style="display:none;" class="panel" style="margin-bottom:20px;">
+    <div class="panel-title">🚨 Log Error / Issue</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <label class="form-label">Added By</label>
+        <select class="form-select" id="errAuthor">
+          <option value="Elie Ashkar">Elie Ashkar</option>
+          <option value="Hanadi Hammoud">Hanadi Hammoud</option>
+          <option value="Fatima Rajab">Fatima Rajab</option>
+          <option value="Maya Timani">Maya Timani</option>
+          <option value="Aya Saiid">Aya Saiid</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Severity</label>
+        <select class="form-select" id="errSeverity">
+          <option value="critical">🚨 Critical</option>
+          <option value="warning">⚠️ Warning</option>
+          <option value="info">📋 Info / Process</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Error / Issue Title</label>
+      <input class="form-input" id="errTitle" placeholder="Short description of the issue..." />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="errDesc" style="min-height:100px;" placeholder="Describe what's happening, what data or context is relevant..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Resolution / Fix</label>
+      <textarea class="form-textarea" id="errFix" style="min-height:100px;" placeholder="Describe the fix, action steps, or who is responsible..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="saveError()">Save</button>
+      <button class="btn btn-ghost" onclick="toggleErrorForm(false)">Cancel</button>
+    </div>
   </div>
 
-  <div class="error-card">
-    <div class="error-title">⚠️ Cancellation Rate 57.6% of Raw Bookings</div>
-    <div class="error-desc">235 of 408 April bookings cancelled before confirmation. This wastes ad spend and setter time. Root cause: low-intent leads booking without commitment, possibly due to low-friction booking flow.</div>
-    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Add pre-booking qualifier in setter script (income level, timeline, decision authority). Consider a micro-commitment step (answer 2 questions before booking confirms). Maya tracks cancellation rate weekly — flag if above 50%.</div></div>
+  <!-- Hardcoded legacy errors -->
+  <div id="errorsLegacy">
+    <div class="error-card">
+      <div class="error-title">🚨 Multi-Funnel Follow-up Leakage</div>
+      <div class="error-desc">Leads from 8+ different sources (VSL, Outbound Genesis, MDP Lead Form, MENA Campaign, Instagram, WhatsApp, Remote Job Funnel, Web Download) are entering the CRM without a unified follow-up protocol. April data: 87 no-shows in Genesis alone with no structured reactivation tracking. MDP leads also sitting unworked.</div>
+      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Create a daily priority queue in Zoho filtered by Stage = "No Show" + "Booked > 3 days" + "Needs Follow Up". Assign to Aya for reactivation calls. Maya audits the queue daily. Tag all business-owner Genesis leads for MDP outreach separately.</div></div>
+    </div>
+    <div class="error-card">
+      <div class="error-title">⚠️ Show-Up Rate Below Target (48.5% vs 60%+ goal)</div>
+      <div class="error-desc">April: consistent show-up of 40–57% across all weeks, vs the 60–70% target from February planning. Week of Apr 13–19 dropped to 40.5%. At current show rate, this is the single biggest revenue bottleneck — each +5% show rate = ~4 additional closes per month.</div>
+      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">3-touch confirmation sequence: booking confirm → 24hr reminder → 2hr reminder. Aya calls non-confirmed bookings the day before. Add urgency framing ("your spot is reserved but we need confirmation"). Target: 55%+ by Week 2 May. Maya tracks weekly.</div></div>
+    </div>
+    <div class="error-card">
+      <div class="error-title">⚠️ Cancellation Rate 57.6% of Raw Bookings</div>
+      <div class="error-desc">235 of 408 April bookings cancelled before confirmation. This wastes ad spend and setter time. Root cause: low-intent leads booking without commitment, possibly due to low-friction booking flow.</div>
+      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Add pre-booking qualifier in setter script (income level, timeline, decision authority). Consider a micro-commitment step (answer 2 questions before booking confirms). Maya tracks cancellation rate weekly — flag if above 50%.</div></div>
+    </div>
+    <div class="error-card">
+      <div class="error-title">⚠️ No Dedicated MDP Funnel Tracking</div>
+      <div class="error-desc">MDP leads exist in Zoho with the MDP tag but no dedicated pipeline view showing its own show rates, close rates, revenue. The 15% Genesis-to-MDP business owner crossover is not systematically identified or routed.</div>
+      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Create a Zoho CRM view: Tag = MDP, with its own weekly KPI columns. Add a "Business Owner?" qualifier in the Genesis setter script to auto-tag MDP crossover leads. Maya produces a separate MDP report starting Week 1 May.</div></div>
+    </div>
+    <div class="error-card">
+      <div class="error-title">⚠️ CRM Export: Dates as Excel Serial Numbers</div>
+      <div class="error-desc">Zoho CRM XLSX export stores Created_Time, Meeting_Date, Closing_Date as floats (e.g. 46143.0) instead of readable dates. Makes date-based analysis and filtering unreliable.</div>
+      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Export from Zoho as CSV instead of XLSX — Zoho uses ISO dates in CSV. In Google Sheets, convert with =DATE(1899,12,30)+A2 to convert serial numbers. Maya implements this in the master tracking sheet.</div></div>
+    </div>
+    <div class="error-card">
+      <div class="error-title">📋 No Setter KPI Accountability System</div>
+      <div class="error-desc">Aya's daily KPIs (calls, bookings, outbound bookings) have no current logging or accountability beyond informal check-ins. Feb meeting confirmed setter performance is the #1 growth blocker.</div>
+      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Use the KPI Logger in Team KPIs tab. Aya fills in daily. Maya verifies against CRM. 2 consecutive days below KPI triggers a notification to Hanadi. Weekly % hitting KPI is Maya's own performance metric.</div></div>
+    </div>
   </div>
 
-  <div class="error-card">
-    <div class="error-title">⚠️ No Dedicated MDP Funnel Tracking</div>
-    <div class="error-desc">MDP leads exist in Zoho with the MDP tag but no dedicated pipeline view showing its own show rates, close rates, revenue. The 15% Genesis-to-MDP business owner crossover is not systematically identified or routed.</div>
-    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Create a Zoho CRM view: Tag = MDP, with its own weekly KPI columns. Add a "Business Owner?" qualifier in the Genesis setter script to auto-tag MDP crossover leads. Maya produces a separate MDP report starting Week 1 May.</div></div>
-  </div>
-
-  <div class="error-card">
-    <div class="error-title">⚠️ CRM Export: Dates as Excel Serial Numbers</div>
-    <div class="error-desc">Zoho CRM XLSX export stores Created_Time, Meeting_Date, Closing_Date as floats (e.g. 46143.0) instead of readable dates. Makes date-based analysis and filtering unreliable.</div>
-    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Export from Zoho as CSV instead of XLSX — Zoho uses ISO dates in CSV. In Google Sheets, convert with =DATE(1899,12,30)+A2 to convert serial numbers. Maya implements this in the master tracking sheet.</div></div>
-  </div>
-
-  <div class="error-card">
-    <div class="error-title">📋 No Setter KPI Accountability System</div>
-    <div class="error-desc">Aya's daily KPIs (calls, bookings, outbound bookings) have no current logging or accountability beyond informal check-ins. Feb meeting confirmed setter performance is the #1 growth blocker.</div>
-    <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Use the KPI Logger in Team KPIs tab. Aya fills in daily. Maya verifies against CRM. 2 consecutive days below KPI triggers a notification to Hanadi. Weekly % hitting KPI is Maya's own performance metric.</div></div>
-  </div>
-
-
+  <!-- Dynamic errors from GitHub -->
+  <div id="errorsList"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -987,94 +1271,12 @@ function updateMonthLabel(){
 }
 updateMonthLabel();
 
-// Init overview month label
-(function(){ const el=document.getElementById('ovMonthLabel'); if(el) el.textContent=ovMonthLabel(); })();
-// ════════════════════════════════
-const MONTHLY_DATA = {
-  '2026-04': {
-    leads:'7,726', bookings:'51', bookingsMeta:'Genesis 24 · MDP 5 · Other 22',
-    revenue:'$35,300', revenueMeta:'Genesis $25K · MDP $4K · Other $6.3K',
-    cash:'$27,280', cashMeta:'Genesis $17.5K · MDP $4.1K',
-    pending:'$8,020', closed:'33', closedMeta:'Genesis 19 · MDP 5 · Other 9',
-    noshows:'87', pendingConf:'51',
-    gen:{ booked:'408', shows:'84', showRate:'48.5% show rate', closed:'26', closeRate:'30.9% close rate', revenue:'$39,000', cash:'$18,420' },
-    weeklyRows:[
-      {w:'Apr 1–5',   booked:79,  canc:50, conf:29, shows:14, showR:'48.3%', showTag:'lead',      closed:6, closeR:'42.9%', closeTag:'won',    spend:'$1,292', cpb:'$44.56', rev:'$9,000',  coll:'$3,370'},
-      {w:'Apr 6–12',  booked:120, canc:75, conf:45, shows:23, showR:'51.1%', showTag:'lead',      closed:5, closeR:'21.7%', closeTag:'lead',   spend:'$1,842', cpb:'$40.94', rev:'$7,500',  coll:'$3,850'},
-      {w:'Apr 13–19', booked:88,  canc:51, conf:37, shows:15, showR:'40.5%', showTag:'cancelled', closed:5, closeR:'33.3%', closeTag:'lead',   spend:'$1,626', cpb:'$43.95', rev:'$7,500',  coll:'$4,250'},
-      {w:'Apr 20–26', booked:73,  canc:36, conf:37, shows:21, showR:'56.8%', showTag:'booked',    closed:6, closeR:'28.6%', closeTag:'lead',   spend:'$1,509', cpb:'$40.78', rev:'$9,000',  coll:'$4,650'},
-      {w:'Apr 27–30', booked:48,  canc:23, conf:25, shows:11, showR:'44.0%', showTag:'lead',      closed:4, closeR:'36.4%', closeTag:'won',    spend:'$909',   cpb:'$36.37', rev:'$6,000',  coll:'$2,300'},
-    ],
-    weeklyTotals:{booked:408, canc:235, conf:173, shows:84, showR:'48.5%', showTag:'booked', closed:26, closeR:'30.9%', closeTag:'lead', spend:'$7,179', cpb:'$41.50', rev:'$39,000', coll:'$18,420'}
-  }
-  // Add future months here as: '2026-05': { ... }
-};
-
-function renderOverview(){
-  const mk = ovMonthKey();
-  const d  = MONTHLY_DATA[mk];
-  const lbl = ovMonthLabel();
-
-  // genesis month label
-  const gml = document.getElementById('ov-genesis-month'); if(gml) gml.textContent = d ? lbl+' Actuals' : lbl;
-  const wml = document.getElementById('ov-weekly-month-label'); if(wml) wml.textContent = lbl;
-  const fl  = document.getElementById('ov-funnel-label'); if(fl) fl.textContent = 'Weekly Funnel ('+(d?lbl:'No data')+')';
-
-  const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val||'—'; };
-
-  if(!d){
-    // No data for this month — show dashes
-    ['ov-leads','ov-bookings','ov-bookings-meta','ov-revenue','ov-revenue-meta',
-     'ov-cash','ov-cash-meta','ov-pending','ov-closed','ov-closed-meta',
-     'ov-noshows','ov-pending-conf',
-     'ov-gen-booked','ov-gen-shows','ov-gen-showrate','ov-gen-closed','ov-gen-closerate',
-     'ov-gen-revenue','ov-gen-cash'].forEach(id=>set(id,'—'));
-    const wt=document.getElementById('ov-weekly-table');
-    if(wt) wt.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3);font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No data yet for '+lbl+'. Data will appear here once the month is complete.</div>';
-    // clear funnel
-    const f=document.getElementById('aprilFunnel'); if(f) f.innerHTML='';
-    return;
-  }
-
-  set('ov-leads', d.leads);
-  set('ov-bookings', d.bookings); set('ov-bookings-meta', d.bookingsMeta);
-  set('ov-revenue', d.revenue);   set('ov-revenue-meta', d.revenueMeta);
-  set('ov-cash', d.cash);         set('ov-cash-meta', d.cashMeta);
-  set('ov-pending', d.pending);
-  set('ov-closed', d.closed);     set('ov-closed-meta', d.closedMeta);
-  set('ov-noshows', d.noshows);   set('ov-pending-conf', d.pendingConf);
-  set('ov-gen-booked', d.gen.booked);
-  set('ov-gen-shows', d.gen.shows);   set('ov-gen-showrate', d.gen.showRate);
-  set('ov-gen-closed', d.gen.closed); set('ov-gen-closerate', d.gen.closeRate);
-  set('ov-gen-revenue', d.gen.revenue);
-  set('ov-gen-cash', d.gen.cash);
-
-  // Weekly table
-  const wt=document.getElementById('ov-weekly-table');
-  if(wt && d.weeklyRows){
-    const t=d.weeklyTotals;
-    wt.innerHTML=`<div class="table-scroll"><table>
-      <thead><tr><th>Week</th><th>Booked</th><th>Cancelled</th><th>Confirmed</th><th>Shows</th><th>Show Rate</th><th>Closed</th><th>Close Rate</th><th>Ad Spend</th><th>CPB</th><th>Revenue</th><th>Collected</th></tr></thead>
-      <tbody>
-        ${d.weeklyRows.map(r=>`<tr>
-          <td style="color:var(--text)">${r.w}</td><td>${r.booked}</td><td>${r.canc}</td><td>${r.conf}</td>
-          <td>${r.shows}</td><td><span class="tag ${r.showTag}">${r.showR}</span></td>
-          <td>${r.closed}</td><td><span class="tag ${r.closeTag}">${r.closeR}</span></td>
-          <td>${r.spend}</td><td>${r.cpb}</td><td>${r.rev}</td><td>${r.coll}</td>
-        </tr>`).join('')}
-        <tr style="background:rgba(108,99,255,.05);">
-          <td style="color:var(--accent2);font-weight:700;font-family:'IBM Plex Mono',monospace;">TOTAL</td>
-          <td style="color:var(--text);font-weight:700;">${t.booked}</td><td>${t.canc}</td><td>${t.conf}</td>
-          <td style="color:var(--text);font-weight:700;">${t.shows}</td><td><span class="tag ${t.showTag}">${t.showR}</span></td>
-          <td style="color:var(--text);font-weight:700;">${t.closed}</td><td><span class="tag ${t.closeTag}">${t.closeR}</span></td>
-          <td>${t.spend}</td><td>${t.cpb}</td>
-          <td style="color:var(--gold);font-weight:700;font-family:'IBM Plex Mono',monospace;">${t.rev}</td>
-          <td style="color:var(--green2);font-weight:700;">${t.coll}</td>
-        </tr>
-      </tbody></table></div>`;
-  }
-}
-renderOverview();
+// Init overview month label + render skeleton immediately
+(function(){
+  const el=document.getElementById('ovMonthLabel'); if(el) el.textContent=ovMonthLabel();
+  // Render empty skeleton right away — data fills in after GitHub loads
+  setTimeout(()=>{ if(typeof renderOverview==='function') renderOverview(); }, 0);
+})();
 
 // ── TABS ──
 function switchTab(name, btn) {
@@ -1177,6 +1379,11 @@ function renderTaskItem(task, idx, key){
   const dlClass = getDeadlineClass(task.deadline);
   const dlText = formatDeadline(task.deadline);
   const recurIcon = task.recurring === 'daily' ? '🔁' : task.recurring === 'weekly' ? '📆' : task.recurring === 'monthly' ? '📅' : '';
+  const hasComment = task.comment && task.comment.trim();
+  const isResolved = task.resolved;
+  const commentIcon = hasComment
+    ? `<button onclick="event.stopPropagation();openCommentModal('${key}',${idx})" style="background:none;border:none;cursor:pointer;padding:2px 4px;font-size:13px;color:${isResolved?'#3b82f6':'var(--red2)'};" title="${isResolved?'✓ Resolved':'💬 Comment'}${task.commentAuthor?' · '+task.commentAuthor:''}${task.commentDate?' · '+task.commentDate:''}${task.comment?'\n'+task.comment:''}">💬</button>`
+    : `<button onclick="event.stopPropagation();openCommentModal('${key}',${idx})" style="background:none;border:none;cursor:pointer;padding:2px 4px;font-size:12px;color:var(--text3);opacity:.35;" title="Add comment">💬</button>`;
   return `<div class="task-item${task.done?' done':''}" data-idx="${idx}" data-key="${key}" onclick="toggleTask(this)">
     <div class="task-check"></div>
     <div class="task-priority ${task.pri}"></div>
@@ -1187,6 +1394,7 @@ function renderTaskItem(task, idx, key){
         ${recurIcon ? `<span style="font-size:10px;color:var(--text3);">${recurIcon} ${task.recurring}</span>` : ''}
       </div>
     </div>
+    ${commentIcon}
     <button onclick="event.stopPropagation();deleteTask('${key}',${idx})" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:2px 4px;font-size:12px;" title="Delete">✕</button>
   </div>`;
 }
@@ -1204,19 +1412,15 @@ function loadTasks(){
   return data;
 }
 
-function saveTasks(data){
-  try{ localStorage.setItem('ea_tasks_v2', JSON.stringify(data)); }catch(e){}
-  if(_appData){ _appData.tasks=data; saveAppData(false); }
-}
 
 function renderTasks(){
   const data = loadTasks();
-  ['hanadi','fatima','maya','aya'].forEach(key => {
+  const allKeys = ['elie','hanadi','fatima','maya','aya',...Object.keys(data).filter(k=>!['elie','hanadi','fatima','maya','aya'].includes(k))];
+  allKeys.forEach(key => {
     const list = document.getElementById('tasks-' + key);
     if(!list) return;
     const tasks = data[key] || [];
     list.innerHTML = tasks.map((t,i) => renderTaskItem(t, i, key)).join('');
-    // Stats
     const done = tasks.filter(t=>t.done).length;
     const total = tasks.length;
     const pct = total > 0 ? Math.round((done/total)*100) : 0;
@@ -1224,22 +1428,52 @@ function renderTasks(){
     if(stat) stat.textContent = `${done}/${total} (${pct}%)`;
   });
   updateHanadiKPI();
+  // Render any custom person columns
+  const data2 = loadTasks();
+  const customKeys = Object.keys(data2).filter(k=>!['elie','hanadi','fatima','maya','aya'].includes(k));
+  customKeys.forEach(key=>{
+    if(!document.getElementById('col-'+key)){
+      const info = data2._persons && data2._persons[key];
+      const name = info ? info.name : key;
+      const role = info ? info.role : '';
+      const initials = info ? info.initials : key.slice(0,2).toUpperCase();
+      const board = document.getElementById('taskBoard');
+      const col = document.createElement('div');
+      col.className = 'team-col'; col.id = 'col-'+key;
+      col.innerHTML = `<div class="team-col-header">
+        <div class="avatar" style="background:linear-gradient(135deg,#6c63ff,#a78bfa);">${escHtml(initials)}</div>
+        <div><div class="team-name">${escHtml(name)}</div><div class="team-role">${escHtml(role)}</div></div>
+        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-${key}">–</div>
+      </div>
+      <div class="task-list" id="tasks-${key}"></div>
+      <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('${key}')">+ Add Task</button></div>`;
+      board.appendChild(col);
+    }
+    // Re-render tasks for custom person
+    const list2 = document.getElementById('tasks-'+key);
+    if(!list2) return;
+    const tasks2 = data2[key]||[];
+    list2.innerHTML = tasks2.map((t,i)=>renderTaskItem(t,i,key)).join('');
+    const done2=tasks2.filter(t=>t.done).length, total2=tasks2.length;
+    const stat2=document.getElementById('stat-'+key);
+    if(stat2) stat2.textContent=`${done2}/${total2} (${total2>0?Math.round((done2/total2)*100):0}%)`;
+  });
 }
 
-function toggleTask(el){
+async function toggleTask(el){
   const key = el.dataset.key;
   const idx = parseInt(el.dataset.idx);
   const data = loadTasks();
   data[key][idx].done = !data[key][idx].done;
-  saveTasks(data);
+  await saveTasks(data);
   renderTasks();
 }
 
-function deleteTask(key, idx){
+async function deleteTask(key, idx){
   if(!confirmDelete('Delete this task?')) return;
   const data = loadTasks();
   data[key].splice(idx, 1);
-  saveTasks(data);
+  await saveTasks(data);
   renderTasks();
 }
 
@@ -1255,7 +1489,100 @@ function openAddTask(key){
   document.getElementById('taskModal').classList.add('show');
 }
 function closeTaskModal(){ document.getElementById('taskModal').classList.remove('show'); }
-function addTask(){
+
+// ── Add Person ──
+function openAddPersonModal(){ document.getElementById('addPersonModal').classList.add('show'); }
+function closeAddPersonModal(){ document.getElementById('addPersonModal').classList.remove('show'); }
+async function addNewPerson(){
+  const name=document.getElementById('newPersonName').value.trim();
+  const role=document.getElementById('newPersonRole').value.trim();
+  const initials=document.getElementById('newPersonInitials').value.trim().toUpperCase();
+  if(!name){ alert('Please enter a name.'); return; }
+  const key=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  const data=loadTasks();
+  if(!data._persons) data._persons={};
+  data._persons[key]={name,role,initials:initials||name.slice(0,2).toUpperCase()};
+  if(!data[key]) data[key]=[];
+  await saveTasks(data);
+  closeAddPersonModal();
+  ['newPersonName','newPersonRole','newPersonInitials'].forEach(id=>document.getElementById(id).value='');
+  renderTasks();
+}
+
+// ── Task Comments ──
+let _commentTarget = {key:null, idx:null};
+function openCommentModal(key, idx){
+  _commentTarget = {key, idx};
+  const data=loadTasks();
+  const task = data[key]?.[idx];
+  if(!task) return;
+  document.getElementById('commentTaskLabel').textContent = task.text;
+  document.getElementById('commentText').value = task.comment||'';
+  document.getElementById('commentResolved').checked = !!task.resolved;
+  if(task.commentAuthor) document.getElementById('commentAuthor').value = task.commentAuthor;
+  document.getElementById('commentModal').classList.add('show');
+}
+function closeCommentModal(){ document.getElementById('commentModal').classList.remove('show'); }
+async function saveComment(){
+  const {key,idx}=_commentTarget;
+  const data=loadTasks();
+  if(!data[key]?.[idx]) return;
+  data[key][idx].comment = document.getElementById('commentText').value.trim();
+  data[key][idx].resolved = document.getElementById('commentResolved').checked;
+  data[key][idx].commentAuthor = document.getElementById('commentAuthor').value;
+  data[key][idx].commentDate = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  await saveTasks(data); renderTasks(); closeCommentModal();
+}
+
+// ── Private Meeting ──
+const PRIVATE_PW = 'ea_888!!';
+function checkPrivateMeeting(m){
+  if(!m.private) return true;
+  if(sessionStorage.getItem('private_meeting_auth')==='1') return true;
+  const pw=prompt('🔒 This is a private meeting.\n\nEnter password to view:');
+  if(pw===PRIVATE_PW){ sessionStorage.setItem('private_meeting_auth','1'); return true; }
+  alert('Incorrect password.'); return false;
+}
+
+// ── Errors & Fixes ──
+function toggleErrorForm(show){
+  document.getElementById('errorForm').style.display=show?'block':'none';
+}
+async function saveError(){
+  const author=document.getElementById('errAuthor').value;
+  const severity=document.getElementById('errSeverity').value;
+  const title=document.getElementById('errTitle').value.trim();
+  const desc=document.getElementById('errDesc').value.trim();
+  const fix=document.getElementById('errFix').value.trim();
+  if(!title){ alert('Please enter a title.'); return; }
+  const data=await loadAppData(); if(!data.errors) data.errors=[];
+  data.errors.unshift({id:Date.now(),author,severity,title,desc,fix,date:new Date().toISOString().split('T')[0],month:activeMonthKey()});
+  await saveAppData();
+  ['errTitle','errDesc','errFix'].forEach(id=>document.getElementById(id).value='');
+  toggleErrorForm(false);
+  renderErrors();
+}
+function renderErrors(){
+  const el=document.getElementById('errorsList'); if(!el) return;
+  const data=_appData; if(!data||!data.errors||!data.errors.length){ el.innerHTML=''; return; }
+  const sevIcon={critical:'🚨',warning:'⚠️',info:'📋'};
+  el.innerHTML=data.errors.map(e=>`
+    <div class="error-card" style="${e.severity==='critical'?'border-color:rgba(239,68,68,.4);':''}">
+      <div class="error-title">${sevIcon[e.severity]||'📋'} ${escHtml(e.title)}
+        <span style="font-size:10px;color:var(--text3);font-weight:400;margin-left:8px;font-family:'IBM Plex Mono',monospace;">${e.date} · ${escHtml(e.author)}</span>
+        <button onclick="deleteError(${e.id})" class="btn btn-danger btn-sm" style="float:right;padding:2px 8px;font-size:10px;">Delete</button>
+      </div>
+      ${e.desc?`<div class="error-desc">${escHtml(e.desc)}</div>`:''}
+      ${e.fix?`<div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">${escHtml(e.fix)}</div></div>`:''}
+    </div>`).join('');
+}
+async function deleteError(id){
+  if(!confirmDelete('Delete this error log?')) return;
+  const data=await loadAppData();
+  data.errors=(data.errors||[]).filter(e=>e.id!==id);
+  await saveAppData(); renderErrors();
+}
+async function addTask(){
   const key = document.getElementById('modalAssignee').value;
   const text = document.getElementById('modalTaskText').value.trim();
   const pri = document.getElementById('modalPriority').value;
@@ -1265,11 +1592,13 @@ function addTask(){
   const data = loadTasks();
   if(!data[key]) data[key] = [];
   data[key].push({text, pri, deadline, recurring, done:false});
-  saveTasks(data);
+  await saveTasks(data);
   renderTasks();
   closeTaskModal();
 }
 document.getElementById('taskModal').addEventListener('click', function(e){ if(e.target===this) closeTaskModal(); });
+document.getElementById('addPersonModal').addEventListener('click', function(e){ if(e.target===this) closeAddPersonModal(); });
+document.getElementById('commentModal').addEventListener('click', function(e){ if(e.target===this) closeCommentModal(); });
 renderTasks();
 
 // ════════════════════════════════════════════════════════════════
@@ -1277,12 +1606,25 @@ renderTasks();
 // ════════════════════════════════════════════════════════════════
 function getGHConfig(){ return { owner:localStorage.getItem('gh_owner')||'', repo:localStorage.getItem('gh_repo')||'', token:localStorage.getItem('gh_token')||'' }; }
 function isGHConfigured(){ const {owner,repo,token}=getGHConfig(); return !!(owner&&repo&&token); }
+function openGHModal(){
+  const c=getGHConfig();
+  if(c.owner){ document.querySelectorAll('.gh-input-owner').forEach(el=>el.value=c.owner); }
+  if(c.repo){  document.querySelectorAll('.gh-input-repo').forEach(el=>el.value=c.repo); }
+  const badge=document.getElementById('ghModalBadge');
+  if(badge) badge.innerHTML=isGHConfigured()
+    ?'<span class="status-badge badge-green"><span class="badge-dot"></span>Connected</span>'
+    :'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Not connected</span>';
+  document.getElementById('ghSyncModal').classList.add('show');
+}
+function closeGHModal(){
+  document.getElementById('ghSyncModal').classList.remove('show');
+}
 function saveGHConfig(){
   const owner=document.getElementById('gh-owner').value.trim(), repo=document.getElementById('gh-repo').value.trim(), token=document.getElementById('gh-token').value.trim();
   if(!owner||!repo||!token){ alert('Please fill in all three fields.'); return; }
   localStorage.setItem('gh_owner',owner); localStorage.setItem('gh_repo',repo); localStorage.setItem('gh_token',token);
   _appData=null; _ghSHA=null;
-  document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display='none');
+  closeGHModal();
   updateSyncBadges('connecting');
   loadAppData().then(()=>{ updateSyncBadges('ok'); refreshAllViews(); });
 }
@@ -1290,12 +1632,37 @@ function clearGHConfig(){
   if(!confirm('Disconnect GitHub sync?')) return;
   ['gh_owner','gh_repo','gh_token'].forEach(k=>localStorage.removeItem(k));
   _appData=null; _ghSHA=null;
-  document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display='block');
+  closeGHModal();
   updateSyncBadges('local');
 }
 function updateSyncBadges(state){
   const html={ok:'<span class="status-badge badge-green"><span class="badge-dot"></span>GitHub Synced — live on all devices</span>',connecting:'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Connecting…</span>',local:'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only — connect GitHub to sync</span>'}[state]||'';
   document.querySelectorAll('.gh-status-badge').forEach(el=>el.innerHTML=html);
+  // Update topbar pill
+  const pill=document.getElementById('topSyncPill');
+  const label=document.getElementById('topSyncLabel');
+  if(!pill||!label) return;
+  pill.className='sync-pill';
+  if(state==='ok'){
+    pill.classList.add('synced');
+    label.textContent='Synced';
+    pill.title='GitHub connected — all data is live';
+  } else if(state==='connecting'){
+    pill.classList.add('connecting');
+    label.textContent='Connecting…';
+    pill.title='Connecting to GitHub…';
+  } else {
+    pill.classList.add('unsynced');
+    label.textContent='Not Synced';
+    pill.title='Click to set up GitHub sync in Daily Reports tab';
+  }
+}
+function handleSyncPillClick(){
+  if(isGHConfigured()){
+    openGHModal(); // show modal even when connected — allows disconnect or view status
+  } else {
+    openGHModal();
+  }
 }
 
 const GH_DATA_PATH='data/appdata.json';
@@ -1344,12 +1711,17 @@ async function loadAppData(){
     return _appData;
   }
 }
-async function saveAppData(){
+async function saveAppData(silent=false){
   if(!_appData) return;
   localStorage.setItem('ea_appdata_cache',JSON.stringify(_appData));
   if(!isGHConfigured()) return;
   try{ _ghSHA=await ghWriteFile(_appData,_ghSHA); }
-  catch(e){ alert('⚠️ Saved locally but GitHub sync failed:\n'+e.message); }
+  catch(e){ if(!silent) alert('⚠️ Saved locally but GitHub sync failed:\n'+e.message); }
+}
+
+async function saveTasks(data){
+  try{ localStorage.setItem('ea_tasks_v2', JSON.stringify(data)); }catch(e){}
+  if(_appData){ _appData.tasks=data; await saveAppData(true); }
 }
 
 function refreshAllViews(){
@@ -1363,6 +1735,11 @@ function refreshAllViews(){
   const ic=document.getElementById('insightsCount'); if(ic) ic.textContent=(d.insights||[]).length+' logged';
   const imc=document.getElementById('improvCount'); if(imc) imc.textContent=(d.improvements||[]).length+' logged';
   if(d.tasks) renderTasks();
+  if(typeof renderOverview==='function') renderOverview();
+  if(typeof renderCalcCard==='function') renderCalcCard();
+  if(typeof renderRecentEntries==='function') renderRecentEntries();
+  if(typeof renderErrors==='function') renderErrors();
+  if(typeof renderCustomKPIs==='function') renderCustomKPIs();
 }
 
 loadAppData().then(()=>{
@@ -1371,7 +1748,6 @@ loadAppData().then(()=>{
   const c=getGHConfig();
   if(c.owner){ document.querySelectorAll('.gh-input-owner').forEach(el=>el.value=c.owner); }
   if(c.repo){  document.querySelectorAll('.gh-input-repo').forEach(el=>el.value=c.repo); }
-  if(isGHConfigured()){ document.querySelectorAll('.gh-setup-panel').forEach(p=>p.style.display='none'); }
 });
 
 // ════════════════════════════════
@@ -1420,26 +1796,59 @@ function updateHanadiKPI(){
   }
 }
 
-function updateAyaKPI(){
+async function saveAyaKPI(){
   const calls = parseInt(document.getElementById('kpi-calls').value)||0;
-  const book = parseInt(document.getElementById('kpi-bookings').value)||0;
-  const out = parseInt(document.getElementById('kpi-outbound').value)||0;
-  const msgs = parseInt(document.getElementById('kpi-msgs').value)||0;
+  const book  = parseInt(document.getElementById('kpi-bookings').value)||0;
   const cOK = calls>=80&&calls<=120;
   const bOK = book>=4&&book<=8;
-  const oOK = out>=3&&out<=8;
-  const rate = msgs>0?((book/msgs)*100).toFixed(1):0;
-  const rOK = rate>=10;
+  // Save to appData as a KPI log entry
+  const data = await loadAppData();
+  if(!data.ayaKPI) data.ayaKPI=[];
+  data.ayaKPI.unshift({date:new Date().toISOString().split('T')[0],calls,bookings:book,month:activeMonthKey()});
+  await saveAppData();
   document.getElementById('ayaKPIResult').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
       <span class="status-badge ${cOK?'badge-green':'badge-red'}"><span class="badge-dot"></span>Calls: ${calls} ${cOK?'✓':'⚠ 80–120'}</span>
       <span class="status-badge ${bOK?'badge-green':'badge-red'}"><span class="badge-dot"></span>Bookings: ${book} ${bOK?'✓':'⚠ 4–8'}</span>
-      <span class="status-badge ${oOK?'badge-green':'badge-red'}"><span class="badge-dot"></span>Outbound: ${out} ${oOK?'✓':'⚠ 3–8'}</span>
-      <span class="status-badge ${rOK?'badge-green':'badge-red'}"><span class="badge-dot"></span>Rate: ${rate}% ${rOK?'✓':'⚠ min 10%'}</span>
     </div>
-    <div style="margin-top:8px;padding:8px 10px;border-radius:6px;font-size:12px;${(cOK&&bOK&&oOK&&rOK)?'background:rgba(34,197,94,.1);color:var(--green2);border:1px solid rgba(34,197,94,.2);':'background:rgba(249,115,22,.07);color:var(--orange);border:1px solid rgba(249,115,22,.2);'}">
-      ${(cOK&&bOK&&oOK&&rOK)?'🎯 All KPIs hit today!':'⚠ Some KPIs below target — needs attention'}
+    <div style="margin-top:8px;padding:8px 10px;border-radius:6px;font-size:12px;${(cOK&&bOK)?'background:rgba(34,197,94,.1);color:var(--green2);border:1px solid rgba(34,197,94,.2);':'background:rgba(249,115,22,.07);color:var(--orange);border:1px solid rgba(249,115,22,.2);'}">
+      ${(cOK&&bOK)?'🎯 All KPIs hit today — saved!':'⚠ Some KPIs below target — saved'}
     </div>`;
+}
+
+// ── Custom KPIs ──
+function toggleCustomKPIForm(show){ document.getElementById('customKPIForm').style.display=show?'block':'none'; }
+async function saveCustomKPI(){
+  const person=document.getElementById('kpi-person').value;
+  const name=document.getElementById('kpi-name').value.trim();
+  const target=document.getElementById('kpi-target').value.trim();
+  if(!name){ alert('Please enter a KPI name.'); return; }
+  const data=await loadAppData(); if(!data.customKPIs) data.customKPIs=[];
+  data.customKPIs.push({id:Date.now(),person,name,target,month:activeMonthKey()});
+  await saveAppData();
+  ['kpi-name','kpi-target'].forEach(id=>document.getElementById(id).value='');
+  toggleCustomKPIForm(false);
+  renderCustomKPIs();
+}
+function renderCustomKPIs(){
+  const el=document.getElementById('customKPIList'); if(!el) return;
+  const data=_appData; if(!data||!data.customKPIs||!data.customKPIs.length){
+    el.innerHTML='<div style="color:var(--text3);font-size:12px;font-family:\'IBM Plex Mono\',monospace;">No custom KPIs added yet.</div>'; return;
+  }
+  const colors={'Elie Ashkar':'var(--accent2)','Hanadi Hammoud':'var(--accent2)','Fatima Rajab':'var(--gold)','Maya Timani':'var(--cyan)','Aya Saiid':'var(--green2)'};
+  el.innerHTML=data.customKPIs.map(k=>`
+    <div class="kpi-target-row">
+      <span style="font-size:10px;color:${colors[k.person]||'var(--text2)'};font-family:'IBM Plex Mono',monospace;font-weight:700;min-width:110px;">${k.person.split(' ')[0]}</span>
+      <span class="kpi-target-label">${escHtml(k.name)}</span>
+      <span class="kpi-target-range">${escHtml(k.target)}</span>
+      <button onclick="deleteCustomKPI(${k.id})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:0 4px;" title="Delete">✕</button>
+    </div>`).join('');
+}
+async function deleteCustomKPI(id){
+  if(!confirmDelete('Delete this KPI?')) return;
+  const data=await loadAppData();
+  data.customKPIs=(data.customKPIs||[]).filter(k=>k.id!==id);
+  await saveAppData(); renderCustomKPIs();
 }
 
 // ════════════════════════════════
@@ -1464,7 +1873,7 @@ async function saveReport(){
   toggleReportForm(false); btn.textContent='Save Report'; btn.disabled=false;
   renderReportsList();
 }
-const AUTHOR_COLORS={'Hanadi Hammoud':'var(--accent2)','Fatima Rajab':'var(--gold)','Maya Timani':'var(--cyan)','Aya Saiid':'var(--green2)'};
+const AUTHOR_COLORS={'Elie Ashkar':'var(--accent2)','Hanadi Hammoud':'var(--accent2)','Fatima Rajab':'var(--gold)','Maya Timani':'var(--cyan)','Aya Saiid':'var(--green2)'};
 const TYPE_LABELS={daily:'Daily Report',weekly:'Weekly Summary',incident:'Issue / Incident',other:'Other'};
 function renderReportsList(){
   const filterPerson=document.getElementById('reportFilterPerson').value;
@@ -1514,7 +1923,8 @@ async function saveMeeting(){
   const btn=document.querySelector('#meetingForm .btn-primary');
   btn.textContent='Saving…'; btn.disabled=true;
   const d=await loadAppData(); if(!d.meetings) d.meetings=[];
-  d.meetings.unshift({id:Date.now(),date,title,attendees,program,content,month:activeMonthKey(),time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
+  const isPrivate=document.getElementById('mPrivate')?.checked||false;
+  d.meetings.unshift({id:Date.now(),date,title,attendees,program,content,month:activeMonthKey(),time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),private:isPrivate});
   ['mDate','mTitle','mAttendees','mContent'].forEach(id=>document.getElementById(id).value='');
   await saveAppData(); toggleMeetingForm(false);
   btn.textContent='Save Meeting Notes'; btn.disabled=false;
@@ -1533,16 +1943,17 @@ function renderMeetings(){
     :meetings.map(m=>{
       const dateStr=m.date?new Date(m.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'—';
       const tagCls=PROG_TAG_CLASS[m.program]||'lead';
+      const privateBadge=m.private?'<span style="font-size:10px;color:var(--red2);font-family:\'IBM Plex Mono\',monospace;margin-right:4px;">🔒 Private</span>':'';
       return `<div class="report-card">
-        <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
+        <div class="report-header" onclick="handleMeetingClick(this,${m.id})">
           <div><div class="report-date-chip">${dateStr}${m.time ? ' · '+m.time : ''}</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${escHtml(m.title)}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${privateBadge}${escHtml(m.title)}</div>
           <div style="font-size:11px;color:var(--text3);margin-top:3px;">${escHtml(m.attendees||'')}</div></div>
           <div style="display:flex;align-items:center;gap:8px;">${syncBadge}<span class="tag ${tagCls}">${m.program}</span>
             <button onclick="event.stopPropagation();deleteMeeting(${m.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
             <span class="chevron">▶</span></div>
         </div>
-        <div class="report-body"><div class="report-raw">${escHtml(m.content)}</div></div>
+        <div class="report-body" id="mbody-${m.id}"><div class="report-raw">${m.private?'<span style="color:var(--text3);font-family:\'IBM Plex Mono\',monospace;font-size:12px;">🔒 Private — click to authenticate</span>':escHtml(m.content)}</div></div>
       </div>`;
     }).join('');
 }
@@ -1551,7 +1962,366 @@ async function deleteMeeting(id){
   const d=await loadAppData(); d.meetings=(d.meetings||[]).filter(m=>m.id!==id);
   await saveAppData(); renderMeetings();
 }
+function handleMeetingClick(header, id){
+  const body=document.getElementById('mbody-'+id);
+  if(!body) return;
+  const chevron=header.querySelector('.chevron');
+  // If private and not yet unlocked this session
+  const data=_appData; if(!data||!data.meetings) return;
+  const m=data.meetings.find(x=>x.id===id);
+  if(m && m.private && sessionStorage.getItem('private_meeting_auth')!=='1'){
+    const pw=prompt('🔒 This is a private meeting.\n\nEnter password to view:');
+    if(pw===PRIVATE_PW){ sessionStorage.setItem('private_meeting_auth','1'); }
+    else { alert('Incorrect password.'); return; }
+    // Show content now
+    body.querySelector('.report-raw').innerHTML=escHtml(m.content);
+  }
+  body.classList.toggle('open');
+  if(chevron) chevron.classList.toggle('open');
+}
 renderMeetings();
+
+// ════════════════════════════════
+// DATA ENTRY PASSWORD
+// ════════════════════════════════
+const DE_PASSWORD = 'ea_888!!';
+function checkDePassword(){
+  const val = document.getElementById('de-pw-input').value;
+  if(val === DE_PASSWORD){
+    sessionStorage.setItem('de_auth','1');
+    document.getElementById('de-gate').style.display='none';
+    document.getElementById('de-content').style.display='block';
+    setDeToday();
+    renderRecentEntries();
+  } else {
+    document.getElementById('de-pw-error').textContent='Incorrect password.';
+  }
+}
+// Auto-unlock if already authed this session
+if(sessionStorage.getItem('de_auth')==='1'){
+  setTimeout(()=>{
+    const g=document.getElementById('de-gate'), c=document.getElementById('de-content');
+    if(g) g.style.display='none'; if(c) c.style.display='block';
+    setDeToday(); renderRecentEntries();
+  },200);
+}
+
+// ════════════════════════════════
+// DATA ENTRY
+// ════════════════════════════════
+const DE_FIELDS = ['optins','booked','confirmed','shows','noshows','closed','revenue','deposits','cash','adspend'];
+
+function calcNoShows(prog){
+  const conf = parseFloat(document.getElementById('de-'+prog+'-confirmed').value)||0;
+  const shows = parseFloat(document.getElementById('de-'+prog+'-shows').value)||0;
+  const ns = Math.max(0, conf - shows);
+  document.getElementById('de-'+prog+'-noshows').value = ns||'';
+}
+
+function setDeToday(){
+  const el=document.getElementById('de-date'); if(!el) return;
+  el.value = new Date().toISOString().split('T')[0];
+  loadDayData();
+}
+function shiftDeDate(dir){
+  const input=document.getElementById('de-date'); if(!input) return;
+  const d = input.value ? new Date(input.value+'T12:00:00') : new Date();
+  d.setDate(d.getDate()+dir);
+  input.value = d.toISOString().split('T')[0];
+  loadDayData();
+}
+async function loadDayData(){
+  const date=document.getElementById('de-date')?.value; if(!date) return;
+  const data=await loadAppData();
+  if(!data.dailyData) data.dailyData={};
+  const day=data.dailyData[date]||{};
+  DE_FIELDS.forEach(f=>{
+    const eg=document.getElementById('de-gen-'+f), em=document.getElementById('de-mdp-'+f);
+    if(eg&&!eg.readOnly) eg.value=(day.gen&&day.gen[f]!=null)?day.gen[f]:'';
+    if(em&&!em.readOnly) em.value=(day.mdp&&day.mdp[f]!=null)?day.mdp[f]:'';
+  });
+  // set readonly no-shows
+  if(day.gen){ document.getElementById('de-gen-noshows').value=day.gen.noshows??''; }
+  if(day.mdp){ document.getElementById('de-mdp-noshows').value=day.mdp.noshows??''; }
+  const s=document.getElementById('de-save-status');
+  if(s) s.textContent=(day.gen||day.mdp)?'✓ Loaded data for '+date:'No data yet for '+date;
+  renderRecentEntries();
+}
+async function saveDayData(){
+  const date=document.getElementById('de-date')?.value; if(!date){alert('Please select a date.');return;}
+  // recalc no-shows before saving
+  calcNoShows('gen'); calcNoShows('mdp');
+  const data=await loadAppData(); if(!data.dailyData) data.dailyData={};
+  const gen={},mdp={};
+  DE_FIELDS.forEach(f=>{
+    const vg=document.getElementById('de-gen-'+f)?.value; gen[f]=vg===''||vg==null?null:parseFloat(vg);
+    const vm=document.getElementById('de-mdp-'+f)?.value; mdp[f]=vm===''||vm==null?null:parseFloat(vm);
+  });
+  data.dailyData[date]={gen,mdp,savedAt:new Date().toISOString()};
+  const s=document.getElementById('de-save-status'); if(s) s.textContent='Saving…';
+  await saveAppData();
+  if(s) s.textContent='✓ Saved '+date+' at '+new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  renderRecentEntries();
+  renderOverview();
+  renderCalcCard();
+}
+
+function renderRecentEntries(){
+  const el=document.getElementById('de-recent'); if(!el) return;
+  const data=_appData; if(!data||!data.dailyData){el.innerHTML='<div style="color:var(--text3);padding:16px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No entries yet.</div>';return;}
+  const dates=Object.keys(data.dailyData).sort().reverse().slice(0,14);
+  if(!dates.length){el.innerHTML='<div style="color:var(--text3);padding:16px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No entries yet.</div>';return;}
+  const selDate=document.getElementById('de-date')?.value;
+  el.innerHTML=`<div class="table-scroll"><table>
+    <thead><tr>
+      <th>Date</th>
+      <th>Gen Opt-ins</th><th>Gen Booked</th><th>Gen Conf</th><th>Gen Shows</th><th>Gen No-Shows</th><th>Gen Closed</th><th>Gen Revenue</th><th>Gen Cash</th><th>Gen AdSpend</th>
+      <th>MDP Opt-ins</th><th>MDP Booked</th><th>MDP Conf</th><th>MDP Shows</th><th>MDP No-Shows</th><th>MDP Closed</th><th>MDP Revenue</th><th>MDP Cash</th><th>MDP AdSpend</th>
+    </tr></thead>
+    <tbody>${dates.map(d=>{
+      const g=data.dailyData[d].gen||{},m=data.dailyData[d].mdp||{};
+      const hi=d===selDate?'background:rgba(108,99,255,.1);':'';
+      const $ =v=>v!=null?'$'+Number(v).toLocaleString():'—';
+      const n =v=>v!=null?v:'—';
+      return `<tr style="${hi}cursor:pointer;" onclick="document.getElementById('de-date').value='${d}';loadDayData();">
+        <td style="color:var(--accent2);font-family:'IBM Plex Mono',monospace;white-space:nowrap;">${d}</td>
+        <td>${n(g.optins)}</td><td>${n(g.booked)}</td><td>${n(g.confirmed)}</td><td>${n(g.shows)}</td><td>${n(g.noshows)}</td><td>${n(g.closed)}</td><td>${$(g.revenue)}</td><td>${$(g.cash)}</td><td>${$(g.adspend)}</td>
+        <td>${n(m.optins)}</td><td>${n(m.booked)}</td><td>${n(m.confirmed)}</td><td>${n(m.shows)}</td><td>${n(m.noshows)}</td><td>${n(m.closed)}</td><td>${$(m.revenue)}</td><td>${$(m.cash)}</td><td>${$(m.adspend)}</td>
+      </tr>`;
+    }).join('')}</tbody></table></div>`;
+}
+
+// ════════════════════════════════
+// RENDER OVERVIEW FROM DAILY DATA
+// ════════════════════════════════
+function sumMonthData(monthKey){
+  const data=_appData; if(!data||!data.dailyData) return null;
+  const g={optins:0,booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,deposits:0,cash:0,adspend:0};
+  const m={optins:0,booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,deposits:0,cash:0,adspend:0};
+  let found=0;
+  Object.keys(data.dailyData).forEach(date=>{
+    if(date.startsWith(monthKey)){
+      found++;
+      const gd=data.dailyData[date].gen||{}, md=data.dailyData[date].mdp||{};
+      Object.keys(g).forEach(f=>{ g[f]+=(gd[f]||0); m[f]+=(md[f]||0); });
+    }
+  });
+  return found?{g,m,days:found}:null;
+}
+
+function getWeeklyBreakdown(monthKey, prog){
+  const data=_appData; if(!data||!data.dailyData) return [];
+  const weeks={};
+  Object.keys(data.dailyData).sort().forEach(date=>{
+    if(!date.startsWith(monthKey)) return;
+    const d=new Date(date+'T12:00:00');
+    // Get Monday of this week
+    const day=d.getDay(); const diff=day===0?-6:1-day;
+    const mon=new Date(d); mon.setDate(d.getDate()+diff);
+    const wkey=mon.toISOString().split('T')[0];
+    if(!weeks[wkey]) weeks[wkey]={booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,cash:0,adspend:0,dates:[]};
+    const src=data.dailyData[date][prog]||{};
+    Object.keys(weeks[wkey]).forEach(f=>{ if(f!=='dates') weeks[wkey][f]+=(src[f]||0); });
+    weeks[wkey].dates.push(date);
+  });
+  return Object.entries(weeks).sort((a,b)=>a[0]>b[0]?1:-1).map(([wkey,w])=>{
+    const monD=new Date(wkey+'T12:00:00');
+    const sunD=new Date(monD); sunD.setDate(monD.getDate()+6);
+    const fmt=d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    return {...w, label:`${fmt(monD)} – ${fmt(sunD)}`};
+  });
+}
+
+function renderOverview(){
+  const mk=ovMonthKey(), lbl=ovMonthLabel();
+  const s=document.getElementById('ov-genesis-month'); if(s) s.textContent=lbl;
+  const sm=document.getElementById('ov-mdp-month'); if(sm) sm.textContent=lbl;
+  const wl=document.getElementById('ov-weekly-month-label'); if(wl) wl.textContent=lbl;
+  const wlm=document.getElementById('ov-mdp-weekly-month-label'); if(wlm) wlm.textContent=lbl;
+
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
+  const $f=v=>v?'$'+Math.round(v).toLocaleString():'—';
+  const pct=v=>v>0?v.toFixed(1)+'%':'—';
+
+  const result=sumMonthData(mk);
+  if(!result){
+    const ids=['ov-leads','ov-bookings','ov-confirmed','ov-shows','ov-revenue','ov-cash','ov-pending','ov-closed',
+      'ov-gen-optins','ov-gen-booked','ov-gen-confirmed','ov-gen-shows','ov-gen-noshows','ov-gen-closed','ov-gen-revenue','ov-gen-cash','ov-gen-adspend','ov-gen-showrate','ov-gen-closerate',
+      'ov-mdp-optins','ov-mdp-booked','ov-mdp-confirmed','ov-mdp-shows','ov-mdp-noshows','ov-mdp-closed','ov-mdp-revenue','ov-mdp-cash','ov-mdp-adspend','ov-mdp-showrate','ov-mdp-closerate'];
+    ids.forEach(id=>set(id,'—'));
+    renderWeeklyTable('ov-weekly-table', [], lbl, mk);
+    renderWeeklyTable('ov-mdp-weekly-table', [], lbl, mk);
+    return;
+  }
+  const {g,m}=result;
+
+  // Top cards
+  set('ov-leads',(g.optins+m.optins).toLocaleString());
+  set('ov-bookings',(g.booked+m.booked).toLocaleString());
+  set('ov-confirmed',(g.confirmed+m.confirmed).toLocaleString());
+  set('ov-shows',(g.shows+m.shows).toLocaleString());
+  set('ov-revenue',$f(g.revenue+m.revenue));
+  set('ov-cash',$f(g.cash+m.cash));
+  set('ov-pending',$f((g.revenue+m.revenue)-(g.cash+m.cash)));
+  set('ov-closed',(g.closed+m.closed).toLocaleString());
+
+  // Genesis panel
+  set('ov-gen-optins',g.optins.toLocaleString());
+  set('ov-gen-booked',g.booked.toLocaleString());
+  set('ov-gen-confirmed',g.confirmed.toLocaleString());
+  set('ov-gen-shows',g.shows.toLocaleString());
+  set('ov-gen-noshows',g.noshows.toLocaleString());
+  set('ov-gen-closed',g.closed.toLocaleString());
+  set('ov-gen-revenue',$f(g.revenue));
+  set('ov-gen-cash',$f(g.cash));
+  set('ov-gen-adspend',$f(g.adspend));
+  set('ov-gen-showrate',pct(g.confirmed?(g.shows/g.confirmed)*100:0)+' show rate');
+  set('ov-gen-closerate',pct(g.confirmed?(g.closed/g.confirmed)*100:0)+' close rate');
+
+  // MDP panel
+  set('ov-mdp-optins',m.optins.toLocaleString());
+  set('ov-mdp-booked',m.booked.toLocaleString());
+  set('ov-mdp-confirmed',m.confirmed.toLocaleString());
+  set('ov-mdp-shows',m.shows.toLocaleString());
+  set('ov-mdp-noshows',m.noshows.toLocaleString());
+  set('ov-mdp-closed',m.closed.toLocaleString());
+  set('ov-mdp-revenue',$f(m.revenue));
+  set('ov-mdp-cash',$f(m.cash));
+  set('ov-mdp-adspend',$f(m.adspend));
+  set('ov-mdp-showrate',pct(m.confirmed?(m.shows/m.confirmed)*100:0)+' show rate');
+  set('ov-mdp-closerate',pct(m.confirmed?(m.closed/m.confirmed)*100:0)+' close rate');
+
+  // Weekly tables
+  renderWeeklyTable('ov-weekly-table', getWeeklyBreakdown(mk,'gen'), lbl, mk);
+  renderWeeklyTable('ov-mdp-weekly-table', getWeeklyBreakdown(mk,'mdp'), lbl, mk);
+}
+
+function noDataMsg(lbl){
+  return `<div style="padding:24px;text-align:center;color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:12px;">No data entered yet for ${lbl}. Go to Data Entry to add daily figures.</div>`;
+}
+
+function getMonthWeekSkeletons(monthKey){
+  const [y,m]=monthKey.split('-').map(Number);
+  const firstDay=new Date(y,m-1,1);
+  const lastDay=new Date(y,m,0);
+  const weeks=[];
+  // Find the Monday on or before the 1st of the month
+  const dow=firstDay.getDay(); // 0=Sun,1=Mon...6=Sat
+  const diff=dow===0?-6:1-dow;
+  let mon=new Date(y,m-1,1+diff); // Monday of the first week
+  const fmt=d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  while(mon<=lastDay){
+    const sun=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+6);
+    const monKey=`${mon.getFullYear()}-${String(mon.getMonth()+1).padStart(2,'0')}-${String(mon.getDate()).padStart(2,'0')}`;
+    weeks.push({label:`${fmt(mon)} – ${fmt(sun)}`, monKey});
+    mon=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+7);
+  }
+  return weeks;
+}
+
+function renderWeeklyTable(containerId, weeks, lbl, monthKey){
+  const el=document.getElementById(containerId); if(!el) return;
+  const pct=v=>v>0?v.toFixed(1)+'%':'—';
+  const $f=v=>v?'$'+Math.round(v).toLocaleString():'—';
+
+  // Build a map from monKey -> week data
+  const weekMap={};
+  (weeks||[]).forEach(w=>{ weekMap[w.monKey]=w; });
+
+  // Generate skeleton for the full month
+  const skeletons = monthKey ? getMonthWeekSkeletons(monthKey) : [];
+  if(!skeletons.length && !weeks.length){ el.innerHTML=noDataMsg(lbl); return; }
+
+  // Merge: use skeleton labels, fill data where available
+  const rows = skeletons.map(sk=>{
+    const w=weekMap[sk.monKey]||{booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,cash:0,adspend:0};
+    return {...w, label:sk.label, monKey:sk.monKey};
+  });
+
+  // totals from actual data only
+  const tot={booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,cash:0,adspend:0};
+  (weeks||[]).forEach(w=>Object.keys(tot).forEach(f=>tot[f]+=(w[f]||0)));
+
+  const hasData=(weeks||[]).length>0;
+
+  el.innerHTML=`<div class="table-scroll"><table>
+    <thead><tr><th>Week</th><th>Booked</th><th>Confirmed</th><th>Shows</th><th>No Shows</th><th>Show Rate</th><th>Closed</th><th>Close Rate</th><th>Revenue</th><th>Cash Collected</th><th>Ad Spend</th></tr></thead>
+    <tbody>
+      ${rows.map(w=>{
+        const hasW=weekMap[w.monKey];
+        const style=hasW?'':'opacity:.45;';
+        return `<tr style="${style}">
+          <td style="color:var(--text);white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:11px;">${w.label}</td>
+          <td>${hasW?w.booked:'—'}</td><td>${hasW?w.confirmed:'—'}</td><td>${hasW?w.shows:'—'}</td><td>${hasW?w.noshows:'—'}</td>
+          <td>${hasW?'<span class="tag lead">'+pct(w.confirmed?(w.shows/w.confirmed)*100:0)+'</span>':'—'}</td>
+          <td>${hasW?w.closed:'—'}</td>
+          <td>${hasW?'<span class="tag lead">'+pct(w.confirmed?(w.closed/w.confirmed)*100:0)+'</span>':'—'}</td>
+          <td>${hasW?$f(w.revenue):'—'}</td><td>${hasW?$f(w.cash):'—'}</td><td>${hasW?$f(w.adspend):'—'}</td>
+        </tr>`;
+      }).join('')}
+      <tr style="background:rgba(108,99,255,.05);">
+        <td style="color:var(--accent2);font-weight:700;font-family:'IBM Plex Mono',monospace;">TOTAL</td>
+        <td style="font-weight:700;">${hasData?tot.booked:'—'}</td>
+        <td style="font-weight:700;">${hasData?tot.confirmed:'—'}</td>
+        <td style="font-weight:700;">${hasData?tot.shows:'—'}</td>
+        <td>${hasData?tot.noshows:'—'}</td>
+        <td>${hasData?'<span class="tag booked">'+pct(tot.confirmed?(tot.shows/tot.confirmed)*100:0)+'</span>':'—'}</td>
+        <td style="font-weight:700;">${hasData?tot.closed:'—'}</td>
+        <td>${hasData?'<span class="tag lead">'+pct(tot.confirmed?(tot.closed/tot.confirmed)*100:0)+'</span>':'—'}</td>
+        <td style="color:var(--gold);font-weight:700;font-family:'IBM Plex Mono',monospace;">${hasData?$f(tot.revenue):'—'}</td>
+        <td style="color:var(--green2);font-weight:700;">${hasData?$f(tot.cash):'—'}</td>
+        <td>${hasData?$f(tot.adspend):'—'}</td>
+      </tr>
+    </tbody></table></div>`;
+}
+
+// ════════════════════════════════
+// CALCULATIONS CARD (Overview)
+// ════════════════════════════════
+function renderCalcCard(){
+  const start=document.getElementById('calc-start')?.value;
+  const end=document.getElementById('calc-end')?.value;
+  const note=document.getElementById('calc-note');
+  if(!start||!end){if(note)note.textContent='Select a start and end date.';return;}
+  if(start>end){if(note)note.textContent='Start date must be before end date.';return;}
+  const data=_appData;
+  if(!data||!data.dailyData){if(note)note.textContent='No data entered yet.';return;}
+  const g={confirmed:0,shows:0,closed:0,adspend:0};
+  const m={confirmed:0,shows:0,closed:0,adspend:0};
+  let days=0;
+  Object.keys(data.dailyData).forEach(date=>{
+    if(date>=start&&date<=end){
+      days++;
+      const gd=data.dailyData[date].gen||{},md=data.dailyData[date].mdp||{};
+      ['confirmed','shows','closed','adspend'].forEach(f=>{g[f]+=(gd[f]||0);m[f]+=(md[f]||0);});
+    }
+  });
+  if(!days){if(note)note.textContent='No entries found in this date range.';return;}
+  const fmt=v=>v>0?'$'+v.toFixed(2):'—';
+  const pct=v=>v>0?v.toFixed(1)+'%':'—';
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
+  set('calc-gen-cpb',fmt(g.confirmed?g.adspend/g.confirmed:0));
+  set('calc-gen-cps',fmt(g.shows?g.adspend/g.shows:0));
+  set('calc-gen-cpc',fmt(g.closed?g.adspend/g.closed:0));
+  set('calc-gen-sur',pct(g.confirmed?(g.shows/g.confirmed)*100:0));
+  set('calc-gen-cr', pct(g.confirmed?(g.closed/g.confirmed)*100:0));
+  set('calc-mdp-cpb',fmt(m.confirmed?m.adspend/m.confirmed:0));
+  set('calc-mdp-cps',fmt(m.shows?m.adspend/m.shows:0));
+  set('calc-mdp-cpc',fmt(m.closed?m.adspend/m.closed:0));
+  set('calc-mdp-sur',pct(m.confirmed?(m.shows/m.confirmed)*100:0));
+  set('calc-mdp-cr', pct(m.confirmed?(m.closed/m.confirmed)*100:0));
+  if(note)note.textContent=days+' day'+(days>1?'s':'')+' · '+start+' → '+end;
+}
+
+// Init
+(function initDataEntry(){
+  // Don't auto-call setDeToday here — handled after password unlock
+  const now=new Date(),y=now.getFullYear(),mo=String(now.getMonth()+1).padStart(2,'0');
+  const cs=document.getElementById('calc-start'),ce=document.getElementById('calc-end');
+  if(cs)cs.value=y+'-'+mo+'-01';
+  if(ce)ce.value=now.toISOString().split('T')[0];
+  setTimeout(renderCalcCard,1500);
+})();
 
 // ════════════════════════════════
 // GOOGLE SHEETS
