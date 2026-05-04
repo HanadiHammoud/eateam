@@ -94,6 +94,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Fix this Dashboard: Add Manual Data entry, Check Team KPI problem, assign Fatima priority on Student success and cash collection and Maya priority on setters and listening to calls, Manual Data in Errors sheet, Add a sheet for \"lead source, volume and contacted\"",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "fatima": [
