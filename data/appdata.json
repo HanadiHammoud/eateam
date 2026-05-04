@@ -60,7 +60,11 @@
         "pri": "pri-high",
         "recurring": "weekly",
         "deadline": "",
-        "done": false
+        "done": false,
+        "comment": "test comment",
+        "resolved": false,
+        "commentAuthor": "Hanadi Hammoud",
+        "commentDate": "May 4"
       },
       {
         "text": "Growth gap analysis — show rate improvement actions",
