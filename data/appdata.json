@@ -49,7 +49,7 @@
         "pri": "pri-high",
         "recurring": "monthly",
         "deadline": "",
-        "done": true,
+        "done": false,
         "comment": "test comment",
         "resolved": true,
         "commentAuthor": "Hanadi Hammoud",
