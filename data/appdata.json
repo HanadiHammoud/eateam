@@ -189,6 +189,13 @@
         "recurring": "weekly",
         "deadline": "",
         "done": false
+      },
+      {
+        "text": "Listen to 2-3 Calls for the Closers/Day and Report accordingly",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "daily",
+        "done": false
       }
     ],
     "aya": [
