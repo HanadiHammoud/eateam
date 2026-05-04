@@ -49,17 +49,21 @@
         "pri": "pri-high",
         "recurring": "monthly",
         "deadline": "",
-        "done": false
+        "done": false,
+        "comment": "test comment",
+        "resolved": false,
+        "commentAuthor": "Hanadi Hammoud",
+        "commentDate": "May 4"
       },
       {
-        "text": "Performance review â Aya KPI dashboard review",
+        "text": "Performance review — Aya KPI dashboard review",
         "pri": "pri-high",
         "recurring": "weekly",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Growth gap analysis â show rate improvement actions",
+        "text": "Growth gap analysis — show rate improvement actions",
         "pri": "pri-med",
         "recurring": "weekly",
         "deadline": "",
@@ -159,7 +163,7 @@
         "done": false
       },
       {
-        "text": "Discord â answer pending student questions",
+        "text": "Discord — answer pending student questions",
         "pri": "pri-med",
         "recurring": "daily",
         "deadline": "",
@@ -173,7 +177,7 @@
         "done": false
       },
       {
-        "text": "Reactivation outreach â students at risk of churn",
+        "text": "Reactivation outreach — students at risk of churn",
         "pri": "pri-med",
         "recurring": "weekly",
         "deadline": "",
@@ -189,35 +193,35 @@
     ],
     "maya": [
       {
-        "text": "Daily CRM accuracy audit â flag errors in Zoho",
+        "text": "Daily CRM accuracy audit — flag errors in Zoho",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Follow up with Aya â review KPI log vs target",
+        "text": "Follow up with Aya — review KPI log vs target",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Weekly data analysis report â produce & share",
+        "text": "Weekly data analysis report — produce & share",
         "pri": "pri-med",
         "recurring": "weekly",
         "deadline": "",
         "done": false
       },
       {
-        "text": "3â4 insights/action items from actuals",
+        "text": "3–4 insights/action items from actuals",
         "pri": "pri-med",
         "recurring": "weekly",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Lead categorization audit â hot / no-show / dead",
+        "text": "Lead categorization audit — hot / no-show / dead",
         "pri": "pri-low",
         "recurring": "weekly",
         "deadline": "",
@@ -233,35 +237,35 @@
     ],
     "aya": [
       {
-        "text": "80â120 outbound calls today",
+        "text": "80–120 outbound calls today",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "4â8 confirmed bookings (inbound + outbound)",
+        "text": "4–8 confirmed bookings (inbound + outbound)",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "3â8 outbound-sourced bookings",
+        "text": "3–8 outbound-sourced bookings",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Lead reactivation â work through no-shows & dead leads",
+        "text": "Lead reactivation — work through no-shows & dead leads",
         "pri": "pri-med",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Update CRM â categorize hot / cold / no-show leads",
+        "text": "Update CRM — categorize hot / cold / no-show leads",
         "pri": "pri-med",
         "recurring": "daily",
         "deadline": "",
