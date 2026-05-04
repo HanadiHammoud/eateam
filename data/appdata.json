@@ -125,7 +125,7 @@
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
-        "done": true
+        "done": false
       },
       {
         "text": "Follow up with Aya — review KPI log vs target",
