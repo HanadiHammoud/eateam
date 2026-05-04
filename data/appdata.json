@@ -87,6 +87,13 @@
         "deadline": "",
         "recurring": "daily",
         "done": false
+      },
+      {
+        "text": "Contract for Aya",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "fatima": [
