@@ -100,7 +100,7 @@
         "pri": "pri-high",
         "deadline": "",
         "recurring": "none",
-        "done": true
+        "done": false
       }
     ],
     "fatima": [
