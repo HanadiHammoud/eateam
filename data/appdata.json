@@ -21,14 +21,184 @@
     {
       "id": 1,
       "date": "2026-02-05",
-      "title": "Setter Performance & MDP Scaling Goals ÃÂ¢ÃÂÃÂ EAXRVO",
-      "attendees": "Elie Ashkar ÃÂÃÂ· Stephan Z ÃÂÃÂ· Abdallah Staitieh ÃÂÃÂ· Hanadi Hammoud",
+      "title": "Setter Performance & MDP Scaling Goals ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ EAXRVO",
+      "attendees": "Elie Ashkar ÃÂÃÂÃÂÃÂ· Stephan Z ÃÂÃÂÃÂÃÂ· Abdallah Staitieh ÃÂÃÂÃÂÃÂ· Hanadi Hammoud",
       "program": "Genesis",
-      "content": "Feb 5, 2026 ÃÂ¢ÃÂÃÂ EAXRVO Meeting\n\nSUMMARY\nElie Ashkar and Stephan Z discussed scaling MDP to 70ÃÂ¢ÃÂÃÂ90 students and achieving $78KÃÂ¢ÃÂÃÂ$113K monthly revenue. Scaling identified as a \"setter game\" ÃÂ¢ÃÂÃÂ setters must hit 10ÃÂ¢ÃÂÃÂ12 bookings/day and 10% message-to-booking rate minimum.\n\nKEY POINTS\nÃÂ¢ÃÂÃÂ¢ Pessimistic: 55% show-up + 35% close = $78K revenue\nÃÂ¢ÃÂÃÂ¢ Average: 60% show-up + 35% close = $85K revenue\nÃÂ¢ÃÂÃÂ¢ Optimistic: 65% show-up + 35% close = $92K revenue\nÃÂ¢ÃÂÃÂ¢ Best case: 70% show-up + 40% close = $113K revenue (132ÃÂ¢ÃÂÃÂ151 students)\nÃÂ¢ÃÂÃÂ¢ Need 540 bookings/month = 18ÃÂ¢ÃÂÃÂ24/day from 2 setters\nÃÂ¢ÃÂÃÂ¢ Setters can earn $2K+/month with bonuses if KPIs hit\nÃÂ¢ÃÂÃÂ¢ Lead center must be cleaned daily ÃÂ¢ÃÂÃÂ categorize hot/no-show/dead\nÃÂ¢ÃÂÃÂ¢ 15% of Genesis leads are business owners ÃÂ¢ÃÂÃÂ good MDP prospects\nÃÂ¢ÃÂÃÂ¢ Content creation + Google Ads to make MDP easier to close at $1.5K\nÃÂ¢ÃÂÃÂ¢ Out of 59 students, 58 were not \"super sophisticated\" ÃÂ¢ÃÂÃÂ focus on freelancers\n\nNEXT STEPS\nÃÂ¢ÃÂÃÂ¢ Elie to review lead center and ensure document is updated\nÃÂ¢ÃÂÃÂ¢ Send content creation brief based on pain points to group\nÃÂ¢ÃÂÃÂ¢ Talk to lead center team on daily KPI dashboard setup\nÃÂ¢ÃÂÃÂ¢ Find common ground with setters on booking targets for May"
+      "content": "Feb 5, 2026 ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ EAXRVO Meeting\n\nSUMMARY\nElie Ashkar and Stephan Z discussed scaling MDP to 70ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ90 students and achieving $78KÃÂÃÂ¢ÃÂÃÂÃÂÃÂ$113K monthly revenue. Scaling identified as a \"setter game\" ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ setters must hit 10ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ12 bookings/day and 10% message-to-booking rate minimum.\n\nKEY POINTS\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Pessimistic: 55% show-up + 35% close = $78K revenue\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Average: 60% show-up + 35% close = $85K revenue\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Optimistic: 65% show-up + 35% close = $92K revenue\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Best case: 70% show-up + 40% close = $113K revenue (132ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ151 students)\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Need 540 bookings/month = 18ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ24/day from 2 setters\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Setters can earn $2K+/month with bonuses if KPIs hit\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Lead center must be cleaned daily ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ categorize hot/no-show/dead\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ 15% of Genesis leads are business owners ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ good MDP prospects\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Content creation + Google Ads to make MDP easier to close at $1.5K\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Out of 59 students, 58 were not \"super sophisticated\" ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ focus on freelancers\n\nNEXT STEPS\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Elie to review lead center and ensure document is updated\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Send content creation brief based on pain points to group\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Talk to lead center team on daily KPI dashboard setup\nÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢ Find common ground with setters on booking targets for May"
     }
   ],
   "wins": [],
   "insights": [],
   "improvements": [],
-  "tasks": null
+  "tasks": {
+    "hanadi": [
+      {
+        "text": "Finalize and implement May operations plan",
+        "pri": "pri-high",
+        "recurring": "monthly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Performance review — Aya KPI dashboard review",
+        "pri": "pri-high",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Growth gap analysis — show rate improvement actions",
+        "pri": "pri-med",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Team alignment meeting",
+        "pri": "pri-med",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Meeting with closers (Stephan / Abdallah)",
+        "pri": "pri-med",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Daily lead tracking check",
+        "pri": "pri-low",
+        "recurring": "daily",
+        "deadline": "",
+        "done": false
+      }
+    ],
+    "fatima": [
+      {
+        "text": "Onboard new students from this week's closes",
+        "pri": "pri-high",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "100% follow-up on all assigned students this week",
+        "pri": "pri-high",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Discord — answer pending student questions",
+        "pri": "pri-med",
+        "recurring": "daily",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "1-on-1 student meetings",
+        "pri": "pri-med",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Reactivation outreach — students at risk of churn",
+        "pri": "pri-med",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Collect 1 win / success story this week",
+        "pri": "pri-low",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      }
+    ],
+    "maya": [
+      {
+        "text": "Daily CRM accuracy audit — flag errors in Zoho",
+        "pri": "pri-high",
+        "recurring": "daily",
+        "deadline": "",
+        "done": true
+      },
+      {
+        "text": "Follow up with Aya — review KPI log vs target",
+        "pri": "pri-high",
+        "recurring": "daily",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Weekly data analysis report — produce & share",
+        "pri": "pri-med",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "3–4 insights/action items from actuals",
+        "pri": "pri-med",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Lead categorization audit — hot / no-show / dead",
+        "pri": "pri-low",
+        "recurring": "weekly",
+        "deadline": "",
+        "done": false
+      }
+    ],
+    "aya": [
+      {
+        "text": "80–120 outbound calls today",
+        "pri": "pri-high",
+        "recurring": "daily",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "4–8 confirmed bookings (inbound + outbound)",
+        "pri": "pri-high",
+        "recurring": "daily",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "3–8 outbound-sourced bookings",
+        "pri": "pri-high",
+        "recurring": "daily",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Lead reactivation — work through no-shows & dead leads",
+        "pri": "pri-med",
+        "recurring": "daily",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "Update CRM — categorize hot / cold / no-show leads",
+        "pri": "pri-med",
+        "recurring": "daily",
+        "deadline": "",
+        "done": false
+      },
+      {
+        "text": "End-of-day KPI report to Maya",
+        "pri": "pri-low",
+        "recurring": "daily",
+        "deadline": "",
+        "done": false
+      }
+    ]
+  }
 }
