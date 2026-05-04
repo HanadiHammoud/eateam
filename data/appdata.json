@@ -51,7 +51,7 @@
         "deadline": "",
         "done": false,
         "comment": "test comment",
-        "resolved": false,
+        "resolved": true,
         "commentAuthor": "Hanadi Hammoud",
         "commentDate": "May 4"
       },
