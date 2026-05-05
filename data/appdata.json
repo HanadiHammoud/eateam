@@ -210,7 +210,7 @@
         "pri": "pri-high",
         "deadline": "",
         "recurring": "daily",
-        "done": false
+        "done": true
       }
     ],
     "aya": [
