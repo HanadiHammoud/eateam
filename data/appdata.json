@@ -218,6 +218,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Fix closers' close rate on the dashboard (deduct no offer leads)",
+        "pri": "pri-med",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
