@@ -190,6 +190,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Review Elie's Presentation (Genesis Progress Timeline) to edit CRM and automate accordingly",
+        "pri": "pri-low",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
