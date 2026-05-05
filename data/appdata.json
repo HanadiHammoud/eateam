@@ -302,6 +302,13 @@
         "deadline": "",
         "recurring": "daily",
         "done": false
+      },
+      {
+        "text": "Meeting with Elie to ensure Ad spent data is accurate",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
