@@ -267,6 +267,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "New Code: Extract CSM leads from zoho to a new sheet",
+        "pri": "pri-med",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
