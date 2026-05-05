@@ -48,7 +48,7 @@
         "commentDate": "May 4"
       },
       {
-        "text": "Performance review Ã¢ÂÂ Aya KPI dashboard review",
+        "text": "Performance review — Aya KPI dashboard review",
         "pri": "pri-high",
         "recurring": "weekly",
         "deadline": "",
@@ -59,7 +59,7 @@
         "commentDate": "May 4"
       },
       {
-        "text": "Growth gap analysis Ã¢ÂÂ show rate improvement actions",
+        "text": "Growth gap analysis — show rate improvement actions",
         "pri": "pri-med",
         "recurring": "weekly",
         "deadline": "",
@@ -141,6 +141,20 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Customer suppoet (10 - 15 calls per week) - Abir/Aya",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
+      },
+      {
+        "text": "Customer suppoet (10 - 15 calls per week) - Abir/Aya",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "fatima": [
@@ -159,7 +173,7 @@
         "done": false
       },
       {
-        "text": "Discord Ã¢ÂÂ answer pending student questions",
+        "text": "Discord — answer pending student questions",
         "pri": "pri-med",
         "recurring": "daily",
         "deadline": "",
@@ -173,7 +187,7 @@
         "done": false
       },
       {
-        "text": "Reactivation outreach Ã¢ÂÂ students at risk of churn",
+        "text": "Reactivation outreach — students at risk of churn",
         "pri": "pri-med",
         "recurring": "weekly",
         "deadline": "",
@@ -189,35 +203,35 @@
     ],
     "maya": [
       {
-        "text": "Daily CRM accuracy audit Ã¢ÂÂ flag errors in Zoho",
+        "text": "Daily CRM accuracy audit — flag errors in Zoho",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Follow up with Aya Ã¢ÂÂ review KPI log vs target",
+        "text": "Follow up with Aya — review KPI log vs target",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Weekly data analysis report Ã¢ÂÂ produce & share",
+        "text": "Weekly data analysis report — produce & share",
         "pri": "pri-med",
         "recurring": "weekly",
         "deadline": "",
         "done": false
       },
       {
-        "text": "3Ã¢ÂÂ4 insights/action items from actuals",
+        "text": "3–4 insights/action items from actuals",
         "pri": "pri-med",
         "recurring": "weekly",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Lead categorization audit Ã¢ÂÂ hot / no-show / dead",
+        "text": "Lead categorization audit — hot / no-show / dead",
         "pri": "pri-low",
         "recurring": "weekly",
         "deadline": "",
@@ -233,35 +247,35 @@
     ],
     "aya": [
       {
-        "text": "80Ã¢ÂÂ120 outbound calls today",
+        "text": "80–120 outbound calls today",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "4Ã¢ÂÂ8 confirmed bookings (inbound + outbound)",
+        "text": "4–8 confirmed bookings (inbound + outbound)",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "3Ã¢ÂÂ8 outbound-sourced bookings",
+        "text": "3–8 outbound-sourced bookings",
         "pri": "pri-high",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Lead reactivation Ã¢ÂÂ work through no-shows & dead leads",
+        "text": "Lead reactivation — work through no-shows & dead leads",
         "pri": "pri-med",
         "recurring": "daily",
         "deadline": "",
         "done": false
       },
       {
-        "text": "Update CRM Ã¢ÂÂ categorize hot / cold / no-show leads",
+        "text": "Update CRM — categorize hot / cold / no-show leads",
         "pri": "pri-med",
         "recurring": "daily",
         "deadline": "",
