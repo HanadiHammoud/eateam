@@ -246,6 +246,13 @@
         "deadline": "2026-05-09",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Follow Up with my students",
+        "pri": "pri-med",
+        "deadline": "2026-05-09",
+        "recurring": "weekly",
+        "done": false
       }
     ],
     "aya": [
