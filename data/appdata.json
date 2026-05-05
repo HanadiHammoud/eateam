@@ -260,6 +260,13 @@
         "deadline": "2026-05-27",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Finish Ads Performance Dashboard",
+        "pri": "pri-low",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
