@@ -280,7 +280,7 @@
         "pri": "pri-high",
         "deadline": "",
         "recurring": "none",
-        "done": true
+        "done": false
       },
       {
         "text": "Create Calendly Links for Aya",
