@@ -204,6 +204,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Review the CRM and insert all the miscorrect data on the leads to fix sheet",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "daily",
+        "done": false
       }
     ],
     "aya": [
