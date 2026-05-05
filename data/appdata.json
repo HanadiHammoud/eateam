@@ -211,6 +211,13 @@
         "deadline": "",
         "recurring": "daily",
         "done": true
+      },
+      {
+        "text": "Add appointments scheduled on the Meta Ads Data Sheet (Update Code)",
+        "pri": "pri-med",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
