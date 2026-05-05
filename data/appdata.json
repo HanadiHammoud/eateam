@@ -163,7 +163,11 @@
         "pri": "pri-high",
         "recurring": "weekly",
         "deadline": "",
-        "done": false
+        "done": false,
+        "comment": "testt",
+        "resolved": false,
+        "commentAuthor": "Elie Ashkar",
+        "commentDate": "May 5"
       },
       {
         "text": "100% follow-up on all assigned students this week",
