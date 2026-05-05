@@ -289,10 +289,10 @@
     "2026-05-01": {
       "gen": {
         "optins": 93,
-        "booked": 10,
-        "confirmed": 5,
+        "booked": 9,
+        "confirmed": 4,
         "shows": 2,
-        "noshows": 3,
+        "noshows": 2,
         "closed": null,
         "revenue": null,
         "deposits": null,
@@ -311,7 +311,7 @@
         "cash": null,
         "adspend": null
       },
-      "savedAt": "2026-05-05T06:35:45.841Z"
+      "savedAt": "2026-05-05T06:40:01.835Z"
     },
     "2026-05-02": {
       "gen": {
