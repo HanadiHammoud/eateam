@@ -155,6 +155,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Customer Support Calls (10-20 Calls/Week) - Abir/Aya",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "fatima": [
