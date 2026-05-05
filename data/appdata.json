@@ -232,6 +232,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Automate closed leads from clickfunnel (automate data extraction). Purpose: know what ads are getting us the most closes automatically",
+        "pri": "pri-med",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
