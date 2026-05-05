@@ -253,6 +253,13 @@
         "deadline": "2026-05-09",
         "recurring": "weekly",
         "done": false
+      },
+      {
+        "text": "Finish CSM Dashboard",
+        "pri": "pri-med",
+        "deadline": "2026-05-27",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
