@@ -309,6 +309,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Solve Ayman Atrees issue with elie",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
