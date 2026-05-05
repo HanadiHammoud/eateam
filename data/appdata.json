@@ -165,7 +165,7 @@
         "deadline": "",
         "done": false,
         "comment": "testt",
-        "resolved": false,
+        "resolved": true,
         "commentAuthor": "Elie Ashkar",
         "commentDate": "May 5"
       },
