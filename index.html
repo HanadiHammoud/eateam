@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Elie Ashkar | Operations Dashboard</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236c63ff'/><text x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='13' fill='white'>EA</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--card2:#22222e;
@@ -13,22 +13,129 @@
   --gold:#f4c842;--gold2:#fde68a;--green:#22c55e;--green2:#4ade80;
   --red:#ef4444;--red2:#f87171;--orange:#f97316;--cyan:#22d3ee;
   --text:#f0f0f8;--text2:#a0a0b8;--text3:#606075;
+  --sidebar-w:220px;
+  /* Type scale */
+  --font-sans:'Inter',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --text-xs:10px;    /* micro labels — mono only */
+  --text-sm:11px;    /* small labels, badges */
+  --text-base:13px;  /* body, tables, forms */
+  --text-md:14px;    /* panel titles, nav */
+  --text-lg:20px;    /* page titles */
+  --text-kpi:26px;   /* KPI values */
+}
+body.light {
+  --bg:#f4f4f8;--bg2:#ebebf2;--bg3:#e2e2ec;--card:#ffffff;--card2:#f8f8fc;
+  --border:#d4d4e0;--border2:#c4c4d4;
+  --text:#1a1a2e;--text2:#4a4a6a;--text3:#8a8aaa;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:var(--text-base);line-height:1.5;-webkit-font-smoothing:antialiased;}
 
-/* TOPBAR */
-.topbar{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;height:56px;gap:0;}
-.brand{font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:15px;letter-spacing:-0.02em;margin-right:28px;white-space:nowrap;}
-.brand span{color:var(--accent2);}
-.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;}
-.nav-tabs::-webkit-scrollbar{display:none;}
-.nav-tab{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--text3);background:none;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em;transition:all .15s;}
-.nav-tab:hover{color:var(--text2);background:var(--bg3);}
-.nav-tab.active{color:var(--accent2);background:rgba(108,99,255,.12);}
-.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto;padding-left:16px;}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
-.sync-pill{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:all .2s;border:1px solid transparent;user-select:none;}
+/* ── LAYOUT SHELL ── */
+.app-layout{display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:200;
+  transition:width .2s ease;overflow:hidden;
+}
+.sidebar-brand{
+  display:flex;align-items:center;gap:10px;
+  padding:20px 18px 16px;border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.sidebar-logo{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--accent);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-weight:800;font-size:12px;color:#fff;
+  flex-shrink:0;
+}
+.sidebar-brand-text{font-family:var(--font-mono);font-weight:700;font-size:var(--text-md);white-space:nowrap;overflow:hidden;}
+.sidebar-brand-text span{color:var(--accent2);}
+.sidebar-brand-sub{font-size:var(--text-xs);color:var(--text3);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;font-family:var(--font-mono);}
+
+.sidebar-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 8px;scrollbar-width:none;}
+.sidebar-nav::-webkit-scrollbar{display:none;}
+
+.sidebar-section-label{
+  font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text3);
+  text-transform:uppercase;letter-spacing:.1em;
+  padding:12px 10px 4px;white-space:nowrap;overflow:hidden;
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:8px;cursor:pointer;
+  font-size:var(--text-base);color:var(--text2);font-weight:500;
+  transition:background .15s,color .15s;white-space:nowrap;
+  border:none;background:none;width:100%;text-align:left;
+  position:relative;overflow:hidden;font-family:var(--font-sans);
+}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:rgba(108,99,255,.15);color:var(--accent2);font-weight:600;}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--accent2);border-radius:0 2px 2px 0;}
+.nav-item-icon{font-size:15px;flex-shrink:0;width:20px;text-align:center;}
+.nav-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;}
+
+.sidebar-footer{
+  padding:12px 8px;border-top:1px solid var(--border);flex-shrink:0;
+}
+
+/* ── TOPBAR (now just a header strip) ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,10,15,0.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;height:52px;gap:12px;
+}
+body.light .topbar{background:rgba(244,244,248,0.92);}
+
+/* ── MAIN CONTENT AREA ── */
+.main-area{
+  margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-width:0;
+  transition:margin-left .2s ease;
+}
+.content{display:none;padding:28px 28px;max-width:1300px;opacity:0;animation:none;}
+.content.active{display:block;animation:fadeIn .15s ease forwards;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── SECTION DIVIDER ── */
+.section-divider{
+  display:flex;align-items:center;gap:12px;
+  margin:28px 0 16px;
+}
+.section-divider-label{
+  font-family:var(--font-mono);font-size:10px;font-weight:600;
+  color:var(--text3);text-transform:uppercase;letter-spacing:.1em;
+  white-space:nowrap;
+}
+.section-divider-line{flex:1;height:1px;background:var(--border);}
+
+/* ── TOAST NOTIFICATIONS ── */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:10px;
+  font-family:var(--font-mono);font-size:12px;font-weight:500;
+  pointer-events:auto;cursor:pointer;min-width:260px;max-width:360px;
+  border:1px solid;
+  animation:toastIn .25s ease;
+  box-shadow:0 4px 24px rgba(0,0,0,.4);
+}
+.toast.success{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#4ade80;}
+.toast.error{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);color:#f87171;}
+.toast.warning{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.25);color:#f97316;}
+.toast.info{background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.3);color:var(--accent2);}
+.toast.hiding{animation:toastOut .2s ease forwards;}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(8px);}}
+
+/* ── SYNC / LIVE ── */
+.sync-pill{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:all .2s;border:1px solid transparent;user-select:none;}
 .sync-pill.synced{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.25);color:#22c55e;}
 .sync-pill.synced:hover{background:rgba(34,197,94,.18);}
 .sync-pill.unsynced{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:#f97316;}
@@ -39,19 +146,141 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
 .sync-pill.unsynced .sync-dot{background:#f97316;}
 .sync-pill.connecting .sync-dot{background:var(--accent2);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-.date-chip{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+.date-chip{font-family:var(--font-mono);font-size:var(--text-sm);color:var(--text3);}
+.nav-scroll-btn{display:none;}/* hidden — sidebar replaces this */
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
 
-/* CONTENT */
-.content{display:none;padding:28px 24px;max-width:1400px;margin:0 auto;}
-.content.active{display:block;}
-.section-title{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:800;color:var(--text);margin-bottom:20px;letter-spacing:-.02em;}
+/* ── DARK/LIGHT TOGGLE ── */
+.theme-toggle{background:none;border:1px solid var(--border);border-radius:20px;padding:4px 10px;cursor:pointer;font-size:14px;color:var(--text2);transition:all .2s;display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10px;}
+.theme-toggle:hover{border-color:var(--border2);color:var(--text);}
+
+/* ── MOBILE SIDEBAR TOGGLE ── */
+.sidebar-toggle{background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;padding:4px 8px;border-radius:6px;transition:color .15s,background .15s;}
+.sidebar-toggle:hover{color:var(--text);background:var(--bg3);}
+.sidebar.collapsed{width:60px;}
+.sidebar.collapsed .sidebar-brand-text,
+.sidebar.collapsed .sidebar-brand-sub,
+.sidebar.collapsed .nav-item-label,
+.sidebar.collapsed .sidebar-section-label{display:none;}
+.sidebar.collapsed .sidebar-brand{padding:16px 14px;justify-content:center;}
+.sidebar.collapsed .nav-item{justify-content:center;padding:10px 0;}
+.sidebar.collapsed .nav-item-icon{width:auto;}
+.sidebar.collapsed .sidebar-footer{padding:12px 6px;}
+.sidebar.collapsed .sync-pill span:not(.sync-dot){display:none;}
+.sidebar.collapsed .sync-pill{justify-content:center;padding:6px;}
+.sidebar.collapsed + .main-area,
+body.sidebar-collapsed .main-area{margin-left:60px;}
+/* ════════════════════════════════
+   RESPONSIVE / MOBILE
+════════════════════════════════ */
+
+/* Tablet — 900px */
+@media(max-width:900px){
+  .two-col{grid-template-columns:1fr;}
+  .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));}
+}
+
+/* Mobile — 768px */
+@media(max-width:768px){
+  :root{ --sidebar-w:240px; }
+
+  /* Sidebar — hidden off-screen, slides in */
+  .sidebar{
+    width:var(--sidebar-w)!important;
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+    border:none;box-shadow:none;
+  }
+  .sidebar.open{
+    transform:translateX(0);
+    box-shadow:4px 0 24px rgba(0,0,0,.4);
+    border-right:1px solid var(--border);
+  }
+  /* Overlay behind open sidebar */
+  .sidebar.open::after{
+    content:'';position:fixed;inset:0;left:var(--sidebar-w);
+    background:rgba(0,0,0,.5);z-index:199;
+  }
+  .main-area{margin-left:0!important;}
+
+  /* Topbar */
+  .topbar{padding:0 12px;gap:8px;}
+  .date-chip{display:none;}
+  .theme-toggle span:last-child{display:none;}
+  .theme-toggle{padding:4px 8px;}
+  #topSyncLabel{display:none;} /* show only the dot on mobile */
+
+  /* Content padding */
+  .content{padding:16px 14px;}
+
+  /* Section titles — stack vertically */
+  .section-title[style*="flex"]{flex-direction:column!important;align-items:flex-start!important;}
+
+  /* KPI grid — 2 columns on phone */
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  .kpi-value{font-size:22px!important;}
+
+  /* Task board — vertical stack on phone */
+  .task-board{grid-template-columns:1fr;}
+
+  /* Tables — horizontal scroll, no max-height on phone */
+  .table-scroll{overflow-x:auto;max-height:none;-webkit-overflow-scrolling:touch;}
+  table{min-width:600px;}
+  td,th{padding:9px 12px;font-size:11px;}
+
+  /* Two-col always stack */
+  .two-col{grid-template-columns:1fr!important;gap:12px;}
+
+  /* Data entry source tabs */
+  .panel-title[style*="flex"]{flex-wrap:wrap;gap:8px;}
+
+  /* Modals — full screen feel */
+  .modal-box{padding:18px;border-radius:12px;width:96vw!important;max-width:96vw;}
+  .modal-title{font-size:16px;}
+
+  /* Report/meeting cards */
+  .report-header{flex-wrap:wrap;gap:8px;}
+
+  /* Buttons in rows */
+  .modal-btns{flex-wrap:wrap;gap:8px;}
+  .modal-btns .btn{flex:1;min-width:100px;text-align:center;}
+
+  /* Toasts */
+  .toast-container{bottom:12px;right:12px;left:12px;}
+  .toast{min-width:unset;width:100%;}
+
+  /* Simulator grid */
+  .sim-grid{grid-template-columns:1fr!important;}
+
+  /* Month selectors in headers */
+  .month-selector-inline{margin-top:8px;}
+}
+
+/* Very small phones — 380px */
+@media(max-width:380px){
+  .kpi-grid{grid-template-columns:1fr;}
+  .kpi-value{font-size:20px!important;}
+  .content{padding:12px 10px;}
+  .panel{padding:14px;}
+}
+.section-title{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;color:var(--text);margin-bottom:20px;letter-spacing:-.02em;}
 .section-title span{color:var(--accent2);}
-.section-sub{font-size:13px;color:var(--text3);margin-top:4px;font-weight:400;}
+.section-sub{font-size:var(--text-base);color:var(--text3);margin-top:4px;font-weight:400;font-family:var(--font-sans);}
+.responsive-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:480px){.responsive-grid-2{grid-template-columns:1fr;}}
+.page-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.page-header-title{font-family:var(--font-sans);font-size:var(--text-lg);font-weight:700;color:var(--text);letter-spacing:-.02em;}
+.page-header-sub{font-size:var(--text-base);color:var(--text3);margin-top:3px;font-weight:400;}
+.month-nav{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.month-nav-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:4px 6px;border-radius:4px;transition:color .15s;}
+.month-nav-btn:hover{color:var(--text);}
+.month-nav-label{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--accent2);background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:6px;padding:4px 12px;min-width:96px;text-align:center;}
 
 /* CARDS */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:24px;}
-.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s;}
-.kpi-card:hover{border-color:var(--border2);}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s,box-shadow .2s,transform .2s;}
+.kpi-card:hover{border-color:var(--border2);box-shadow:0 8px 24px rgba(0,0,0,.3);transform:translateY(-2px);}
 .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
 .kpi-card.green::before{background:linear-gradient(90deg,var(--green),transparent);}
 .kpi-card.purple::before{background:linear-gradient(90deg,var(--accent),transparent);}
@@ -59,47 +288,44 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--tex
 .kpi-card.red::before{background:linear-gradient(90deg,var(--red),transparent);}
 .kpi-card.cyan::before{background:linear-gradient(90deg,var(--cyan),transparent);}
 .kpi-card.orange::before{background:linear-gradient(90deg,var(--orange),transparent);}
-.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:'IBM Plex Mono',monospace;margin-bottom:10px;}
-.kpi-value{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:800;line-height:1;}
+.kpi-label{font-size:var(--text-xs);color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-family:var(--font-mono);font-weight:500;margin-bottom:10px;}
+.kpi-value{font-family:var(--font-mono);font-size:var(--text-kpi);font-weight:800;line-height:1;}
 .kpi-value.green{color:var(--green);}
 .kpi-value.purple{color:var(--accent2);}
 .kpi-value.gold{color:var(--gold);}
 .kpi-value.red{color:var(--red2);}
 .kpi-value.cyan{color:var(--cyan);}
 .kpi-value.orange{color:var(--orange);}
-.kpi-meta{font-size:11px;color:var(--text3);margin-top:6px;}
+.kpi-meta{font-size:var(--text-sm);color:var(--text3);margin-top:6px;font-family:var(--font-sans);}
 
 /* TWO/THREE COL */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
-@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+
 
 /* TABLE */
 .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;}
-.table-scroll{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-th{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:500;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
-td{padding:11px 16px;border-bottom:1px solid rgba(42,42,56,.5);color:var(--text2);white-space:nowrap;}
+.table-scroll{overflow-x:auto;max-height:480px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.table-scroll::after{content:'';display:block;} /* scroll hint handled by OS */
+table{width:100%;border-collapse:collapse;font-size:var(--text-base);font-family:var(--font-sans);}
+thead{position:sticky;top:0;z-index:2;}
+th{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-weight:600;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg2);backdrop-filter:blur(8px);}
+td{padding:11px 16px;border-bottom:1px solid rgba(42,42,56,.4);color:var(--text2);white-space:nowrap;transition:background .1s;font-size:var(--text-base);}
+tr:nth-child(even) td{background:rgba(255,255,255,.015);}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
+tr:hover td{background:rgba(108,99,255,.06);color:var(--text);}
+td:hover{background:rgba(108,99,255,.1)!important;}
 
-/* TAGS */
-.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.04em;font-family:'IBM Plex Mono',monospace;}
-.tag.genesis{background:rgba(108,99,255,.15);color:var(--accent2);border:1px solid rgba(108,99,255,.3);}
-.tag.mdp{background:rgba(244,200,66,.12);color:var(--gold);border:1px solid rgba(244,200,66,.3);}
-.tag.won{background:rgba(34,197,94,.12);color:var(--green2);border:1px solid rgba(34,197,94,.3);}
-.tag.lead{background:rgba(96,96,117,.2);color:var(--text3);border:1px solid var(--border);}
-.tag.booked{background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.3);}
-.tag.cancelled{background:rgba(249,115,22,.12);color:var(--orange);border:1px solid rgba(249,115,22,.3);}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:var(--text-xs);font-weight:600;letter-spacing:.04em;font-family:var(--font-mono);}
 
 /* PANEL */
 .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
-.panel-title{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.panel-title{font-family:var(--font-sans);font-weight:600;font-size:var(--text-md);color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 
 /* PROGRESS */
 .progress-bar-wrap{margin-bottom:12px;}
-.progress-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+.progress-label{display:flex;justify-content:space-between;font-size:var(--text-base);margin-bottom:5px;font-family:var(--font-sans);}
 .progress-label .name{color:var(--text2);}
-.progress-label .val{font-family:'IBM Plex Mono',monospace;color:var(--text3);font-size:11px;}
+.progress-label .val{font-family:var(--font-mono);color:var(--text3);font-size:var(--text-sm);}
 .progress-track{height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
 .progress-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1);}
 .progress-fill.green{background:linear-gradient(90deg,var(--green),var(--green2));}
@@ -109,7 +335,7 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 .progress-fill.orange{background:linear-gradient(90deg,var(--orange),#fb923c);}
 
 /* BADGE */
-.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;font-family:'IBM Plex Mono',monospace;}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:var(--text-sm);font-weight:600;font-family:var(--font-mono);}
 .badge-green{background:rgba(34,197,94,.12);color:var(--green2);border:1px solid rgba(34,197,94,.25);}
 .badge-red{background:rgba(239,68,68,.12);color:var(--red2);border:1px solid rgba(239,68,68,.25);}
 .badge-yellow{background:rgba(244,200,66,.12);color:var(--gold);border:1px solid rgba(244,200,66,.25);}
@@ -118,22 +344,31 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 
 /* FORMS */
 .form-group{margin-bottom:14px;}
-.form-label{font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block;}
-.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;font-family:'IBM Plex Sans',sans-serif;outline:none;transition:border-color .15s;}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+.form-label{font-size:var(--text-xs);color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;font-weight:500;margin-bottom:6px;display:block;}
+.form-input,.form-select,.form-textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;color:var(--text);font-size:var(--text-base);font-family:var(--font-sans);
+  outline:none;transition:border-color .15s,box-shadow .15s,background .15s;
+}
+.form-input:hover,.form-select:hover,.form-textarea:hover{border-color:var(--border2);}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(108,99,255,.12),inset 0 1px 3px rgba(0,0,0,.15);
+  background:var(--card);
+}
 .form-select option{background:var(--card2);}
 .form-textarea{min-height:80px;resize:vertical;}
-.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;}
+.btn{padding:9px 18px;border-radius:8px;font-size:var(--text-base);font-weight:600;cursor:pointer;border:none;font-family:var(--font-sans);transition:all .15s;}
 .btn-primary{background:var(--accent);color:#fff;}
 .btn-primary:hover{background:#7c73ff;}
 .btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
 .btn-ghost:hover{background:var(--card2);}
-.btn-sm{padding:7px 14px;font-size:11px;}
+.btn-sm{padding:6px 12px;font-size:var(--text-sm);}
 .btn-danger{background:rgba(239,68,68,.15);color:var(--red2);border:1px solid rgba(239,68,68,.3);}
 .btn-danger:hover{background:rgba(239,68,68,.25);}
 
 /* AVATAR */
-.avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'IBM Plex Mono',monospace;flex-shrink:0;}
+.avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:var(--font-mono);flex-shrink:0;}
 .av-purple{background:rgba(108,99,255,.2);color:var(--accent2);border:1px solid rgba(108,99,255,.3);}
 .av-gold{background:rgba(244,200,66,.15);color:var(--gold);border:1px solid rgba(244,200,66,.3);}
 .av-cyan{background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.25);}
@@ -142,9 +377,6 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 /* DIVIDER */
 .divider{height:1px;background:var(--border);margin:20px 0;}
 
-/* FUNNEL */
-.funnel-vis{display:flex;gap:6px;align-items:flex-end;height:80px;margin-top:12px;}
-.funnel-bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
 
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:6px;height:6px;}
@@ -155,15 +387,15 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 .modal-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;}
 .modal-overlay.show{display:flex;}
 .modal-box{background:var(--card2);border:1px solid var(--border2);border-radius:16px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;}
-.modal-title{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;margin-bottom:18px;}
+.modal-title{font-family:var(--font-sans);font-weight:700;font-size:var(--text-lg);margin-bottom:18px;}
 .modal-btns{display:flex;gap:8px;margin-top:16px;}
 
 /* TASK BOARD */
 .task-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px;}
 .team-col{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .team-col-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.team-name{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;}
-.team-role{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;}
+.team-name{font-family:var(--font-sans);font-size:var(--text-md);font-weight:700;}
+.team-role{font-size:var(--text-xs);color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;}
 .task-list{padding:10px;display:flex;flex-direction:column;gap:5px;max-height:460px;overflow-y:auto;}
 .task-list::-webkit-scrollbar{width:3px;}
 .task-list::-webkit-scrollbar-thumb{background:var(--border2);}
@@ -175,24 +407,24 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 .task-item.done .task-check{background:var(--green);border-color:var(--green);}
 .task-check::after{content:'✓';font-size:10px;color:#fff;display:none;}
 .task-item.done .task-check::after{display:block;}
-.task-text{font-size:12px;color:var(--text2);line-height:1.4;flex:1;}
+.task-text{font-size:var(--text-base);color:var(--text2);line-height:1.4;flex:1;}
 .task-priority{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0;}
 .pri-high{background:var(--red);}
 .pri-med{background:var(--orange);}
 .pri-low{background:var(--text3);}
-.task-deadline{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:3px;}
+.task-deadline{font-size:var(--text-xs);color:var(--text3);font-family:var(--font-mono);margin-top:3px;}
 .task-deadline.overdue{color:var(--red2);}
 .task-deadline.due-soon{color:var(--orange);}
 .task-footer{padding:10px;border-top:1px solid var(--border);}
-.task-add-btn{width:100%;padding:8px;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--text3);font-size:12px;cursor:pointer;transition:all .15s;font-family:'IBM Plex Sans',sans-serif;}
+.task-add-btn{width:100%;padding:8px;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--text3);font-size:var(--text-base);cursor:pointer;transition:all .15s;font-family:var(--font-sans);}
 .task-add-btn:hover{border-color:var(--border2);color:var(--text2);background:var(--bg3);}
 .task-meta-row{display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap;}
 
 /* KPIS */
 .kpi-target-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;}
-.kpi-target-label{font-size:12px;color:var(--text2);}
-.kpi-target-range{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);}
-.kpi-target-val{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;}
+.kpi-target-label{font-size:var(--text-base);color:var(--text2);}
+.kpi-target-range{font-family:var(--font-mono);font-size:var(--text-sm);color:var(--text3);}
+.kpi-target-val{font-family:var(--font-mono);font-size:var(--text-md);font-weight:700;}
 
 /* REPORTS */
 .report-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
@@ -201,40 +433,40 @@ tr:hover td{background:rgba(108,99,255,.04);color:var(--text);}
 .report-body{padding:20px;display:none;}
 .report-body.open{display:block;}
 .report-section{margin-bottom:14px;}
-.report-section-title{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.report-section-title{font-size:var(--text-sm);font-family:var(--font-mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
 .report-list{list-style:none;}
-.report-list li{font-size:13px;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;}
+.report-list li{font-size:var(--text-base);color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;}
 .report-list li::before{content:'→';position:absolute;left:0;color:var(--accent2);font-size:11px;top:5px;}
-.report-raw{font-size:12px;color:var(--text2);line-height:1.7;white-space:pre-wrap;background:var(--bg3);padding:14px;border-radius:8px;border:1px solid var(--border);}
-.report-date-chip{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent2);}
+.report-raw{font-size:var(--text-base);color:var(--text2);line-height:1.7;white-space:pre-wrap;background:var(--bg3);padding:14px;border-radius:8px;border:1px solid var(--border);}
+.report-date-chip{font-family:var(--font-mono);font-size:var(--text-sm);color:var(--accent2);}
 .chevron{color:var(--text3);font-size:12px;transition:transform .2s;}
 .chevron.open{transform:rotate(90deg);}
 
 /* ERRORS */
 .error-card{background:var(--card);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:18px 20px;margin-bottom:12px;border-left:3px solid var(--red);}
-.error-title{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--red2);margin-bottom:6px;}
-.error-desc{font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5;}
+.error-title{font-family:var(--font-sans);font-weight:600;font-size:var(--text-md);color:var(--red2);margin-bottom:6px;}
+.error-desc{font-size:var(--text-base);color:var(--text2);margin-bottom:10px;line-height:1.5;}
 .resolution-card{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:12px 14px;}
-.resolution-title{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--green2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
-.resolution-text{font-size:12px;color:var(--text2);line-height:1.5;}
+.resolution-title{font-size:var(--text-sm);font-family:var(--font-mono);color:var(--green2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.resolution-text{font-size:var(--text-base);color:var(--text2);line-height:1.5;}
 
 /* SIMULATOR */
 .sim-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;}
 @media(max-width:1000px){.sim-grid{grid-template-columns:1fr;}}
 .sim-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;}
-.sim-title{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;margin-bottom:20px;}
+.sim-title{font-family:var(--font-sans);font-weight:600;font-size:var(--text-md);margin-bottom:20px;}
 .slider-row{margin-bottom:16px;}
 .slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
-.slider-label{font-size:12px;color:var(--text2);}
-.slider-val{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--accent2);}
+.slider-label{font-size:var(--text-base);color:var(--text2);}
+.slider-val{font-family:var(--font-mono);font-weight:700;font-size:var(--text-lg);color:var(--accent2);}
 input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:99px;background:var(--border);outline:none;cursor:pointer;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(108,99,255,.5);cursor:pointer;}
-.slider-desc{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:4px;}
+.slider-desc{font-size:var(--text-xs);color:var(--text3);font-family:var(--font-mono);margin-top:4px;}
 .results-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;position:sticky;top:76px;}
 .result-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
 .result-row:last-child{border-bottom:none;}
 .result-label{font-size:12px;color:var(--text3);}
-.result-value{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;}
+.result-value{font-family:var(--font-mono);font-weight:700;font-size:14px;}
 .gap-indicator{padding:12px 14px;border-radius:8px;margin-top:12px;font-size:12px;font-weight:600;}
 .gap-over{background:rgba(34,197,94,.1);color:var(--green2);border:1px solid rgba(34,197,94,.25);}
 .gap-under{background:rgba(239,68,68,.1);color:var(--red2);border:1px solid rgba(239,68,68,.25);}
@@ -245,14 +477,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .month-picker select:focus,.month-picker input:focus{border-color:var(--accent);}
 
 /* SHEETS BANNER */
-.sheets-banner{background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;}
-.sheets-text strong{font-size:13px;color:var(--text);display:block;margin-bottom:2px;}
-.sheets-text span{font-size:11px;color:var(--text3);}
-
-/* RESET PERIOD BANNER */
-.reset-banner{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-.reset-banner-text{font-size:13px;color:var(--text2);}
-.reset-banner-text strong{color:var(--orange);}
 
 /* INFO BOX */
 .info-box{background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.2);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:16px;}
@@ -277,10 +501,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       display:flex;align-items:center;justify-content:center;
       font-size:22px;margin:0 auto 20px;
     ">🔐</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:16px;color:#f0f0f8;margin-bottom:6px;">
+    <div style="font-family:var(--font-mono);font-weight:600;font-size:16px;color:#f0f0f8;margin-bottom:6px;">
       Elie<span style="color:#a78bfa;">Ashkar</span> OPS
     </div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#606075;margin-bottom:28px;letter-spacing:.04em;">
+    <div style="font-family:var(--font-mono);font-size:11px;color:#606075;margin-bottom:28px;letter-spacing:.04em;">
       OPERATIONS DASHBOARD · PRIVATE
     </div>
     <input
@@ -291,7 +515,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       style="
         width:100%;background:#18181f;border:1px solid #2a2a38;
         border-radius:8px;padding:12px 16px;
-        color:#f0f0f8;font-size:14px;font-family:'IBM Plex Sans',sans-serif;
+        color:#f0f0f8;font-size:14px;font-family:var(--font-sans);
         outline:none;text-align:center;letter-spacing:.1em;
         transition:border-color .15s;margin-bottom:12px;
       "
@@ -300,7 +524,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     />
     <div id="pwError" style="
       font-size:12px;color:#f87171;
-      font-family:'IBM Plex Mono',monospace;
+      font-family:var(--font-mono);
       height:16px;margin-bottom:12px;
     "></div>
     <button
@@ -308,13 +532,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       style="
         width:100%;padding:12px;border-radius:8px;border:none;
         background:#6c63ff;color:#fff;font-size:13px;font-weight:600;
-        font-family:'IBM Plex Sans',sans-serif;cursor:pointer;
+        font-family:var(--font-sans);cursor:pointer;
         transition:background .15s;
       "
       onmouseover="this.style.background='#7c73ff'"
       onmouseout="this.style.background='#6c63ff'"
     >Enter Dashboard</button>
-    <div style="font-size:11px;color:#606075;font-family:'IBM Plex Mono',monospace;margin-top:20px;">
+    <div style="font-size:11px;color:#606075;font-family:var(--font-mono);margin-top:20px;">
       Team access only · Elie Ashkar Operations
     </div>
   </div>
@@ -331,7 +555,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <span id="ghModalBadge" style="margin-left:auto;"></span>
     </div>
     <div style="font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.8;">
-      All data saves to your GitHub repo as <code style="background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;">data/appdata.json</code> — free, live on every device.<br>
+      All data saves to your GitHub repo as <code style="background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:11px;">data/appdata.json</code> — free, live on every device.<br>
       <strong style="color:var(--text);">One-time per device:</strong> Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> → Generate → tick <strong>repo</strong> → copy → paste below.
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
@@ -342,7 +566,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <label class="form-label">Personal Access Token</label>
       <input class="form-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" onkeydown="if(event.key==='Enter')saveGHConfig()" />
     </div>
-    <div style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-bottom:16px;">Token stored locally on this device only — never shared anywhere except GitHub</div>
+    <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:16px;">Token stored locally on this device only — never shared anywhere except GitHub</div>
     <div class="modal-btns">
       <button class="btn btn-primary" onclick="saveGHConfig()">Connect & Save</button>
       <button class="btn btn-ghost" onclick="closeGHModal()">Cancel</button>
@@ -352,51 +576,91 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <div id="appShell" style="display:none;">
-<div class="topbar">
-  <div class="brand">Elie<span>Ashkar</span> <span style="color:var(--text3);font-size:11px;font-family:'IBM Plex Mono',monospace;font-weight:400;margin-left:4px;">OPS</span></div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="switchTab('overview',this)">Overview</button>
-    <button class="nav-tab" onclick="switchTab('dataentry',this)">Data Entry</button>
-    <button class="nav-tab" onclick="switchTab('tasks',this)">Task Center</button>
-    <button class="nav-tab" onclick="switchTab('kpis',this)">Team KPIs</button>
-    <button class="nav-tab" onclick="switchTab('reports',this)">Daily Reports</button>
-    <button class="nav-tab" onclick="switchTab('meetings',this)">Meeting Notes</button>
-    <button class="nav-tab" onclick="switchTab('errors',this)">Errors & Fixes</button>
-    <button class="nav-tab" onclick="switchTab('simulator',this)">Scenario Sim</button>
-  </div>
-  <div class="topbar-right">
-    <div style="display:flex;align-items:center;gap:6px;margin-right:12px;">
-      <button onclick="shiftMonth(-1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">◀</button>
-      <div id="monthLabel" style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--accent2);background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:6px;padding:4px 12px;min-width:96px;text-align:center;"></div>
-      <button onclick="shiftMonth(1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">▶</button>
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="app-layout">
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">EA</div>
+    <div>
+      <div class="sidebar-brand-text">Elie<span>Ashkar</span></div>
+      <div class="sidebar-brand-sub">OPS Dashboard</div>
     </div>
-    <div id="topSyncPill" class="sync-pill connecting" onclick="handleSyncPillClick()" title="Click to set up GitHub sync">
-      <div class="sync-dot"></div>
-      <span id="topSyncLabel">Connecting…</span>
-    </div>
-    <div class="live-dot"></div>
-    <div class="date-chip" id="topDate"></div>
   </div>
-</div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Main</div>
+    <button class="nav-item active" id="nav-overview" onclick="switchTab('overview',this)">
+      <span class="nav-item-icon">📊</span><span class="nav-item-label">Overview</span>
+    </button>
+    <button class="nav-item" id="nav-dataentry" onclick="switchTab('dataentry',this)">
+      <span class="nav-item-icon">✏️</span><span class="nav-item-label">Data Entry</span>
+    </button>
+
+    <div class="sidebar-section-label">Team</div>
+    <button class="nav-item" id="nav-tasks" onclick="switchTab('tasks',this)">
+      <span class="nav-item-icon">✅</span><span class="nav-item-label">Task Center</span>
+    </button>
+    <button class="nav-item" id="nav-kpis" onclick="switchTab('kpis',this)">
+      <span class="nav-item-icon">🎯</span><span class="nav-item-label">Team KPIs</span>
+    </button>
+
+    <div class="sidebar-section-label">Records</div>
+    <button class="nav-item" id="nav-reports" onclick="switchTab('reports',this)">
+      <span class="nav-item-icon">📋</span><span class="nav-item-label">Daily Reports</span>
+    </button>
+    <button class="nav-item" id="nav-meetings" onclick="switchTab('meetings',this)">
+      <span class="nav-item-icon">🗒️</span><span class="nav-item-label">Meeting Notes</span>
+    </button>
+
+    <div class="sidebar-section-label">Analysis</div>
+    <button class="nav-item" id="nav-errors" onclick="switchTab('errors',this)">
+      <span class="nav-item-icon">⚠️</span><span class="nav-item-label">Errors & Fixes</span>
+    </button>
+    <button class="nav-item" id="nav-simulator" onclick="switchTab('simulator',this)">
+      <span class="nav-item-icon">🔮</span><span class="nav-item-label">Scenario Sim</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer"></div>
+</aside>
+
+<!-- ═══ MAIN AREA ═══ -->
+<div class="main-area">
+  <!-- Topbar -->
+  <div class="topbar">
+    <button class="sidebar-toggle" onclick="toggleSidebarCollapse()" title="Toggle sidebar">☰</button>
+    <div class="topbar-right">
+      <div id="topSyncPill" class="sync-pill connecting" onclick="handleSyncPillClick()" title="GitHub sync status">
+        <div class="sync-dot"></div>
+        <span id="topSyncLabel">Connecting…</span>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙 Dark</button>
+      <div class="live-dot"></div>
+      <div class="date-chip" id="topDate"></div>
+    </div>
+  </div>
 
 <!-- ═══════════════════════════════════════════
      OVERVIEW
 ═══════════════════════════════════════════ -->
 <div id="tab-overview" class="content active">
-  <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-    <div>Operations Overview
-      <div class="section-sub">Elie Ashkar · Genesis + MDP Programs</div>
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">Operations Overview</div>
+      <div class="page-header-sub">Elie Ashkar · Genesis + MDP Programs</div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;">
-      <button onclick="shiftOverviewMonth(-1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">◀</button>
-      <div id="ovMonthLabel" style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--accent2);background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:6px;padding:4px 12px;min-width:96px;text-align:center;"></div>
-      <button onclick="shiftOverviewMonth(1)" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">▶</button>
+    <div class="month-nav">
+      <button class="month-nav-btn" onclick="shiftTabMonth('ov',-1)">◀</button>
+      <div id="ovMonthLabel" class="month-nav-label"></div>
+      <button class="month-nav-btn" onclick="shiftTabMonth('ov',1)">▶</button>
     </div>
   </div>
 
 
 
   <!-- Top KPI Cards — fed from daily data -->
+  <div class="section-divider"><div class="section-divider-label">Summary</div><div class="section-divider-line"></div></div>
   <div class="kpi-grid">
     <div class="kpi-card purple"><div class="kpi-label">Total Opt-ins</div><div class="kpi-value purple" id="ov-leads">—</div><div class="kpi-meta">Genesis + MDP</div></div>
     <div class="kpi-card cyan"><div class="kpi-label">Total Booked</div><div class="kpi-value cyan" id="ov-bookings">—</div><div class="kpi-meta">Genesis + MDP</div></div>
@@ -408,8 +672,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="kpi-card green"><div class="kpi-label">Closed Won</div><div class="kpi-value green" id="ov-closed">—</div><div class="kpi-meta">Genesis + MDP</div></div>
   </div>
 
+  <div class="section-divider"><div class="section-divider-label">Program Breakdown</div><div class="section-divider-line"></div></div>
   <div class="two-col">
-    <!-- Genesis + MDP stacked -->
     <div style="display:flex;flex-direction:column;gap:16px;">
       <!-- GENESIS -->
       <div class="panel">
@@ -450,28 +714,29 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <!-- Performance Metrics -->
     <div class="panel">
       <div class="panel-title">📐 Performance Metrics</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:14px;font-family:'IBM Plex Mono',monospace;">Select date range → pulls from Data Entry</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:14px;font-family:var(--font-mono);">Select date range → pulls from Data Entry</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
         <div><label class="form-label">Start Date</label><input class="form-input" type="date" id="calc-start" onchange="renderCalcCard()" /></div>
         <div><label class="form-label">End Date</label><input class="form-input" type="date" id="calc-end" onchange="renderCalcCard()" /></div>
       </div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Genesis</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Genesis</div>
       <div class="kpi-target-row"><span class="kpi-target-label">Cost per Booking</span><span class="kpi-target-val" id="calc-gen-cpb" style="color:var(--gold);">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">Cost per Show</span><span class="kpi-target-val" id="calc-gen-cps" style="color:var(--gold);">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">Cost per Close</span><span class="kpi-target-val" id="calc-gen-cpc" style="color:var(--gold);">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">Show Up Rate</span><span class="kpi-target-val" id="calc-gen-sur" style="color:var(--cyan);">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">Close Rate</span><span class="kpi-target-val" id="calc-gen-cr" style="color:var(--green2);">—</span></div>
       <div class="divider"></div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">MDP</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">MDP</div>
       <div class="kpi-target-row"><span class="kpi-target-label">Cost per Booking</span><span class="kpi-target-val" id="calc-mdp-cpb" style="color:var(--gold);">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">Cost per Show</span><span class="kpi-target-val" id="calc-mdp-cps" style="color:var(--gold);">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">Cost per Close</span><span class="kpi-target-val" id="calc-mdp-cpc" style="color:var(--gold);">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">Show Up Rate</span><span class="kpi-target-val" id="calc-mdp-sur" style="color:var(--cyan);">—</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">Close Rate</span><span class="kpi-target-val" id="calc-mdp-cr" style="color:var(--green2);">—</span></div>
-      <div id="calc-note" style="font-size:11px;color:var(--text3);margin-top:12px;font-family:'IBM Plex Mono',monospace;"></div>
+      <div id="calc-note" style="font-size:11px;color:var(--text3);margin-top:12px;font-family:var(--font-mono);"></div>
     </div>
   </div>
 
+  <div class="section-divider"><div class="section-divider-label">Weekly Breakdown</div><div class="section-divider-line"></div></div>
   <!-- Weekly Breakdowns -->
   <div class="panel" style="margin-bottom:16px;">
     <div class="panel-title">📊 Genesis — <span id="ov-weekly-month-label"></span> Weekly Breakdown</div>
@@ -488,88 +753,68 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-dataentry" class="content">
 
-  <!-- Password gate for data entry -->
+  <!-- Password gate -->
   <div id="de-gate" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:340px;gap:16px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text2);">🔒 Data Entry is restricted</div>
-    <input class="form-input" type="password" id="de-pw-input" style="width:240px;text-align:center;" placeholder="Enter data entry password" onkeydown="if(event.key==='Enter')checkDePassword()" />
+    <div style="font-family:var(--font-mono);font-size:13px;color:var(--text2);">🔒 Data Entry is restricted</div>
+    <input class="form-input" type="text" id="de-pw-input" style="width:240px;text-align:center;-webkit-text-security:disc;" placeholder="Enter data entry password" onkeydown="if(event.key==='Enter')checkDePassword()" autocomplete="off" />
     <button class="btn btn-primary" onclick="checkDePassword()">Unlock</button>
-    <div id="de-pw-error" style="font-size:11px;color:var(--red2);font-family:'IBM Plex Mono',monospace;"></div>
+    <div id="de-pw-error" style="font-size:11px;color:var(--red2);font-family:var(--font-mono);"></div>
   </div>
 
-  <!-- Actual content, shown after password -->
+  <!-- Content after password -->
   <div id="de-content" style="display:none;">
     <div class="section-title">Daily Data Entry
-      <div class="section-sub">Enter daily actuals for Genesis & MDP · Edit any past date · Synced to GitHub</div>
+      <div class="section-sub">Enter actuals per source · Each source saves independently · Synced to GitHub</div>
     </div>
 
     <!-- Date Selector -->
     <div class="panel" style="margin-bottom:20px;">
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <div>
-          <label class="form-label">Select Date</label>
-          <input class="form-input" type="date" id="de-date" style="width:180px;" onchange="loadDayData()" />
-        </div>
+        <div><label class="form-label">Select Date</label>
+          <input class="form-input" type="date" id="de-date" style="width:180px;" onchange="loadDayData()" /></div>
         <div style="display:flex;align-items:flex-end;gap:8px;">
           <button class="btn btn-ghost btn-sm" onclick="shiftDeDate(-1)">◀ Prev Day</button>
           <button class="btn btn-ghost btn-sm" onclick="setDeToday()">Today</button>
           <button class="btn btn-ghost btn-sm" onclick="shiftDeDate(1)">Next Day ▶</button>
         </div>
-        <button class="btn btn-primary" style="margin-left:auto;" onclick="saveDayData()">💾 Save Entry</button>
-        <div id="de-save-status" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);"></div>
+        <div id="de-save-status" style="font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-left:auto;"></div>
       </div>
     </div>
 
     <div class="two-col">
-      <!-- GENESIS -->
+      <!-- GENESIS CARD -->
       <div class="panel">
-        <div class="panel-title" style="color:var(--accent2);">🏗 Genesis</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div><label class="form-label">Opt-ins</label><input class="form-input" type="number" id="de-gen-optins" placeholder="0" /></div>
-          <div><label class="form-label">Total Booked</label><input class="form-input" type="number" id="de-gen-booked" placeholder="0" /></div>
-          <div><label class="form-label">Confirmed</label><input class="form-input" type="number" id="de-gen-confirmed" placeholder="0" oninput="calcNoShows('gen')" /></div>
-          <div><label class="form-label">Shows</label><input class="form-input" type="number" id="de-gen-shows" placeholder="0" oninput="calcNoShows('gen')" /></div>
-          <div>
-            <label class="form-label">No Shows <span style="color:var(--text3);font-size:10px;">(auto)</span></label>
-            <input class="form-input" type="number" id="de-gen-noshows" placeholder="0" readonly style="opacity:.6;cursor:not-allowed;" />
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+          <div class="panel-title" style="color:var(--accent2);margin-bottom:0;">🏗 Genesis</div>
+          <div style="display:flex;gap:6px;margin-left:auto;">
+            <button id="de-gen-tab-vsl" class="btn btn-primary btn-sm" onclick="switchDeSource('gen','vsl')">VSL</button>
+            <button id="de-gen-tab-dm" class="btn btn-ghost btn-sm" onclick="switchDeSource('gen','dm')">DM</button>
           </div>
-          <div><label class="form-label">Closed</label><input class="form-input" type="number" id="de-gen-closed" placeholder="0" /></div>
-          <div><label class="form-label">Revenue ($)</label><input class="form-input" type="number" id="de-gen-revenue" placeholder="0" /></div>
-          <div><label class="form-label">Deposits ($)</label><input class="form-input" type="number" id="de-gen-deposits" placeholder="0" /></div>
-          <div style="grid-column:span 2;">
-            <label class="form-label">Cash Collected ($) <span style="color:var(--red2);font-size:10px;">including deposits</span></label>
-            <input class="form-input" type="number" id="de-gen-cash" placeholder="0" />
-          </div>
-          <div style="grid-column:span 2;"><label class="form-label">Ad Spend ($)</label><input class="form-input" type="number" id="de-gen-adspend" placeholder="0" /></div>
         </div>
+        <div id="de-gen-form"></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:14px;" id="de-gen-save-btn" onclick="saveSourceData('gen')" disabled>💾 Save Genesis Entry</button>
+        <div id="de-gen-status" style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-top:6px;text-align:center;"></div>
       </div>
 
-      <!-- MDP -->
+      <!-- MDP CARD -->
       <div class="panel">
-        <div class="panel-title" style="color:var(--gold);">🎯 MDP</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div><label class="form-label">Opt-ins</label><input class="form-input" type="number" id="de-mdp-optins" placeholder="0" /></div>
-          <div><label class="form-label">Total Booked</label><input class="form-input" type="number" id="de-mdp-booked" placeholder="0" /></div>
-          <div><label class="form-label">Confirmed</label><input class="form-input" type="number" id="de-mdp-confirmed" placeholder="0" oninput="calcNoShows('mdp')" /></div>
-          <div><label class="form-label">Shows</label><input class="form-input" type="number" id="de-mdp-shows" placeholder="0" oninput="calcNoShows('mdp')" /></div>
-          <div>
-            <label class="form-label">No Shows <span style="color:var(--text3);font-size:10px;">(auto)</span></label>
-            <input class="form-input" type="number" id="de-mdp-noshows" placeholder="0" readonly style="opacity:.6;cursor:not-allowed;" />
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+          <div class="panel-title" style="color:var(--gold);margin-bottom:0;">🎯 MDP</div>
+          <div style="display:flex;gap:6px;margin-left:auto;">
+            <button id="de-mdp-tab-dm" class="btn btn-primary btn-sm" onclick="switchDeSource('mdp','dm')">DM</button>
+            <button id="de-mdp-tab-leadgen" class="btn btn-ghost btn-sm" onclick="switchDeSource('mdp','leadgen')">Lead Gen</button>
+            <button id="de-mdp-tab-vsl" class="btn btn-ghost btn-sm" onclick="switchDeSource('mdp','vsl')">VSL</button>
           </div>
-          <div><label class="form-label">Closed</label><input class="form-input" type="number" id="de-mdp-closed" placeholder="0" /></div>
-          <div><label class="form-label">Revenue ($)</label><input class="form-input" type="number" id="de-mdp-revenue" placeholder="0" /></div>
-          <div><label class="form-label">Deposits ($)</label><input class="form-input" type="number" id="de-mdp-deposits" placeholder="0" /></div>
-          <div style="grid-column:span 2;">
-            <label class="form-label">Cash Collected ($) <span style="color:var(--red2);font-size:10px;">including deposits</span></label>
-            <input class="form-input" type="number" id="de-mdp-cash" placeholder="0" />
-          </div>
-          <div style="grid-column:span 2;"><label class="form-label">Ad Spend ($)</label><input class="form-input" type="number" id="de-mdp-adspend" placeholder="0" /></div>
         </div>
+        <div id="de-mdp-form"></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:14px;" id="de-mdp-save-btn" onclick="saveSourceData('mdp')" disabled>💾 Save MDP Entry</button>
+        <div id="de-mdp-status" style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-top:6px;text-align:center;"></div>
       </div>
     </div>
 
     <!-- Recent Entries -->
     <div class="panel">
-      <div class="panel-title">📅 Recent Entries <span style="font-size:11px;color:var(--text3);font-weight:400;">· Click any row to edit</span></div>
+      <div class="panel-title">📅 Recent Entries <span style="font-size:11px;color:var(--text3);font-weight:400;">· Click any row to load that date</span></div>
       <div id="de-recent">Loading…</div>
     </div>
   </div>
@@ -594,7 +839,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="team-col-header">
         <div class="avatar" style="background:linear-gradient(135deg,#6c63ff,#a78bfa);">EA</div>
         <div><div class="team-name">Elie Ashkar</div><div class="team-role">CEO</div></div>
-        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-elie">–</div>
+        <div style="margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text3);" id="stat-elie">–</div>
       </div>
       <div class="task-list" id="tasks-elie"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('elie')">+ Add Task</button></div>
@@ -603,7 +848,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="team-col-header">
         <div class="avatar av-purple">HH</div>
         <div><div class="team-name">Hanadi Hammoud</div><div class="team-role">Operations Manager</div></div>
-        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-hanadi">–</div>
+        <div style="margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text3);" id="stat-hanadi">–</div>
       </div>
       <div class="task-list" id="tasks-hanadi"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('hanadi')">+ Add Task</button></div>
@@ -614,7 +859,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="team-col-header">
         <div class="avatar av-gold">FR</div>
         <div><div class="team-name">Fatima Rajab</div><div class="team-role">Student Success Manager</div></div>
-        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-fatima">–</div>
+        <div style="margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text3);" id="stat-fatima">–</div>
       </div>
       <div class="task-list" id="tasks-fatima"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('fatima')">+ Add Task</button></div>
@@ -625,7 +870,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="team-col-header">
         <div class="avatar av-cyan">MT</div>
         <div><div class="team-name">Maya Timani</div><div class="team-role">Data Analyst & Setters Mgr</div></div>
-        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-maya">–</div>
+        <div style="margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text3);" id="stat-maya">–</div>
       </div>
       <div class="task-list" id="tasks-maya"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('maya')">+ Add Task</button></div>
@@ -636,7 +881,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="team-col-header">
         <div class="avatar av-green">AS</div>
         <div><div class="team-name">Aya Saiid</div><div class="team-role">Appointment Setter</div></div>
-        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-aya">–</div>
+        <div style="margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text3);" id="stat-aya">–</div>
       </div>
       <div class="task-list" id="tasks-aya"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('aya')">+ Add Task</button></div>
@@ -748,33 +993,47 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
      TEAM KPIs
 ═══════════════════════════════════════════ -->
 <div id="tab-kpis" class="content">
-  <div class="section-title">Team KPI Dashboard
-    <div class="section-sub">Targets and performance benchmarks · Synced across all devices</div>
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">Team KPI Dashboard</div>
+      <div class="page-header-sub">Targets and performance benchmarks · Synced across all devices</div>
+    </div>
+    <div class="month-nav">
+      <button class="month-nav-btn" onclick="shiftTabMonth('kpi',-1)">◀</button>
+      <div id="kpiMonthLabel" class="month-nav-label"></div>
+      <button class="month-nav-btn" onclick="shiftTabMonth('kpi',1)">▶</button>
+    </div>
   </div>
 
   <div class="two-col">
     <div class="panel">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
         <div class="avatar av-green" style="width:40px;height:40px;font-size:15px;">AS</div>
-        <div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;">Aya Saiid</div><div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Appointment Setter</div></div>
+        <div><div style="font-family:var(--font-mono);font-weight:700;font-size:15px;">Aya Saiid</div><div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Appointment Setter</div></div>
         <div style="margin-left:auto;"><span class="status-badge badge-yellow"><span class="badge-dot"></span>Tracking</span></div>
       </div>
       <div class="kpi-target-row"><span class="kpi-target-label">📞 Outbound Calls / Day</span><span class="kpi-target-range">Target: 80–120</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
       <div class="kpi-target-row"><span class="kpi-target-label">📅 Total Bookings / Day</span><span class="kpi-target-range">Target: 4–8</span><span class="kpi-target-val" style="color:var(--cyan);">–</span></div>
       <div class="divider"></div>
-      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Daily KPI Logger</div>
+      <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Daily KPI Logger</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         <div><label class="form-label">Calls Today</label><input class="form-input" type="number" id="kpi-calls" placeholder="0" /></div>
         <div><label class="form-label">Total Bookings</label><input class="form-input" type="number" id="kpi-bookings" placeholder="0" /></div>
       </div>
       <button class="btn btn-primary btn-sm" style="margin-top:10px;width:100%;" onclick="saveAyaKPI()">💾 Save KPI Entry</button>
       <div id="ayaKPIResult" style="margin-top:10px;"></div>
+      <div class="divider"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;">Custom KPIs</div>
+        <button class="btn btn-ghost btn-sm" onclick="openCustomKPIForm('Aya Saiid')">+ Add</button>
+      </div>
+      <div id="customKPI-Aya Saiid"></div>
     </div>
 
     <div class="panel">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
         <div class="avatar av-gold" style="width:40px;height:40px;font-size:15px;">FR</div>
-        <div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;">Fatima Rajab</div><div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Student Success Manager</div></div>
+        <div><div style="font-family:var(--font-mono);font-weight:700;font-size:15px;">Fatima Rajab</div><div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Student Success Manager</div></div>
         <div style="margin-left:auto;"><span class="status-badge badge-green"><span class="badge-dot"></span>Active</span></div>
       </div>
       <div class="kpi-target-row"><span class="kpi-target-label">📬 Follow-up Rate</span><span class="kpi-target-range">Target: 100%</span><span class="kpi-target-val" style="color:var(--green2);">Log weekly</span></div>
@@ -788,6 +1047,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <textarea class="form-textarea" id="winLog" placeholder="Student name + milestone achieved..."></textarea>
       <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="logWin()">Record Win 🏆</button>
       <div id="winsDisplay" style="margin-top:10px;"></div>
+      <div class="divider"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;">Custom KPIs</div>
+        <button class="btn btn-ghost btn-sm" onclick="openCustomKPIForm('Fatima Rajab')">+ Add</button>
+      </div>
+      <div id="customKPI-Fatima Rajab"></div>
     </div>
   </div>
 
@@ -795,7 +1060,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="panel">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
         <div class="avatar av-cyan" style="width:40px;height:40px;font-size:15px;">MT</div>
-        <div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;">Maya Timani</div><div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Data Analyst & Setters Manager</div></div>
+        <div><div style="font-family:var(--font-mono);font-weight:700;font-size:15px;">Maya Timani</div><div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Data Analyst & Setters Manager</div></div>
         <div style="margin-left:auto;"><span class="status-badge badge-green"><span class="badge-dot"></span>Active</span></div>
       </div>
       <div class="kpi-target-row"><span class="kpi-target-label">🗄 CRM Data Accuracy</span><span class="kpi-target-range">Target: >95%</span><span class="kpi-target-val" style="color:var(--green2);">Audit weekly</span></div>
@@ -807,12 +1072,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <textarea class="form-textarea" id="insightLog" placeholder="Data insight + recommended action..."></textarea>
       <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="logInsight()">Add Insight 💡</button>
       <div id="insightsDisplay" style="margin-top:10px;"></div>
+      <div class="divider"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;">Custom KPIs</div>
+        <button class="btn btn-ghost btn-sm" onclick="openCustomKPIForm('Maya Timani')">+ Add</button>
+      </div>
+      <div id="customKPI-Maya Timani"></div>
     </div>
 
     <div class="panel">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
         <div class="avatar av-purple" style="width:40px;height:40px;font-size:15px;">HH</div>
-        <div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;">Hanadi Hammoud</div><div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">Operations Manager</div></div>
+        <div><div style="font-family:var(--font-mono);font-weight:700;font-size:15px;">Hanadi Hammoud</div><div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Operations Manager</div></div>
         <div style="margin-left:auto;"><span class="status-badge badge-yellow"><span class="badge-dot"></span>In Review</span></div>
       </div>
       <div class="kpi-target-row"><span class="kpi-target-label">✅ Tasks On Time</span><span class="kpi-target-range">Target: 80%+</span><span class="kpi-target-val" style="color:var(--accent2);" id="hanadiOnTime">—</span></div>
@@ -823,36 +1094,37 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <textarea class="form-textarea" id="improvementLog" placeholder="Process improvement implemented..."></textarea>
       <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="logImprovement()">Record Improvement ⚡</button>
       <div id="improvementsDisplay" style="margin-top:10px;"></div>
+      <div class="divider"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;">Custom KPIs</div>
+        <button class="btn btn-ghost btn-sm" onclick="openCustomKPIForm('Hanadi Hammoud')">+ Add</button>
+      </div>
+      <div id="customKPI-Hanadi Hammoud"></div>
     </div>
   </div>
 
-  <!-- Custom KPIs -->
+  <!-- Elie Custom KPIs — standalone panel -->
   <div class="panel" style="margin-top:8px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-      <div class="panel-title" style="margin-bottom:0;">📌 Custom KPIs</div>
-      <button class="btn btn-ghost btn-sm" onclick="toggleCustomKPIForm(true)">+ Add KPI</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div class="avatar" style="width:36px;height:36px;font-size:13px;background:linear-gradient(135deg,#6c63ff,#a78bfa);">EA</div>
+      <div style="font-family:var(--font-mono);font-weight:700;font-size:14px;">Elie Ashkar — CEO</div>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="openCustomKPIForm('Elie Ashkar')">+ Add KPI</button>
     </div>
-    <div id="customKPIForm" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:14px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
-        <div>
-          <label class="form-label">Staff Member</label>
-          <select class="form-select" id="kpi-person">
-            <option value="Elie Ashkar">Elie Ashkar</option>
-            <option value="Hanadi Hammoud">Hanadi Hammoud</option>
-            <option value="Fatima Rajab">Fatima Rajab</option>
-            <option value="Maya Timani">Maya Timani</option>
-            <option value="Aya Saiid">Aya Saiid</option>
-          </select>
-        </div>
-        <div><label class="form-label">KPI Name</label><input class="form-input" id="kpi-name" placeholder="e.g. Calls / Week" /></div>
-        <div><label class="form-label">Target</label><input class="form-input" id="kpi-target" placeholder="e.g. 100+" /></div>
-      </div>
-      <div class="modal-btns">
-        <button class="btn btn-primary" onclick="saveCustomKPI()">Save KPI</button>
-        <button class="btn btn-ghost" onclick="toggleCustomKPIForm(false)">Cancel</button>
-      </div>
+    <div id="customKPI-Elie Ashkar"></div>
+  </div>
+</div>
+
+<!-- CUSTOM KPI MODAL -->
+<div class="modal-overlay" id="customKPIModal" onclick="if(event.target===this)closeCustomKPIModal()">
+  <div class="modal-box" style="width:420px;">
+    <div class="modal-title">📌 Add Custom KPI — <span id="customKPIModalPerson"></span></div>
+    <input type="hidden" id="customKPIModalPersonValue" />
+    <div class="form-group"><label class="form-label">KPI Name</label><input class="form-input" id="kpi-name" placeholder="e.g. Calls / Week" /></div>
+    <div class="form-group"><label class="form-label">Target</label><input class="form-input" id="kpi-target" placeholder="e.g. 100+" /></div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="saveCustomKPI()">Save KPI</button>
+      <button class="btn btn-ghost" onclick="closeCustomKPIModal()">Cancel</button>
     </div>
-    <div id="customKPIList"><div style="color:var(--text3);font-size:12px;font-family:'IBM Plex Mono',monospace;">No custom KPIs added yet.</div></div>
   </div>
 </div>
 
@@ -860,8 +1132,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
      DAILY REPORTS
 ═══════════════════════════════════════════ -->
 <div id="tab-reports" class="content">
-  <div class="section-title">Daily Reports
-    <div class="section-sub">Paste WhatsApp reports directly · Synced to GitHub · <span id="reportsMonthLabel"></span></div>
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">Daily Reports</div>
+      <div class="page-header-sub">Paste WhatsApp reports directly · Synced to GitHub</div>
+    </div>
+    <div class="month-nav">
+      <button class="month-nav-btn" onclick="shiftTabMonth('rep',-1)">◀</button>
+      <div id="repMonthLabel" class="month-nav-label"></div>
+      <button class="month-nav-btn" onclick="shiftTabMonth('rep',1)">▶</button>
+    </div>
   </div>
 
   <div class="info-box">
@@ -878,6 +1158,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <option value="Maya Timani">Maya Timani</option>
       <option value="Aya Saiid">Aya Saiid</option>
     </select>
+    <input class="form-input" style="width:260px;" id="reportSearch" placeholder="Search reports…" oninput="renderReports()" />
   </div>
 
   <!-- New report form -->
@@ -925,8 +1206,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
      MEETING NOTES
 ═══════════════════════════════════════════ -->
 <div id="tab-meetings" class="content">
-  <div class="section-title">Meeting Notes
-    <div class="section-sub">Paste Gemini notes directly · Searchable archive · Saved in browser</div>
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">Meeting Notes</div>
+      <div class="page-header-sub">Paste Gemini notes directly · Searchable archive · Synced to GitHub</div>
+    </div>
+    <div class="month-nav">
+      <button class="month-nav-btn" onclick="shiftTabMonth('meet',-1)">◀</button>
+      <div id="meetMonthLabel" class="month-nav-label"></div>
+      <button class="month-nav-btn" onclick="shiftTabMonth('meet',1)">▶</button>
+    </div>
   </div>
 
   <div class="info-box">
@@ -976,13 +1265,24 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 ═══════════════════════════════════════════ -->
 <div id="tab-errors" class="content">
   <div class="section-title">Errors & Suggested Resolutions
-    <div class="section-sub">Log issues and fixes · Synced to GitHub</div>
+    <div class="section-sub">Auto-generated from data · Manually logged · Hardcoded legacy</div>
   </div>
 
-  <div style="margin-bottom:20px;">
-    <button class="btn btn-primary" onclick="toggleErrorForm(true)">+ Log New Error</button>
+  <!-- Date Range Selector -->
+  <div class="panel" style="margin-bottom:20px;">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Analysis Range</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <div><label class="form-label" style="margin-bottom:2px;">Start</label><input class="form-input" type="date" id="err-start" style="width:150px;" onchange="runErrorEngine()" /></div>
+        <div><label class="form-label" style="margin-bottom:2px;">End</label><input class="form-input" type="date" id="err-end" style="width:150px;" onchange="runErrorEngine()" /></div>
+        <button class="btn btn-ghost btn-sm" onclick="setErrRangeMonth()">This Month</button>
+        <button class="btn btn-ghost btn-sm" onclick="setErrRangeAll()">All Time</button>
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="toggleErrorForm(true)">+ Log Manual Error</button>
+    </div>
   </div>
 
+  <!-- Manual Error Form -->
   <div id="errorForm" style="display:none;" class="panel" style="margin-bottom:20px;">
     <div class="panel-title">🚨 Log Error / Issue</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
@@ -1005,60 +1305,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         </select>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Error / Issue Title</label>
-      <input class="form-input" id="errTitle" placeholder="Short description of the issue..." />
-    </div>
-    <div class="form-group">
-      <label class="form-label">Description</label>
-      <textarea class="form-textarea" id="errDesc" style="min-height:100px;" placeholder="Describe what's happening, what data or context is relevant..."></textarea>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Resolution / Fix</label>
-      <textarea class="form-textarea" id="errFix" style="min-height:100px;" placeholder="Describe the fix, action steps, or who is responsible..."></textarea>
-    </div>
+    <div class="form-group"><label class="form-label">Error / Issue Title</label><input class="form-input" id="errTitle" placeholder="Short description of the issue..." /></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="errDesc" style="min-height:80px;" placeholder="What's happening..."></textarea></div>
+    <div class="form-group"><label class="form-label">Resolution / Fix</label><textarea class="form-textarea" id="errFix" style="min-height:80px;" placeholder="Action steps or who is responsible..."></textarea></div>
     <div class="modal-btns">
       <button class="btn btn-primary" onclick="saveError()">Save</button>
       <button class="btn btn-ghost" onclick="toggleErrorForm(false)">Cancel</button>
     </div>
   </div>
 
-  <!-- Hardcoded legacy errors -->
-  <div id="errorsLegacy">
-    <div class="error-card">
-      <div class="error-title">🚨 Multi-Funnel Follow-up Leakage</div>
-      <div class="error-desc">Leads from 8+ different sources (VSL, Outbound Genesis, MDP Lead Form, MENA Campaign, Instagram, WhatsApp, Remote Job Funnel, Web Download) are entering the CRM without a unified follow-up protocol. April data: 87 no-shows in Genesis alone with no structured reactivation tracking. MDP leads also sitting unworked.</div>
-      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Create a daily priority queue in Zoho filtered by Stage = "No Show" + "Booked > 3 days" + "Needs Follow Up". Assign to Aya for reactivation calls. Maya audits the queue daily. Tag all business-owner Genesis leads for MDP outreach separately.</div></div>
-    </div>
-    <div class="error-card">
-      <div class="error-title">⚠️ Show-Up Rate Below Target (48.5% vs 60%+ goal)</div>
-      <div class="error-desc">April: consistent show-up of 40–57% across all weeks, vs the 60–70% target from February planning. Week of Apr 13–19 dropped to 40.5%. At current show rate, this is the single biggest revenue bottleneck — each +5% show rate = ~4 additional closes per month.</div>
-      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">3-touch confirmation sequence: booking confirm → 24hr reminder → 2hr reminder. Aya calls non-confirmed bookings the day before. Add urgency framing ("your spot is reserved but we need confirmation"). Target: 55%+ by Week 2 May. Maya tracks weekly.</div></div>
-    </div>
-    <div class="error-card">
-      <div class="error-title">⚠️ Cancellation Rate 57.6% of Raw Bookings</div>
-      <div class="error-desc">235 of 408 April bookings cancelled before confirmation. This wastes ad spend and setter time. Root cause: low-intent leads booking without commitment, possibly due to low-friction booking flow.</div>
-      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Add pre-booking qualifier in setter script (income level, timeline, decision authority). Consider a micro-commitment step (answer 2 questions before booking confirms). Maya tracks cancellation rate weekly — flag if above 50%.</div></div>
-    </div>
-    <div class="error-card">
-      <div class="error-title">⚠️ No Dedicated MDP Funnel Tracking</div>
-      <div class="error-desc">MDP leads exist in Zoho with the MDP tag but no dedicated pipeline view showing its own show rates, close rates, revenue. The 15% Genesis-to-MDP business owner crossover is not systematically identified or routed.</div>
-      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Create a Zoho CRM view: Tag = MDP, with its own weekly KPI columns. Add a "Business Owner?" qualifier in the Genesis setter script to auto-tag MDP crossover leads. Maya produces a separate MDP report starting Week 1 May.</div></div>
-    </div>
-    <div class="error-card">
-      <div class="error-title">⚠️ CRM Export: Dates as Excel Serial Numbers</div>
-      <div class="error-desc">Zoho CRM XLSX export stores Created_Time, Meeting_Date, Closing_Date as floats (e.g. 46143.0) instead of readable dates. Makes date-based analysis and filtering unreliable.</div>
-      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Export from Zoho as CSV instead of XLSX — Zoho uses ISO dates in CSV. In Google Sheets, convert with =DATE(1899,12,30)+A2 to convert serial numbers. Maya implements this in the master tracking sheet.</div></div>
-    </div>
-    <div class="error-card">
-      <div class="error-title">📋 No Setter KPI Accountability System</div>
-      <div class="error-desc">Aya's daily KPIs (calls, bookings, outbound bookings) have no current logging or accountability beyond informal check-ins. Feb meeting confirmed setter performance is the #1 growth blocker.</div>
-      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">Use the KPI Logger in Team KPIs tab. Aya fills in daily. Maya verifies against CRM. 2 consecutive days below KPI triggers a notification to Hanadi. Weekly % hitting KPI is Maya's own performance metric.</div></div>
-    </div>
-  </div>
+  <!-- AUTO-GENERATED ERRORS -->
+  <div id="errorsAuto"></div>
 
-  <!-- Dynamic errors from GitHub -->
+  <!-- MANUALLY LOGGED ERRORS -->
   <div id="errorsList"></div>
+
+
+
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1090,8 +1353,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
             </select>
           </div>
           <div style="align-self:flex-end;padding-bottom:2px;">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);">Calendar days</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--accent2);" id="calDaysDisplay">31</div>
+            <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);">Calendar days</div>
+            <div style="font-family:var(--font-mono);font-weight:800;font-size:22px;color:var(--accent2);" id="calDaysDisplay">31</div>
           </div>
         </div>
 
@@ -1108,10 +1371,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="sim-panel" style="margin-bottom:16px;">
         <div class="sim-title">🎯 Revenue Target</div>
         <div style="background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:14px 16px;">
-          <div style="font-size:11px;color:var(--accent2);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Target Revenue (USD)</div>
+          <div style="font-size:11px;color:var(--accent2);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Target Revenue (USD)</div>
           <div style="display:flex;align-items:center;gap:4px;">
-            <span style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:28px;color:var(--text3);">$</span>
-            <input style="background:none;border:none;outline:none;font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:32px;color:var(--text);width:100%;" type="number" id="simTarget" value="100000" oninput="runSimulator()"/>
+            <span style="font-family:var(--font-mono);font-weight:800;font-size:28px;color:var(--text3);">$</span>
+            <input style="background:none;border:none;outline:none;font-family:var(--font-mono);font-weight:800;font-size:32px;color:var(--text);width:100%;" type="number" id="simTarget" value="100000" oninput="runSimulator()"/>
           </div>
         </div>
       </div>
@@ -1188,10 +1451,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
     <!-- Results -->
     <div class="results-panel">
-      <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;margin-bottom:16px;" id="simMonthLabel">May 2026 Projection</div>
+      <div style="font-family:var(--font-mono);font-weight:700;font-size:15px;margin-bottom:16px;" id="simMonthLabel">May 2026 Projection</div>
 
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;margin-bottom:14px;">
-        <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:6px;">Projected Revenue</div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;margin-bottom:6px;">Projected Revenue</div>
         <div class="kpi-value green" style="font-size:36px;" id="projRevenue">$–</div>
       </div>
 
@@ -1211,7 +1474,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="result-row"><span class="result-label">ROAS</span><span class="result-value" style="color:var(--green2);" id="projROAS">–</span></div>
       <div class="result-row"><span class="result-label">Bookings Needed / Day</span><span class="result-value" id="projBookPerDay">–</span></div>
 
-      <div style="margin-top:14px;padding:12px;background:rgba(108,99,255,.07);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;font-family:'IBM Plex Mono',monospace;" id="simNote">
+      <div style="margin-top:14px;padding:12px;background:rgba(108,99,255,.07);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;font-family:var(--font-mono);" id="simNote">
         15% of shows = MDP business owners routed through MDP close rate and deal value.
       </div>
     </div>
@@ -1230,90 +1493,128 @@ document.getElementById('topDate').textContent = today.toLocaleDateString('en-US
 // MONTH SELECTOR
 // ════════════════════════════════
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-let _activeYear  = today.getFullYear();
-let _activeMonth = today.getMonth() + 1;
 
-function activeMonthKey(){ return _activeYear + '-' + String(_activeMonth).padStart(2,'0'); }
-function activeMonthLabel(){ return MONTH_NAMES[_activeMonth-1] + ' ' + _activeYear; }
+// Each tab has its own independent month — changing one never affects another
+const _tabMonths = {
+  ov:   { y: today.getFullYear(), m: today.getMonth()+1 },
+  rep:  { y: today.getFullYear(), m: today.getMonth()+1 },
+  meet: { y: today.getFullYear(), m: today.getMonth()+1 },
+  kpi:  { y: today.getFullYear(), m: today.getMonth()+1 },
+};
+const _tabMonthLabelIds = { ov:'ovMonthLabel', rep:'repMonthLabel', meet:'meetMonthLabel', kpi:'kpiMonthLabel' };
 
-function shiftMonth(dir){
-  _activeMonth += dir;
-  if(_activeMonth > 12){ _activeMonth=1; _activeYear++; }
-  if(_activeMonth < 1){  _activeMonth=12; _activeYear--; }
-  updateMonthLabel();
-  if(typeof renderReports==='function') renderReports();
-  if(typeof renderMeetings==='function') renderMeetings();
-  if(typeof renderKPIList==='function'){
-    const d=_appData||{};
-    renderKPIList(d.wins||[],'winsDisplay');
-    renderKPIList(d.insights||[],'insightsDisplay');
-    renderKPIList(d.improvements||[],'improvementsDisplay');
-  }
+function tabMonthKey(tab){  const t=_tabMonths[tab]; return t.y+'-'+String(t.m).padStart(2,'0'); }
+function tabMonthLabel(tab){ const t=_tabMonths[tab]; return MONTH_NAMES[t.m-1]+' '+t.y; }
+function updateTabMonthLabel(tab){ const el=document.getElementById(_tabMonthLabelIds[tab]); if(el) el.textContent=tabMonthLabel(tab); }
+
+function shiftTabMonth(tab, dir){
+  const t=_tabMonths[tab];
+  t.m+=dir; if(t.m>12){t.m=1;t.y++;} if(t.m<1){t.m=12;t.y--;}
+  updateTabMonthLabel(tab);
+  if(tab==='ov') renderOverview();
+  if(tab==='rep') renderReportsList();
+  if(tab==='meet') renderMeetings();
+  if(tab==='kpi'){ const d=_appData||{}; renderKPIList(d.wins||[],'winsDisplay'); renderKPIList(d.insights||[],'insightsDisplay'); renderKPIList(d.improvements||[],'improvementsDisplay'); }
 }
 
-// ── Overview has its own independent month selector ──
-let _ovYear  = today.getFullYear();
-let _ovMonth = today.getMonth() + 1;
+// Aliases used throughout — saves/tags use current calendar month (today), not the selected view month
+function activeMonthKey(){ const now=new Date(); return now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0'); }
+function activeMonthLabel(){ return tabMonthLabel('rep'); }
+function ovMonthKey(){ return tabMonthKey('ov'); }
+function ovMonthLabel(){ return tabMonthLabel('ov'); }
+function shiftOverviewMonth(dir){ shiftTabMonth('ov',dir); } // legacy alias
+function shiftMonth(){ /* removed — each tab has its own selector now */ }
 
-function ovMonthKey(){ return _ovYear + '-' + String(_ovMonth).padStart(2,'0'); }
-function ovMonthLabel(){ return MONTH_NAMES[_ovMonth-1] + ' ' + _ovYear; }
-
-function shiftOverviewMonth(dir){
-  _ovMonth += dir;
-  if(_ovMonth > 12){ _ovMonth=1; _ovYear++; }
-  if(_ovMonth < 1){  _ovMonth=12; _ovYear--; }
-  const el=document.getElementById('ovMonthLabel'); if(el) el.textContent=ovMonthLabel();
-  renderOverview();
-}
-
-function updateMonthLabel(){
-  const el=document.getElementById('monthLabel'); if(el) el.textContent=activeMonthLabel();
-}
-updateMonthLabel();
-
-// Init overview month label + render skeleton immediately
+// Init all labels + overview skeleton
 (function(){
-  const el=document.getElementById('ovMonthLabel'); if(el) el.textContent=ovMonthLabel();
-  // Render empty skeleton right away — data fills in after GitHub loads
+  ['ov','rep','meet','kpi'].forEach(tab=>updateTabMonthLabel(tab));
   setTimeout(()=>{ if(typeof renderOverview==='function') renderOverview(); }, 0);
 })();
 
-// ── TABS ──
-function switchTab(name, btn) {
-  document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  if(btn) btn.classList.add('active');
+// ── SIDEBAR COLLAPSE ──
+function toggleSidebarCollapse(){
+  const sidebar=document.getElementById('sidebar');
+  const mainArea=document.querySelector('.main-area');
+  if(window.innerWidth<=768){
+    sidebar.classList.toggle('open');
+  } else {
+    const collapsed=sidebar.classList.toggle('collapsed');
+    if(mainArea) mainArea.style.marginLeft=collapsed?'60px':'var(--sidebar-w)';
+    localStorage.setItem('ea_sidebar_collapsed',collapsed?'1':'0');
+  }
+}
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(e){
+  if(window.innerWidth>768) return;
+  const sidebar=document.getElementById('sidebar');
+  if(!sidebar?.classList.contains('open')) return;
+  if(!sidebar.contains(e.target) && !e.target.closest('.sidebar-toggle')) {
+    sidebar.classList.remove('open');
+  }
+});
+(function initSidebarState(){
+  if(localStorage.getItem('ea_sidebar_collapsed')==='1'){
+    setTimeout(()=>{
+      const sidebar=document.getElementById('sidebar');
+      const mainArea=document.querySelector('.main-area');
+      if(sidebar) sidebar.classList.add('collapsed');
+      if(mainArea) mainArea.style.marginLeft='60px';
+    },50);
+  }
+})();
+
+// ── PERSON COLORS (global constants) ──
+const PERSON_COLORS={
+  'Elie Ashkar':    {color:'var(--accent2)', bg:'rgba(167,139,250,.12)', border:'rgba(167,139,250,.25)'},
+  'Hanadi Hammoud': {color:'var(--accent2)', bg:'rgba(108,99,255,.12)',  border:'rgba(108,99,255,.25)'},
+  'Fatima Rajab':   {color:'var(--gold)',    bg:'rgba(244,200,66,.1)',   border:'rgba(244,200,66,.25)'},
+  'Maya Timani':    {color:'var(--cyan)',    bg:'rgba(34,211,238,.1)',   border:'rgba(34,211,238,.25)'},
+  'Aya Saiid':      {color:'var(--green2)', bg:'rgba(74,222,128,.1)',   border:'rgba(74,222,128,.25)'},
+};
+function personBadge(name){
+  const p=PERSON_COLORS[name]||{color:'var(--text2)',bg:'var(--bg3)',border:'var(--border)'};
+  return `<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-family:var(--font-mono);font-size:10px;font-weight:600;background:${p.bg};border:1px solid ${p.border};color:${p.color};">${name}</span>`;
+}
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  const isLight=document.body.classList.contains('light');
+  localStorage.setItem('ea_theme',isLight?'light':'dark');
+  document.getElementById('themeToggle').textContent=isLight?'🌙 Dark':'☀️ Light';
+}
+(function initTheme(){
+  if(localStorage.getItem('ea_theme')==='light'){
+    document.body.classList.add('light');
+    setTimeout(()=>{ const t=document.getElementById('themeToggle'); if(t) t.textContent='🌙 Dark'; },100);
+  }
+})();
+
+// ── TOAST SYSTEM ──
+function toast(msg, type='success', duration=3000){
+  const icons={success:'✓',error:'✕',warning:'⚠',info:'ℹ'};
+  const c=document.getElementById('toastContainer'); if(!c) return;
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span style="font-size:14px;">${icons[type]||'ℹ'}</span><span style="flex:1;">${msg}</span><span style="opacity:.5;font-size:11px;cursor:pointer;" onclick="this.parentElement.remove()">✕</span>`;
+  c.appendChild(t);
+  setTimeout(()=>{
+    t.classList.add('hiding');
+    setTimeout(()=>t.remove(),220);
+  },duration);
 }
 
-// ── APRIL FUNNEL ──
-const aprilData = [
-  {label:'Apr 1–5',booked:79,shows:14,closed:6},
-  {label:'Apr 6–12',booked:120,shows:23,closed:5},
-  {label:'Apr 13–19',booked:88,shows:15,closed:5},
-  {label:'Apr 20–26',booked:73,shows:21,closed:6},
-  {label:'Apr 27–30',booked:48,shows:11,closed:4},
-];
-(function buildFunnel(){
-  const el = document.getElementById('aprilFunnel');
-  if(!el) return;
-  const maxB = Math.max(...aprilData.map(w=>w.booked));
-  aprilData.forEach(w => {
-    const col = document.createElement('div');
-    col.className = 'funnel-bar-col';
-    const bh = Math.round((w.booked/maxB)*72);
-    const sh = Math.round((w.shows/maxB)*72);
-    const ch = Math.round((w.closed/maxB)*72);
-    col.innerHTML = `
-      <div style="display:flex;gap:2px;align-items:flex-end;width:100%;height:72px;">
-        <div style="flex:1;height:${bh}px;background:rgba(108,99,255,.4);border-radius:3px 3px 0 0;"></div>
-        <div style="flex:1;height:${sh}px;background:rgba(34,211,238,.5);border-radius:3px 3px 0 0;"></div>
-        <div style="flex:1;height:${ch}px;background:rgba(34,197,94,.6);border-radius:3px 3px 0 0;"></div>
-      </div>
-      <div style="font-size:9px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-align:center;margin-top:4px;">${w.label.split('–')[0]}</div>`;
-    el.appendChild(col);
-  });
-})();
+// ── TABS ──
+function scrollTabs(by){ /* legacy stub — sidebar handles nav */ }
+function switchTab(name, btn){
+  document.querySelectorAll('.content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const tab=document.getElementById('tab-'+name);
+  if(tab) tab.classList.add('active');
+  const navItem=document.getElementById('nav-'+name);
+  if(navItem) navItem.classList.add('active');
+  // Close sidebar on mobile after selecting
+  if(window.innerWidth<=768) document.getElementById('sidebar')?.classList.remove('open');
+}
+
 
 // ════════════════════════════════
 // TASK SYSTEM
@@ -1399,12 +1700,19 @@ function renderTaskItem(task, idx, key){
   </div>`;
 }
 
+// Data Entry source config — declared early so HTML button handlers can access it
+const DE_SOURCES = { gen: ['vsl','dm'], mdp: ['dm','leadgen','vsl'] };
+const DE_SOURCE_LABELS = { vsl:'VSL', dm:'DM', leadgen:'Lead Gen' };
+let _deActiveSource = { gen:'vsl', mdp:'dm' };
+
+let _appData = null; // declared early so loadTasks() can safely reference it
+
 function loadTasks(){
+  if(_appData && _appData.tasks) return _appData.tasks;
   try{
     const saved = JSON.parse(localStorage.getItem('ea_tasks_v2'));
     if(saved) return saved;
   }catch(e){}
-  // First load: use defaults
   const data = {};
   Object.keys(DEFAULT_TASKS).forEach(k => {
     data[k] = DEFAULT_TASKS[k].map(t => ({...t, done:false}));
@@ -1414,7 +1722,7 @@ function loadTasks(){
 
 
 function renderTasks(){
-  const data = loadTasks();
+  const data = getTaskData();
   const allKeys = ['elie','hanadi','fatima','maya','aya',...Object.keys(data).filter(k=>!['elie','hanadi','fatima','maya','aya'].includes(k))];
   allKeys.forEach(key => {
     const list = document.getElementById('tasks-' + key);
@@ -1429,7 +1737,7 @@ function renderTasks(){
   });
   updateHanadiKPI();
   // Render any custom person columns
-  const data2 = loadTasks();
+  const data2 = getTaskData();
   const customKeys = Object.keys(data2).filter(k=>!['elie','hanadi','fatima','maya','aya'].includes(k));
   customKeys.forEach(key=>{
     if(!document.getElementById('col-'+key)){
@@ -1443,7 +1751,7 @@ function renderTasks(){
       col.innerHTML = `<div class="team-col-header">
         <div class="avatar" style="background:linear-gradient(135deg,#6c63ff,#a78bfa);">${escHtml(initials)}</div>
         <div><div class="team-name">${escHtml(name)}</div><div class="team-role">${escHtml(role)}</div></div>
-        <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);" id="stat-${key}">–</div>
+        <div style="margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text3);" id="stat-${key}">–</div>
       </div>
       <div class="task-list" id="tasks-${key}"></div>
       <div class="task-footer"><button class="task-add-btn" onclick="openAddTask('${key}')">+ Add Task</button></div>`;
@@ -1460,10 +1768,13 @@ function renderTasks(){
   });
 }
 
+function getTaskData(){ return (_appData && _appData.tasks) ? _appData.tasks : loadTasks(); }
+
 async function toggleTask(el){
   const key = el.dataset.key;
   const idx = parseInt(el.dataset.idx);
-  const data = loadTasks();
+  const data = getTaskData();
+  if(!data[key]?.[idx]) return;
   data[key][idx].done = !data[key][idx].done;
   await saveTasks(data);
   renderTasks();
@@ -1471,7 +1782,7 @@ async function toggleTask(el){
 
 async function deleteTask(key, idx){
   if(!confirmDelete('Delete this task?')) return;
-  const data = loadTasks();
+  const data = getTaskData();
   data[key].splice(idx, 1);
   await saveTasks(data);
   renderTasks();
@@ -1497,10 +1808,9 @@ async function addNewPerson(){
   const name=document.getElementById('newPersonName').value.trim();
   const role=document.getElementById('newPersonRole').value.trim();
   const initials=document.getElementById('newPersonInitials').value.trim().toUpperCase();
-  if(!name){ alert('Please enter a name.'); return; }
+  if(!name){ toast('Please enter a name.','warning'); return; }
   const key=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
-  const data=loadTasks();
-  if(!data._persons) data._persons={};
+  const data=getTaskData();
   data._persons[key]={name,role,initials:initials||name.slice(0,2).toUpperCase()};
   if(!data[key]) data[key]=[];
   await saveTasks(data);
@@ -1513,7 +1823,7 @@ async function addNewPerson(){
 let _commentTarget = {key:null, idx:null};
 function openCommentModal(key, idx){
   _commentTarget = {key, idx};
-  const data=loadTasks();
+  const data=getTaskData();
   const task = data[key]?.[idx];
   if(!task) return;
   document.getElementById('commentTaskLabel').textContent = task.text;
@@ -1525,7 +1835,8 @@ function openCommentModal(key, idx){
 function closeCommentModal(){ document.getElementById('commentModal').classList.remove('show'); }
 async function saveComment(){
   const {key,idx}=_commentTarget;
-  const data=loadTasks();
+  // Always use _appData.tasks as source of truth
+  const data = _appData && _appData.tasks ? _appData.tasks : loadTasks();
   if(!data[key]?.[idx]) return;
   data[key][idx].comment = document.getElementById('commentText').value.trim();
   data[key][idx].resolved = document.getElementById('commentResolved').checked;
@@ -1541,47 +1852,208 @@ function checkPrivateMeeting(m){
   if(sessionStorage.getItem('private_meeting_auth')==='1') return true;
   const pw=prompt('🔒 This is a private meeting.\n\nEnter password to view:');
   if(pw===PRIVATE_PW){ sessionStorage.setItem('private_meeting_auth','1'); return true; }
-  alert('Incorrect password.'); return false;
+  toast('Incorrect password.','error'); return false;
 }
 
 // ── Errors & Fixes ──
 function toggleErrorForm(show){
   document.getElementById('errorForm').style.display=show?'block':'none';
 }
+
+// ── Date range helpers ──
+function setErrRangeMonth(){
+  const now=new Date(), y=now.getFullYear(), m=String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('err-start').value=`${y}-${m}-01`;
+  document.getElementById('err-end').value=now.toISOString().split('T')[0];
+  runErrorEngine();
+}
+function setErrRangeAll(){
+  document.getElementById('err-start').value='';
+  document.getElementById('err-end').value='';
+  runErrorEngine();
+}
+
+// ── Auto-generate engine ──
+function runErrorEngine(){
+  const start=document.getElementById('err-start')?.value||'';
+  const end=document.getElementById('err-end')?.value||'';
+  const el=document.getElementById('errorsAuto'); if(!el) return;
+  const data=_appData; if(!data?.dailyData){
+    el.innerHTML='<div style="color:var(--text3);font-family:\'IBM Plex Mono\',monospace;font-size:12px;padding:12px 0;">No data entered yet — auto-errors will appear once you add daily entries.</div>';
+    return;
+  }
+
+  // Sum all entries in range
+  const totGen={confirmed:0,shows:0,closed:0,revenue:0,cash:0,adspend:0,booked:0,days:0};
+  const totMdp={confirmed:0,shows:0,closed:0,revenue:0,cash:0,adspend:0,booked:0,days:0};
+  let daysInRange=0;
+
+  Object.keys(data.dailyData).sort().forEach(date=>{
+    if(start && date<start) return;
+    if(end   && date>end)   return;
+    daysInRange++;
+    const day=data.dailyData[date];
+    const gs=sumSources(day.gen)||{}, ms=sumSources(day.mdp)||{};
+    ['confirmed','shows','closed','revenue','cash','adspend','booked'].forEach(f=>{
+      totGen[f]+=(gs[f]||0); totMdp[f]+=(ms[f]||0);
+    });
+    totGen.days+=(gs.confirmed>0?1:0);
+    totMdp.days+=(ms.confirmed>0?1:0);
+  });
+
+  if(!daysInRange){
+    el.innerHTML='<div style="color:var(--text3);font-family:\'IBM Plex Mono\',monospace;font-size:12px;padding:12px 0;">No data entries found in this date range.</div>';
+    return;
+  }
+
+  const rangeLabel = start&&end ? `${start} → ${end}` : start ? `From ${start}` : end ? `Until ${end}` : 'All time';
+  const errors=[];
+  const pct=(a,b)=>b>0?((a/b)*100):0;
+  const f1=(v)=>v.toFixed(1);
+  const $=(v)=>'$'+Math.round(v).toLocaleString();
+
+  // ── THRESHOLDS ──
+  // 1. Show rate < 60%
+  ['Genesis','MDP'].forEach((prog,i)=>{
+    const t=i===0?totGen:totMdp;
+    const showRate=pct(t.shows,t.confirmed);
+    if(t.confirmed>0 && showRate<60){
+      errors.push({
+        sev:'critical', prog,
+        title:`📉 ${prog} Show Rate Below Target — ${f1(showRate)}% (target: 60%+)`,
+        desc:`In the selected range (${rangeLabel}), ${prog} recorded ${t.shows} shows from ${t.confirmed} confirmed bookings — a show rate of ${f1(showRate)}%. This is ${f1(60-showRate)}% below the 60% target. At current rate, you are losing approximately ${Math.round((t.confirmed*0.6)-t.shows)} potential shows per period.`,
+        fix:`Implement a 3-touch confirmation sequence: immediate booking confirmation, 24-hour reminder, 2-hour pre-call reminder. Aya should personally call all unconfirmed bookings the day before. Review no-show patterns — are certain lead sources showing up less? Maya to break down show rate by source (VSL vs DM) to identify the weakest funnel.`
+      });
+    }
+  });
+
+  // 2. Close rate < 40%
+  ['Genesis','MDP'].forEach((prog,i)=>{
+    const t=i===0?totGen:totMdp;
+    const closeRate=pct(t.closed,t.confirmed);
+    if(t.confirmed>0 && closeRate<40){
+      errors.push({
+        sev:'warning', prog,
+        title:`📉 ${prog} Close Rate Below Target — ${f1(closeRate)}% (target: 40%+)`,
+        desc:`${prog} closed ${t.closed} deals from ${t.confirmed} confirmed bookings — a close rate of ${f1(closeRate)}% in the range ${rangeLabel}. Target is 40%. Missing ${Math.round((t.confirmed*0.4)-t.closed)} closes to hit target.`,
+        fix:`Review call recordings for the most common objections. Elie to audit at least 3 lost deals per week. Check if offer framing, price anchoring, or urgency elements are missing. Consider adding a follow-up sequence for prospects who didn't close on the first call.`
+      });
+    }
+  });
+
+  // 3. Cost per booking > $100
+  ['Genesis','MDP'].forEach((prog,i)=>{
+    const t=i===0?totGen:totMdp;
+    const cpb=t.confirmed>0?t.adspend/t.confirmed:0;
+    if(t.adspend>0 && t.confirmed>0 && cpb>100){
+      errors.push({
+        sev:'warning', prog,
+        title:`💸 ${prog} Cost Per Booking Too High — ${$(cpb)} (target: under $100)`,
+        desc:`${prog} spent ${$(t.adspend)} in ad spend to generate ${t.confirmed} confirmed bookings — a CPB of ${$(cpb)} in the range ${rangeLabel}. This is ${$(cpb-100)} above the $100 threshold, meaning each booking costs more than your target.`,
+        fix:`Audit ad creatives — pause the lowest-performing ad sets immediately. Review targeting: are you reaching the right audience? Test new hooks or angles. Maya should break down CPB by source (VSL vs DM) to identify the expensive channel. Consider reallocating budget to the best-performing source.`
+      });
+    }
+  });
+
+  // 4. Confirmed bookings < 14/day total
+  const totalDaysWithData=Math.max(totGen.days,totMdp.days,daysInRange);
+  const totalDailyBooked=(totGen.confirmed+totMdp.confirmed)/Math.max(daysInRange,1);
+  if(daysInRange>0 && totalDailyBooked<14){
+    errors.push({
+      sev:'critical', prog:'Overall',
+      title:`📅 Daily Confirmed Bookings Below Target — ${f1(totalDailyBooked)}/day (target: 14+/day)`,
+      desc:`Across ${daysInRange} days in the range ${rangeLabel}, the team averaged ${f1(totalDailyBooked)} confirmed bookings per day (${totGen.confirmed+totMdp.confirmed} total). The target is 14+ per day. At this rate you are ${Math.round((14*daysInRange)-(totGen.confirmed+totMdp.confirmed))} bookings short of target for this period.`,
+      fix:`Aya must hit a minimum of 14 confirmed bookings per day. If not hitting, increase outbound call volume, review messaging scripts, and check that lead quality from ads is sufficient. Maya to flag any day below 10 confirmed bookings immediately to Hanadi. Consider whether a second setter is needed.`
+    });
+  }
+
+  // 5. Cash collected / revenue < 80%
+  ['Genesis','MDP'].forEach((prog,i)=>{
+    const t=i===0?totGen:totMdp;
+    const collectRate=pct(t.cash,t.revenue);
+    if(t.revenue>0 && collectRate<80){
+      errors.push({
+        sev:'warning', prog,
+        title:`💰 ${prog} Cash Collection Rate Low — ${f1(collectRate)}% of Revenue (target: 80%+)`,
+        desc:`${prog} collected ${$(t.cash)} out of ${$(t.revenue)} in revenue in the range ${rangeLabel} — a collection rate of ${f1(collectRate)}%. The ${$(t.revenue-t.cash)} gap represents uncollected deposits and payment plans that need active follow-up.`,
+        fix:`Fatima to run a weekly collection sweep: identify all clients with outstanding balances. Send payment reminders on Day 3, Day 7, and Day 14. For payment plans, set up automatic reminders. Consider requiring larger upfront deposits to reduce collection risk.`
+      });
+    }
+  });
+
+  if(!errors.length){
+    el.innerHTML=`<div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:16px 20px;margin-bottom:16px;font-family:var(--font-mono);font-size:13px;color:var(--green2);">✅ All metrics are within target for the selected range (${rangeLabel}). No auto-generated errors.</div>`;
+    return;
+  }
+
+  const sevStyle={critical:'border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.03);', warning:'border-color:rgba(249,115,22,.4);', info:''};
+  el.innerHTML=`
+    <div style="font-family:var(--font-mono);font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">⚡ ${errors.length} Auto-Generated Error${errors.length>1?'s':''} · ${rangeLabel}</div>
+    ${errors.map(e=>`
+    <div class="error-card" style="${sevStyle[e.sev]||''}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <div class="error-title" style="margin-bottom:0;">${escHtml(e.title)}</div>
+        <span style="margin-left:auto;font-size:10px;font-family:var(--font-mono);color:var(--text3);background:var(--bg3);padding:2px 8px;border-radius:4px;white-space:nowrap;">${e.prog} · Auto</span>
+      </div>
+      <div class="error-desc">${escHtml(e.desc)}</div>
+      <div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">${escHtml(e.fix)}</div></div>
+    </div>`).join('')}`;
+}
+
 async function saveError(){
   const author=document.getElementById('errAuthor').value;
   const severity=document.getElementById('errSeverity').value;
   const title=document.getElementById('errTitle').value.trim();
   const desc=document.getElementById('errDesc').value.trim();
   const fix=document.getElementById('errFix').value.trim();
-  if(!title){ alert('Please enter a title.'); return; }
+  if(!title){ toast('Please enter a title.','warning'); return; }
   const data=await loadAppData(); if(!data.errors) data.errors=[];
   data.errors.unshift({id:Date.now(),author,severity,title,desc,fix,date:new Date().toISOString().split('T')[0],month:activeMonthKey()});
   await saveAppData();
   ['errTitle','errDesc','errFix'].forEach(id=>document.getElementById(id).value='');
   toggleErrorForm(false);
+  toast('Error logged','success');
   renderErrors();
 }
+
 function renderErrors(){
   const el=document.getElementById('errorsList'); if(!el) return;
-  const data=_appData; if(!data||!data.errors||!data.errors.length){ el.innerHTML=''; return; }
+  const data=_appData; if(!data?.errors?.length){ el.innerHTML=''; return; }
+  const start=document.getElementById('err-start')?.value||'';
+  const end=document.getElementById('err-end')?.value||'';
+  let list=data.errors;
+  if(start) list=list.filter(e=>e.date>=start);
+  if(end)   list=list.filter(e=>e.date<=end);
+  if(!list.length){ el.innerHTML=''; return; }
   const sevIcon={critical:'🚨',warning:'⚠️',info:'📋'};
-  el.innerHTML=data.errors.map(e=>`
-    <div class="error-card" style="${e.severity==='critical'?'border-color:rgba(239,68,68,.4);':''}">
+  el.innerHTML=`
+    <div style="font-family:var(--font-mono);font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">📝 ${list.length} Manually Logged</div>
+    ${list.map(e=>`
+    <div class="error-card" style="border-color:rgba(234,179,8,.35);background:rgba(234,179,8,.02);">
       <div class="error-title">${sevIcon[e.severity]||'📋'} ${escHtml(e.title)}
-        <span style="font-size:10px;color:var(--text3);font-weight:400;margin-left:8px;font-family:'IBM Plex Mono',monospace;">${e.date} · ${escHtml(e.author)}</span>
+        <span style="font-size:10px;color:var(--text3);font-weight:400;margin-left:8px;font-family:var(--font-mono);">${e.date} · ${escHtml(e.author)}</span>
         <button onclick="deleteError(${e.id})" class="btn btn-danger btn-sm" style="float:right;padding:2px 8px;font-size:10px;">Delete</button>
       </div>
       ${e.desc?`<div class="error-desc">${escHtml(e.desc)}</div>`:''}
       ${e.fix?`<div class="resolution-card"><div class="resolution-title">✅ Resolution</div><div class="resolution-text">${escHtml(e.fix)}</div></div>`:''}
-    </div>`).join('');
+    </div>`).join('')}`;
 }
+
 async function deleteError(id){
   if(!confirmDelete('Delete this error log?')) return;
   const data=await loadAppData();
   data.errors=(data.errors||[]).filter(e=>e.id!==id);
   await saveAppData(); renderErrors();
 }
+
+// Init errors tab
+(function initErrors(){
+  const now=new Date(), y=now.getFullYear(), m=String(now.getMonth()+1).padStart(2,'0');
+  const es=document.getElementById('err-start'), ee=document.getElementById('err-end');
+  if(es) es.value=`${y}-${m}-01`;
+  if(ee) ee.value=now.toISOString().split('T')[0];
+  setTimeout(()=>{ runErrorEngine(); renderErrors(); }, 1600);
+})();
 async function addTask(){
   const key = document.getElementById('modalAssignee').value;
   const text = document.getElementById('modalTaskText').value.trim();
@@ -1589,8 +2061,7 @@ async function addTask(){
   const deadline = document.getElementById('modalDeadline').value;
   const recurring = document.getElementById('modalRecurring').value;
   if(!text) return;
-  const data = loadTasks();
-  if(!data[key]) data[key] = [];
+  const data = getTaskData();
   data[key].push({text, pri, deadline, recurring, done:false});
   await saveTasks(data);
   renderTasks();
@@ -1599,6 +2070,7 @@ async function addTask(){
 document.getElementById('taskModal').addEventListener('click', function(e){ if(e.target===this) closeTaskModal(); });
 document.getElementById('addPersonModal').addEventListener('click', function(e){ if(e.target===this) closeAddPersonModal(); });
 document.getElementById('commentModal').addEventListener('click', function(e){ if(e.target===this) closeCommentModal(); });
+document.getElementById('customKPIModal').addEventListener('click', function(e){ if(e.target===this) closeCustomKPIModal(); });
 renderTasks();
 
 // ════════════════════════════════════════════════════════════════
@@ -1621,12 +2093,13 @@ function closeGHModal(){
 }
 function saveGHConfig(){
   const owner=document.getElementById('gh-owner').value.trim(), repo=document.getElementById('gh-repo').value.trim(), token=document.getElementById('gh-token').value.trim();
-  if(!owner||!repo||!token){ alert('Please fill in all three fields.'); return; }
+  if(!owner||!repo||!token){ toast('Please fill in all three fields.','warning'); return; }
   localStorage.setItem('gh_owner',owner); localStorage.setItem('gh_repo',repo); localStorage.setItem('gh_token',token);
   _appData=null; _ghSHA=null;
   closeGHModal();
   updateSyncBadges('connecting');
-  loadAppData().then(()=>{ updateSyncBadges('ok'); refreshAllViews(); });
+  toast('Connecting to GitHub…','info');
+  loadAppData().then(()=>{ updateSyncBadges('ok'); refreshAllViews(); toast('GitHub connected — all data is live','success'); });
 }
 function clearGHConfig(){
   if(!confirm('Disconnect GitHub sync?')) return;
@@ -1666,7 +2139,7 @@ function handleSyncPillClick(){
 }
 
 const GH_DATA_PATH='data/appdata.json';
-let _ghSHA=null, _appData=null;
+let _ghSHA=null;
 
 async function ghReadFile(){
   const {owner,repo,token}=getGHConfig();
@@ -1686,8 +2159,8 @@ async function ghWriteFile(data,sha){
 
 function localFallback(){
   return {
-    reports:  JSON.parse(localStorage.getItem('ea_reports_v2')||'null')||[defaultReport],
-    meetings: JSON.parse(localStorage.getItem('ea_meetings_v2')||'null')||[defaultMeeting],
+    reports:  JSON.parse(localStorage.getItem('ea_reports_v2')||'null')||[],
+    meetings: JSON.parse(localStorage.getItem('ea_meetings_v2')||'null')||[],
     wins:     JSON.parse(localStorage.getItem('ea_kpi_wins')||'[]'),
     insights: JSON.parse(localStorage.getItem('ea_kpi_insights')||'[]'),
     improvements: JSON.parse(localStorage.getItem('ea_kpi_improvements')||'[]'),
@@ -1716,7 +2189,7 @@ async function saveAppData(silent=false){
   localStorage.setItem('ea_appdata_cache',JSON.stringify(_appData));
   if(!isGHConfigured()) return;
   try{ _ghSHA=await ghWriteFile(_appData,_ghSHA); }
-  catch(e){ if(!silent) alert('⚠️ Saved locally but GitHub sync failed:\n'+e.message); }
+  catch(e){ if(!silent) toast('Saved locally — GitHub sync failed: '+e.message,'error',6000); }
 }
 
 async function saveTasks(data){
@@ -1726,6 +2199,7 @@ async function saveTasks(data){
 
 function refreshAllViews(){
   if(!_appData) return;
+  ['ov','rep','meet','kpi'].forEach(tab=>updateTabMonthLabel(tab));
   renderReportsList(); renderMeetings();
   const d=_appData;
   renderKPIList(d.wins||[],'winsDisplay');
@@ -1735,10 +2209,12 @@ function refreshAllViews(){
   const ic=document.getElementById('insightsCount'); if(ic) ic.textContent=(d.insights||[]).length+' logged';
   const imc=document.getElementById('improvCount'); if(imc) imc.textContent=(d.improvements||[]).length+' logged';
   if(d.tasks) renderTasks();
+  else renderTasks(); // render defaults if no tasks yet
   if(typeof renderOverview==='function') renderOverview();
   if(typeof renderCalcCard==='function') renderCalcCard();
   if(typeof renderRecentEntries==='function') renderRecentEntries();
   if(typeof renderErrors==='function') renderErrors();
+  if(typeof runErrorEngine==='function') runErrorEngine();
   if(typeof renderCustomKPIs==='function') renderCustomKPIs();
 }
 
@@ -1755,8 +2231,7 @@ loadAppData().then(()=>{
 // ════════════════════════════════
 function renderKPIList(items,containerId){
   const el=document.getElementById(containerId); if(!el) return;
-  const mk=activeMonthKey();
-  const filtered=(items||[]).filter(i=>!i.month||i.month===mk).slice(-5).reverse();
+  const mk=tabMonthKey('kpi');
   el.innerHTML=filtered.map(i=>`<div class="kpi-target-row" style="margin-top:4px;"><span class="kpi-target-label" style="flex:1;">${escHtml(i.text)}</span><span class="kpi-target-range">${i.date}</span></div>`).join('')||'<div style="font-size:11px;color:var(--text3);padding:8px 0;">No entries yet.</div>';
 }
 async function logWin(){
@@ -1817,32 +2292,45 @@ async function saveAyaKPI(){
 }
 
 // ── Custom KPIs ──
-function toggleCustomKPIForm(show){ document.getElementById('customKPIForm').style.display=show?'block':'none'; }
+function toggleCustomKPIForm(show){ /* legacy stub */ }
+function openCustomKPIForm(person){
+  document.getElementById('customKPIModalPerson').textContent=person;
+  document.getElementById('customKPIModalPersonValue').value=person;
+  document.getElementById('kpi-name').value='';
+  document.getElementById('kpi-target').value='';
+  document.getElementById('customKPIModal').classList.add('show');
+}
+function closeCustomKPIModal(){ document.getElementById('customKPIModal').classList.remove('show'); }
 async function saveCustomKPI(){
-  const person=document.getElementById('kpi-person').value;
+  const person=document.getElementById('customKPIModalPersonValue').value;
   const name=document.getElementById('kpi-name').value.trim();
   const target=document.getElementById('kpi-target').value.trim();
-  if(!name){ alert('Please enter a KPI name.'); return; }
+  if(!name){ toast('Please enter a KPI name.','warning'); return; }
   const data=await loadAppData(); if(!data.customKPIs) data.customKPIs=[];
   data.customKPIs.push({id:Date.now(),person,name,target,month:activeMonthKey()});
   await saveAppData();
-  ['kpi-name','kpi-target'].forEach(id=>document.getElementById(id).value='');
-  toggleCustomKPIForm(false);
+  document.getElementById('kpi-name').value='';
+  document.getElementById('kpi-target').value='';
+  closeCustomKPIModal();
   renderCustomKPIs();
 }
 function renderCustomKPIs(){
-  const el=document.getElementById('customKPIList'); if(!el) return;
-  const data=_appData; if(!data||!data.customKPIs||!data.customKPIs.length){
-    el.innerHTML='<div style="color:var(--text3);font-size:12px;font-family:\'IBM Plex Mono\',monospace;">No custom KPIs added yet.</div>'; return;
-  }
-  const colors={'Elie Ashkar':'var(--accent2)','Hanadi Hammoud':'var(--accent2)','Fatima Rajab':'var(--gold)','Maya Timani':'var(--cyan)','Aya Saiid':'var(--green2)'};
-  el.innerHTML=data.customKPIs.map(k=>`
-    <div class="kpi-target-row">
-      <span style="font-size:10px;color:${colors[k.person]||'var(--text2)'};font-family:'IBM Plex Mono',monospace;font-weight:700;min-width:110px;">${k.person.split(' ')[0]}</span>
-      <span class="kpi-target-label">${escHtml(k.name)}</span>
-      <span class="kpi-target-range">${escHtml(k.target)}</span>
-      <button onclick="deleteCustomKPI(${k.id})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:0 4px;" title="Delete">✕</button>
-    </div>`).join('');
+  const data=_appData; if(!data?.customKPIs) return;
+  // Group by person
+  const byPerson={};
+  data.customKPIs.forEach(k=>{ if(!byPerson[k.person]) byPerson[k.person]=[]; byPerson[k.person].push(k); });
+  // Render into each person's container
+  ['Elie Ashkar','Hanadi Hammoud','Fatima Rajab','Maya Timani','Aya Saiid'].forEach(person=>{
+    const el=document.getElementById('customKPI-'+person); if(!el) return;
+    const items=byPerson[person]||[];
+    if(!items.length){ el.innerHTML='<div style="font-size:11px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace;padding:4px 0;">No custom KPIs yet.</div>'; return; }
+    el.innerHTML=items.map(k=>`
+      <div class="kpi-target-row">
+        <span class="kpi-target-label">📌 ${escHtml(k.name)}</span>
+        <span class="kpi-target-range">${escHtml(k.target)}</span>
+        <button onclick="deleteCustomKPI(${k.id})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:0 4px;" title="Delete">✕</button>
+      </div>`).join('');
+  });
 }
 async function deleteCustomKPI(id){
   if(!confirmDelete('Delete this KPI?')) return;
@@ -1854,7 +2342,6 @@ async function deleteCustomKPI(id){
 // ════════════════════════════════
 // DAILY REPORTS
 // ════════════════════════════════
-const defaultReport={id:1746000000000,date:'2026-04-29',author:'Hanadi Hammoud',type:'daily',month:'2026-04',content:`Daily Report\nDate: Wednesday, 29 April 2026\n\nSummary of Activities:\n• Conducted a meeting with Aya (new setter).\n• Attended a meeting with Elie, Fatima, and Maya.\n• Held a meeting with Jinane.\n• Conducted a follow-up meeting with Fatima and Maya.\n• Checked and reviewed yesterday's leads.\n• Continued updating the May plan and new tracking sheets.\n• Attended the RVO meeting.\n• Focused on optimization and building a structured plan moving forward.\n\nChallenges:\n• Aligning optimization efforts with ongoing operations requires clear prioritization and structured execution.\n\nAction Points:\n• Finalize and implement the May plan.\n• Ensure alignment across the team on optimization strategy.\n• Continue monitoring lead tracking and performance closely.`};
 
 function toggleReportForm(show){
   document.getElementById('reportForm').style.display=show?'block':'none';
@@ -1863,7 +2350,7 @@ function toggleReportForm(show){
 async function saveReport(){
   const date=document.getElementById('rDate').value,author=document.getElementById('rAuthor').value,
         type=document.getElementById('rType').value,content=document.getElementById('rContent').value.trim();
-  if(!content){ alert('Please paste the report content.'); return; }
+  if(!content){ toast('Please paste the report content.','warning'); return; }
   const btn=document.querySelector('#reportForm .btn-primary');
   btn.textContent='Saving…'; btn.disabled=true;
   const d=await loadAppData(); if(!d.reports) d.reports=[];
@@ -1871,25 +2358,28 @@ async function saveReport(){
   await saveAppData();
   document.getElementById('rContent').value='';
   toggleReportForm(false); btn.textContent='Save Report'; btn.disabled=false;
+  toast('Report saved successfully','success');
   renderReportsList();
 }
 const AUTHOR_COLORS={'Elie Ashkar':'var(--accent2)','Hanadi Hammoud':'var(--accent2)','Fatima Rajab':'var(--gold)','Maya Timani':'var(--cyan)','Aya Saiid':'var(--green2)'};
 const TYPE_LABELS={daily:'Daily Report',weekly:'Weekly Summary',incident:'Issue / Incident',other:'Other'};
 function renderReportsList(){
   const filterPerson=document.getElementById('reportFilterPerson').value;
-  const mk=activeMonthKey();
-  const d=_appData||{reports:[defaultReport]};
-  let list=(d.reports||[defaultReport]).filter(r=>(r.month||r.date||'').startsWith(mk));
+  const q=(document.getElementById('reportSearch')?.value||'').toLowerCase();
+  const mk=tabMonthKey('rep');
+  const d=_appData||{reports:[]};
+  let list=(d.reports||[]).filter(r=>(r.month||r.date||'').startsWith(mk));
   if(filterPerson) list=list.filter(r=>r.author===filterPerson);
+  if(q) list=list.filter(r=>(r.content||'').toLowerCase().includes(q)||(r.author||'').toLowerCase().includes(q));
   document.getElementById('reportsList').innerHTML=list.length===0
-    ?'<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No reports for '+activeMonthLabel()+'.</div>'
+    ?`<div style="text-align:center;color:var(--text3);padding:40px;font-family:var(--font-mono);font-size:12px;">No reports for ${tabMonthLabel('rep')}.</div>`
     :list.map(r=>{
       const dateStr=r.date?new Date(r.date).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'—';
       const color=AUTHOR_COLORS[r.author]||'var(--text2)';
       return `<div class="report-card">
         <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
           <div><div class="report-date-chip">${dateStr}${r.time ? ' · '+r.time : ''}</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${TYPE_LABELS[r.type]||r.type} <span style="color:${color};font-weight:600;">— ${r.author}</span></div></div>
+          <div style="font-family:var(--font-mono);font-size:13px;font-weight:700;margin-top:4px;">${TYPE_LABELS[r.type]||r.type} · ${personBadge(r.author)}</div></div>
             <button onclick="event.stopPropagation();deleteReport(${r.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
             <span class="chevron">▶</span></div>
         </div>
@@ -1908,7 +2398,6 @@ renderReportsList();
 // ════════════════════════════════
 // MEETING NOTES
 // ════════════════════════════════
-const defaultMeeting={id:1,date:'2026-02-05',title:'Setter Performance & MDP Scaling Goals — EAXRVO',attendees:'Elie Ashkar · Stephan Z · Abdallah Staitieh · Hanadi Hammoud',program:'Genesis',month:'2026-02',content:`Feb 5, 2026 — EAXRVO Meeting\n\nSUMMARY\nElie Ashkar and Stephan Z discussed scaling MDP to 70–90 students and achieving $78K–$113K monthly revenue. Scaling identified as a "setter game" — setters must hit 10–12 bookings/day and 10% message-to-booking rate minimum.\n\nKEY POINTS\n• Pessimistic: 55% show-up + 35% close = $78K revenue\n• Average: 60% show-up + 35% close = $85K revenue\n• Optimistic: 65% show-up + 35% close = $92K revenue\n• Best case: 70% show-up + 40% close = $113K revenue (132–151 students)\n• Need 540 bookings/month = 18–24/day from 2 setters\n• Setters can earn $2K+/month with bonuses if KPIs hit\n• Lead center must be cleaned daily — categorize hot/no-show/dead\n• 15% of Genesis leads are business owners → good MDP prospects\n• Content creation + Google Ads to make MDP easier to close at $1.5K\n• Out of 59 students, 58 were not "super sophisticated" — focus on freelancers\n\nNEXT STEPS\n• Elie to review lead center and ensure document is updated\n• Send content creation brief based on pain points to group\n• Talk to lead center team on daily KPI dashboard setup\n• Find common ground with setters on booking targets for May`};
 
 function toggleMeetingForm(show){
   document.getElementById('meetingForm').style.display=show?'block':'none';
@@ -1918,8 +2407,8 @@ async function saveMeeting(){
   const date=document.getElementById('mDate').value,title=document.getElementById('mTitle').value.trim(),
         attendees=document.getElementById('mAttendees').value.trim(),program=document.getElementById('mProgram').value,
         content=document.getElementById('mContent').value.trim();
-  if(!title){ alert('Please enter a meeting title.'); return; }
-  if(!content){ alert('Please paste the meeting notes.'); return; }
+  if(!title){ toast('Please enter a meeting title.','warning'); return; }
+  if(!content){ toast('Please paste the meeting notes.','warning'); return; }
   const btn=document.querySelector('#meetingForm .btn-primary');
   btn.textContent='Saving…'; btn.disabled=true;
   const d=await loadAppData(); if(!d.meetings) d.meetings=[];
@@ -1928,18 +2417,19 @@ async function saveMeeting(){
   ['mDate','mTitle','mAttendees','mContent'].forEach(id=>document.getElementById(id).value='');
   await saveAppData(); toggleMeetingForm(false);
   btn.textContent='Save Meeting Notes'; btn.disabled=false;
+  toast('Meeting notes saved','success');
   renderMeetings();
 }
 const PROG_TAG_CLASS={Genesis:'genesis',MDP:'mdp',Sales:'booked','General':'lead'};
 function renderMeetings(){
   const q=(document.getElementById('meetingSearch').value||'').toLowerCase();
-  const mk=activeMonthKey();
-  const d=_appData||{meetings:[defaultMeeting]};
-  let meetings=(d.meetings||[defaultMeeting]).filter(m=>(m.month||m.date||'').startsWith(mk));
+  const mk=tabMonthKey('meet');
+  const d=_appData||{meetings:[]};
+  let meetings=(d.meetings||[]).filter(m=>(m.month||m.date||'').startsWith(mk));
   if(q) meetings=meetings.filter(m=>(m.title||'').toLowerCase().includes(q)||(m.attendees||'').toLowerCase().includes(q)||(m.content||'').toLowerCase().includes(q));
   const syncBadge=isGHConfigured()?'<span class="status-badge badge-green"><span class="badge-dot"></span>Synced</span>':'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only</span>';
   document.getElementById('meetingsList').innerHTML=meetings.length===0
-    ?'<div style="text-align:center;color:var(--text3);padding:40px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No meetings for '+activeMonthLabel()+'.</div>'
+    ?`<div style="text-align:center;color:var(--text3);padding:40px;font-family:var(--font-mono);font-size:12px;">No meetings for ${tabMonthLabel('meet')}.</div>`
     :meetings.map(m=>{
       const dateStr=m.date?new Date(m.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'—';
       const tagCls=PROG_TAG_CLASS[m.program]||'lead';
@@ -1947,9 +2437,10 @@ function renderMeetings(){
       return `<div class="report-card">
         <div class="report-header" onclick="handleMeetingClick(this,${m.id})">
           <div><div class="report-date-chip">${dateStr}${m.time ? ' · '+m.time : ''}</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;">${privateBadge}${escHtml(m.title)}</div>
+          <div style="font-family:var(--font-mono);font-size:13px;font-weight:700;margin-top:3px;">${privateBadge}${escHtml(m.title)}</div>
           <div style="font-size:11px;color:var(--text3);margin-top:3px;">${escHtml(m.attendees||'')}</div></div>
-          <div style="display:flex;align-items:center;gap:8px;">${syncBadge}<span class="tag ${tagCls}">${m.program}</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            ${syncBadge}<span class="tag ${tagCls}">${m.program}</span>
             <button onclick="event.stopPropagation();deleteMeeting(${m.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
             <span class="chevron">▶</span></div>
         </div>
@@ -1972,7 +2463,7 @@ function handleMeetingClick(header, id){
   if(m && m.private && sessionStorage.getItem('private_meeting_auth')!=='1'){
     const pw=prompt('🔒 This is a private meeting.\n\nEnter password to view:');
     if(pw===PRIVATE_PW){ sessionStorage.setItem('private_meeting_auth','1'); }
-    else { alert('Incorrect password.'); return; }
+    else { toast('Incorrect password.','error'); return; }
     // Show content now
     body.querySelector('.report-raw').innerHTML=escHtml(m.content);
   }
@@ -1986,11 +2477,19 @@ renderMeetings();
 // ════════════════════════════════
 const DE_PASSWORD = 'ea_888!!';
 function checkDePassword(){
-  const val = document.getElementById('de-pw-input').value;
-  if(val === DE_PASSWORD){
+  const val=document.getElementById('de-pw-input').value;
+  if(val===DE_PASSWORD){
     sessionStorage.setItem('de_auth','1');
     document.getElementById('de-gate').style.display='none';
     document.getElementById('de-content').style.display='block';
+    // Init source forms
+    ['gen','mdp'].forEach(prog=>{
+      const source=_deActiveSource[prog];
+      const form=document.getElementById(`de-${prog}-form`);
+      if(form) form.innerHTML=buildSourceForm(prog,source);
+      const btn=document.getElementById(`de-${prog}-save-btn`);
+      if(btn){ btn.disabled=true; btn.textContent=`💾 Save ${prog==='gen'?'Genesis':'MDP'} ${DE_SOURCE_LABELS[source]} Entry`; }
+    });
     setDeToday();
     renderRecentEntries();
   } else {
@@ -2002,92 +2501,202 @@ if(sessionStorage.getItem('de_auth')==='1'){
   setTimeout(()=>{
     const g=document.getElementById('de-gate'), c=document.getElementById('de-content');
     if(g) g.style.display='none'; if(c) c.style.display='block';
+    ['gen','mdp'].forEach(prog=>{
+      const source=_deActiveSource[prog];
+      const form=document.getElementById(`de-${prog}-form`);
+      if(form) form.innerHTML=buildSourceForm(prog,source);
+      const btn=document.getElementById(`de-${prog}-save-btn`);
+      if(btn){ btn.disabled=true; btn.textContent=`💾 Save ${prog==='gen'?'Genesis':'MDP'} ${DE_SOURCE_LABELS[source]} Entry`; }
+    });
     setDeToday(); renderRecentEntries();
   },200);
 }
 
-// ════════════════════════════════
-// DATA ENTRY
-// ════════════════════════════════
-const DE_FIELDS = ['optins','booked','confirmed','shows','noshows','closed','revenue','deposits','cash','adspend'];
 
-function calcNoShows(prog){
-  const conf = parseFloat(document.getElementById('de-'+prog+'-confirmed').value)||0;
-  const shows = parseFloat(document.getElementById('de-'+prog+'-shows').value)||0;
-  const ns = Math.max(0, conf - shows);
-  document.getElementById('de-'+prog+'-noshows').value = ns||'';
+// ════════════════════════════════
+// DATA ENTRY — source-aware
+// ════════════════════════════════
+
+function buildSourceForm(prog, source){
+  const isVSL = source === 'vsl';
+  const pid = `de-${prog}-${source}`;
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label class="form-label">Opt-ins</label><input class="form-input" type="number" id="${pid}-optins" placeholder="0" oninput="enableSaveBtn('${prog}')" /></div>
+      ${isVSL ? `
+      <div><label class="form-label">Outbound Bookings</label><input class="form-input" type="number" id="${pid}-outbound" placeholder="0" oninput="calcVSLTotal('${prog}','${source}')" /></div>
+      <div><label class="form-label">VSL Bookings</label><input class="form-input" type="number" id="${pid}-vslbook" placeholder="0" oninput="calcVSLTotal('${prog}','${source}')" /></div>
+      <div><label class="form-label">Total Booked <span style="color:var(--text3);font-size:10px;">(auto)</span></label><input class="form-input" type="number" id="${pid}-booked" placeholder="0" readonly style="opacity:.6;cursor:not-allowed;" /></div>
+      ` : `
+      <div><label class="form-label">Total Booked</label><input class="form-input" type="number" id="${pid}-booked" placeholder="0" oninput="enableSaveBtn('${prog}')" /></div>
+      `}
+      <div><label class="form-label">Confirmed</label><input class="form-input" type="number" id="${pid}-confirmed" placeholder="0" oninput="calcNoShowsSrc('${prog}','${source}')" /></div>
+      <div><label class="form-label">Shows</label><input class="form-input" type="number" id="${pid}-shows" placeholder="0" oninput="calcNoShowsSrc('${prog}','${source}')" /></div>
+      <div><label class="form-label">No Shows <span style="color:var(--text3);font-size:10px;">(auto)</span></label><input class="form-input" type="number" id="${pid}-noshows" placeholder="0" readonly style="opacity:.6;cursor:not-allowed;" /></div>
+      <div><label class="form-label">Closed</label><input class="form-input" type="number" id="${pid}-closed" placeholder="0" oninput="enableSaveBtn('${prog}')" /></div>
+      <div><label class="form-label">Revenue ($)</label><input class="form-input" type="number" id="${pid}-revenue" placeholder="0" oninput="enableSaveBtn('${prog}')" /></div>
+      <div><label class="form-label">Deposits ($)</label><input class="form-input" type="number" id="${pid}-deposits" placeholder="0" oninput="enableSaveBtn('${prog}')" /></div>
+      <div style="grid-column:span 2;"><label class="form-label">Cash Collected ($) <span style="color:var(--red2);font-size:10px;">including deposits</span></label><input class="form-input" type="number" id="${pid}-cash" placeholder="0" oninput="enableSaveBtn('${prog}')" /></div>
+      <div style="grid-column:span 2;"><label class="form-label">Ad Spend ($)</label><input class="form-input" type="number" id="${pid}-adspend" placeholder="0" oninput="enableSaveBtn('${prog}')" /></div>
+    </div>`;
+}
+
+function switchDeSource(prog, source){
+  _deActiveSource[prog] = source;
+  DE_SOURCES[prog].forEach(s=>{
+    const btn=document.getElementById(`de-${prog}-tab-${s}`);
+    if(btn) btn.className = s===source ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm';
+  });
+  const form=document.getElementById(`de-${prog}-form`);
+  if(form) form.innerHTML=buildSourceForm(prog, source);
+  loadSourceFields(prog, source);
+  const btn=document.getElementById(`de-${prog}-save-btn`);
+  if(btn){ btn.disabled=true; btn.textContent=`💾 Save ${prog==='gen'?'Genesis':'MDP'} ${DE_SOURCE_LABELS[source]} Entry`; }
+  const st=document.getElementById(`de-${prog}-status`); if(st) st.textContent='';
+}
+
+function enableSaveBtn(prog){
+  const btn=document.getElementById(`de-${prog}-save-btn`); if(btn) btn.disabled=false;
+}
+
+function calcVSLTotal(prog, source){
+  const pid=`de-${prog}-${source}`;
+  const out=parseFloat(document.getElementById(`${pid}-outbound`)?.value)||0;
+  const vsl=parseFloat(document.getElementById(`${pid}-vslbook`)?.value)||0;
+  const booked=document.getElementById(`${pid}-booked`);
+  if(booked) booked.value=(out+vsl)||'';
+  enableSaveBtn(prog);
+}
+
+function calcNoShowsSrc(prog, source){
+  const pid=`de-${prog}-${source}`;
+  const conf=parseFloat(document.getElementById(`${pid}-confirmed`)?.value)||0;
+  const shows=parseFloat(document.getElementById(`${pid}-shows`)?.value)||0;
+  const ns=document.getElementById(`${pid}-noshows`);
+  if(ns) ns.value=Math.max(0,conf-shows)||'';
+  enableSaveBtn(prog);
+}
+
+function loadSourceFields(prog, source){
+  const date=document.getElementById('de-date')?.value; if(!date||!_appData) return;
+  const src=_appData.dailyData?.[date]?.[prog]?.[source];
+  if(!src) return;
+  const pid=`de-${prog}-${source}`;
+  ['optins','booked','outbound','vslbook','confirmed','shows','noshows','closed','revenue','deposits','cash','adspend'].forEach(f=>{
+    const el=document.getElementById(`${pid}-${f}`);
+    if(el&&src[f]!=null) el.value=src[f];
+  });
+  const btn=document.getElementById(`de-${prog}-save-btn`); if(btn) btn.disabled=true;
+}
+
+async function loadDayData(){
+  const date=document.getElementById('de-date')?.value; if(!date) return;
+  await loadAppData();
+  ['gen','mdp'].forEach(prog=>{
+    const source=_deActiveSource[prog];
+    const form=document.getElementById(`de-${prog}-form`);
+    if(form) form.innerHTML=buildSourceForm(prog, source);
+    loadSourceFields(prog, source);
+    const btn=document.getElementById(`de-${prog}-save-btn`);
+    if(btn){ btn.disabled=true; btn.textContent=`💾 Save ${prog==='gen'?'Genesis':'MDP'} ${DE_SOURCE_LABELS[source]} Entry`; }
+    const st=document.getElementById(`de-${prog}-status`); if(st) st.textContent='';
+  });
+  // Reset source tab labels
+  DE_SOURCES.gen.forEach(s=>{ const b=document.getElementById(`de-gen-tab-${s}`); if(b) b.textContent=DE_SOURCE_LABELS[s]; });
+  DE_SOURCES.mdp.forEach(s=>{ const b=document.getElementById(`de-mdp-tab-${s}`); if(b) b.textContent=DE_SOURCE_LABELS[s]; });
+  // Check which sources already have data for this date and mark them
+  if(_appData?.dailyData?.[date]){
+    const day=_appData.dailyData[date];
+    DE_SOURCES.gen.forEach(s=>{ if(day.gen?.[s]){ const b=document.getElementById(`de-gen-tab-${s}`); if(b) b.textContent='✓ '+DE_SOURCE_LABELS[s]; }});
+    DE_SOURCES.mdp.forEach(s=>{ if(day.mdp?.[s]){ const b=document.getElementById(`de-mdp-tab-${s}`); if(b) b.textContent='✓ '+DE_SOURCE_LABELS[s]; }});
+  }
+  if(s) s.textContent=hasSomeData?`✓ Loaded data for ${date}`:`No data yet for ${date}`;
+  renderRecentEntries();
+}
+
+async function saveSourceData(prog){
+  const date=document.getElementById('de-date')?.value; if(!date){toast('Please select a date.','warning');return;}
+  const source=_deActiveSource[prog];
+  const pid=`de-${prog}-${source}`;
+  const isVSL=source==='vsl';
+  const entry={};
+  ['optins','booked','confirmed','shows','noshows','closed','revenue','deposits','cash','adspend'].forEach(f=>{
+    const v=document.getElementById(`${pid}-${f}`)?.value;
+    entry[f]=v===''||v==null?null:parseFloat(v);
+  });
+  if(isVSL){
+    const vo=document.getElementById(`${pid}-outbound`)?.value;
+    const vv=document.getElementById(`${pid}-vslbook`)?.value;
+    entry.outbound=vo?parseFloat(vo):null;
+    entry.vslbook=vv?parseFloat(vv):null;
+  }
+  entry.savedAt=new Date().toISOString();
+  const data=await loadAppData();
+  if(!data.dailyData) data.dailyData={};
+  if(!data.dailyData[date]) data.dailyData[date]={};
+  if(!data.dailyData[date][prog]) data.dailyData[date][prog]={};
+  data.dailyData[date][prog][source]=entry;
+  const st=document.getElementById(`de-${prog}-status`); if(st) st.textContent='Saving…';
+  await saveAppData();
+  const time=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  if(st) st.textContent=`✓ Saved ${DE_SOURCE_LABELS[source]} at ${time}`;
+  const btn2=document.getElementById(`de-${prog}-save-btn`); if(btn2) btn2.disabled=true;
+  // Mark source tab button as complete with checkmark
+  const tabBtn=document.getElementById(`de-${prog}-tab-${source}`);
+  if(tabBtn && !tabBtn.textContent.includes('✓')) tabBtn.textContent='✓ '+DE_SOURCE_LABELS[source];
+  renderRecentEntries(); renderOverview(); renderCalcCard();
 }
 
 function setDeToday(){
   const el=document.getElementById('de-date'); if(!el) return;
-  el.value = new Date().toISOString().split('T')[0];
-  loadDayData();
+  el.value=new Date().toISOString().split('T')[0]; loadDayData();
 }
 function shiftDeDate(dir){
   const input=document.getElementById('de-date'); if(!input) return;
-  const d = input.value ? new Date(input.value+'T12:00:00') : new Date();
+  const d=input.value?new Date(input.value+'T12:00:00'):new Date();
   d.setDate(d.getDate()+dir);
-  input.value = d.toISOString().split('T')[0];
-  loadDayData();
+  input.value=d.toISOString().split('T')[0]; loadDayData();
 }
-async function loadDayData(){
-  const date=document.getElementById('de-date')?.value; if(!date) return;
-  const data=await loadAppData();
-  if(!data.dailyData) data.dailyData={};
-  const day=data.dailyData[date]||{};
-  DE_FIELDS.forEach(f=>{
-    const eg=document.getElementById('de-gen-'+f), em=document.getElementById('de-mdp-'+f);
-    if(eg&&!eg.readOnly) eg.value=(day.gen&&day.gen[f]!=null)?day.gen[f]:'';
-    if(em&&!em.readOnly) em.value=(day.mdp&&day.mdp[f]!=null)?day.mdp[f]:'';
+
+// Sum all sources for a program object
+function sumSources(progObj){
+  if(!progObj) return null;
+  const tot={optins:0,booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,deposits:0,cash:0,adspend:0};
+  let hasAny=false;
+  Object.values(progObj).forEach(src=>{
+    if(typeof src!=='object'||!src) return;
+    hasAny=true;
+    Object.keys(tot).forEach(f=>{ tot[f]+=(src[f]||0); });
   });
-  // set readonly no-shows
-  if(day.gen){ document.getElementById('de-gen-noshows').value=day.gen.noshows??''; }
-  if(day.mdp){ document.getElementById('de-mdp-noshows').value=day.mdp.noshows??''; }
-  const s=document.getElementById('de-save-status');
-  if(s) s.textContent=(day.gen||day.mdp)?'✓ Loaded data for '+date:'No data yet for '+date;
-  renderRecentEntries();
-}
-async function saveDayData(){
-  const date=document.getElementById('de-date')?.value; if(!date){alert('Please select a date.');return;}
-  // recalc no-shows before saving
-  calcNoShows('gen'); calcNoShows('mdp');
-  const data=await loadAppData(); if(!data.dailyData) data.dailyData={};
-  const gen={},mdp={};
-  DE_FIELDS.forEach(f=>{
-    const vg=document.getElementById('de-gen-'+f)?.value; gen[f]=vg===''||vg==null?null:parseFloat(vg);
-    const vm=document.getElementById('de-mdp-'+f)?.value; mdp[f]=vm===''||vm==null?null:parseFloat(vm);
-  });
-  data.dailyData[date]={gen,mdp,savedAt:new Date().toISOString()};
-  const s=document.getElementById('de-save-status'); if(s) s.textContent='Saving…';
-  await saveAppData();
-  if(s) s.textContent='✓ Saved '+date+' at '+new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-  renderRecentEntries();
-  renderOverview();
-  renderCalcCard();
+  return hasAny?tot:null;
 }
 
 function renderRecentEntries(){
   const el=document.getElementById('de-recent'); if(!el) return;
-  const data=_appData; if(!data||!data.dailyData){el.innerHTML='<div style="color:var(--text3);padding:16px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No entries yet.</div>';return;}
+  const data=_appData;
+  if(!data?.dailyData||!Object.keys(data.dailyData).length){
+    el.innerHTML='<div style="color:var(--text3);padding:16px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No entries yet.</div>'; return;
+  }
   const dates=Object.keys(data.dailyData).sort().reverse().slice(0,14);
-  if(!dates.length){el.innerHTML='<div style="color:var(--text3);padding:16px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No entries yet.</div>';return;}
   const selDate=document.getElementById('de-date')?.value;
+  const $f=v=>v!=null&&v>0?'$'+Number(v).toLocaleString():'—';
+  const n=v=>v!=null?v:'—';
+  const gSrcs=['vsl','dm'], mSrcs=['dm','leadgen','vsl'];
+  const gH=gSrcs.map(s=>`<th colspan="4" style="background:rgba(108,99,255,.08);">Gen ${DE_SOURCE_LABELS[s]}</th>`).join('');
+  const mH=mSrcs.map(s=>`<th colspan="4" style="background:rgba(234,179,8,.06);">MDP ${DE_SOURCE_LABELS[s]}</th>`).join('');
+  const sub=()=>'<th>Booked</th><th>Conf</th><th>Shows</th><th>Closed</th>';
   el.innerHTML=`<div class="table-scroll"><table>
-    <thead><tr>
-      <th>Date</th>
-      <th>Gen Opt-ins</th><th>Gen Booked</th><th>Gen Conf</th><th>Gen Shows</th><th>Gen No-Shows</th><th>Gen Closed</th><th>Gen Revenue</th><th>Gen Cash</th><th>Gen AdSpend</th>
-      <th>MDP Opt-ins</th><th>MDP Booked</th><th>MDP Conf</th><th>MDP Shows</th><th>MDP No-Shows</th><th>MDP Closed</th><th>MDP Revenue</th><th>MDP Cash</th><th>MDP AdSpend</th>
-    </tr></thead>
+    <thead>
+      <tr><th rowspan="2">Date</th>${gH}${mH}</tr>
+      <tr>${gSrcs.map(sub).join('')}${mSrcs.map(sub).join('')}</tr>
+    </thead>
     <tbody>${dates.map(d=>{
-      const g=data.dailyData[d].gen||{},m=data.dailyData[d].mdp||{};
+      const day=data.dailyData[d]||{};
       const hi=d===selDate?'background:rgba(108,99,255,.1);':'';
-      const $ =v=>v!=null?'$'+Number(v).toLocaleString():'—';
-      const n =v=>v!=null?v:'—';
+      const gc=gSrcs.map(s=>{const src=day.gen?.[s]||{};return `<td>${n(src.booked)}</td><td>${n(src.confirmed)}</td><td>${n(src.shows)}</td><td>${n(src.closed)}</td>`;}).join('');
+      const mc=mSrcs.map(s=>{const src=day.mdp?.[s]||{};return `<td>${n(src.booked)}</td><td>${n(src.confirmed)}</td><td>${n(src.shows)}</td><td>${n(src.closed)}</td>`;}).join('');
       return `<tr style="${hi}cursor:pointer;" onclick="document.getElementById('de-date').value='${d}';loadDayData();">
-        <td style="color:var(--accent2);font-family:'IBM Plex Mono',monospace;white-space:nowrap;">${d}</td>
-        <td>${n(g.optins)}</td><td>${n(g.booked)}</td><td>${n(g.confirmed)}</td><td>${n(g.shows)}</td><td>${n(g.noshows)}</td><td>${n(g.closed)}</td><td>${$(g.revenue)}</td><td>${$(g.cash)}</td><td>${$(g.adspend)}</td>
-        <td>${n(m.optins)}</td><td>${n(m.booked)}</td><td>${n(m.confirmed)}</td><td>${n(m.shows)}</td><td>${n(m.noshows)}</td><td>${n(m.closed)}</td><td>${$(m.revenue)}</td><td>${$(m.cash)}</td><td>${$(m.adspend)}</td>
-      </tr>`;
+        <td style="color:var(--accent2);font-family:var(--font-mono);white-space:nowrap;">${d}</td>${gc}${mc}</tr>`;
     }).join('')}</tbody></table></div>`;
 }
 
@@ -2095,40 +2704,49 @@ function renderRecentEntries(){
 // RENDER OVERVIEW FROM DAILY DATA
 // ════════════════════════════════
 function sumMonthData(monthKey){
-  const data=_appData; if(!data||!data.dailyData) return null;
+  const data=_appData; if(!data?.dailyData) return null;
   const g={optins:0,booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,deposits:0,cash:0,adspend:0};
   const m={optins:0,booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,deposits:0,cash:0,adspend:0};
   let found=0;
   Object.keys(data.dailyData).forEach(date=>{
-    if(date.startsWith(monthKey)){
-      found++;
-      const gd=data.dailyData[date].gen||{}, md=data.dailyData[date].mdp||{};
-      Object.keys(g).forEach(f=>{ g[f]+=(gd[f]||0); m[f]+=(md[f]||0); });
-    }
+    if(!date.startsWith(monthKey)) return;
+    found++;
+    const gs=sumSources(data.dailyData[date].gen);
+    const ms=sumSources(data.dailyData[date].mdp);
+    if(gs) Object.keys(g).forEach(f=>{ g[f]+=(gs[f]||0); });
+    if(ms) Object.keys(m).forEach(f=>{ m[f]+=(ms[f]||0); });
   });
   return found?{g,m,days:found}:null;
 }
 
 function getWeeklyBreakdown(monthKey, prog){
-  const data=_appData; if(!data||!data.dailyData) return [];
+  const data=_appData; if(!data?.dailyData) return [];
   const weeks={};
+  const sources=DE_SOURCES[prog]||[];
   Object.keys(data.dailyData).sort().forEach(date=>{
     if(!date.startsWith(monthKey)) return;
     const d=new Date(date+'T12:00:00');
-    // Get Monday of this week
-    const day=d.getDay(); const diff=day===0?-6:1-day;
-    const mon=new Date(d); mon.setDate(d.getDate()+diff);
-    const wkey=mon.toISOString().split('T')[0];
-    if(!weeks[wkey]) weeks[wkey]={booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,cash:0,adspend:0,dates:[]};
-    const src=data.dailyData[date][prog]||{};
-    Object.keys(weeks[wkey]).forEach(f=>{ if(f!=='dates') weeks[wkey][f]+=(src[f]||0); });
-    weeks[wkey].dates.push(date);
+    const dow=d.getDay(); const diff=dow===0?-6:1-dow;
+    const mon=new Date(d.getFullYear(),d.getMonth(),d.getDate()+diff);
+    const wkey=`${mon.getFullYear()}-${String(mon.getMonth()+1).padStart(2,'0')}-${String(mon.getDate()).padStart(2,'0')}`;
+    if(!weeks[wkey]){
+      weeks[wkey]={booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,cash:0,adspend:0,bySrc:{}};
+      sources.forEach(s=>{ weeks[wkey].bySrc[s]={booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,cash:0,adspend:0}; });
+    }
+    const progData=data.dailyData[date][prog]||{};
+    sources.forEach(s=>{
+      const src=progData[s]||{};
+      ['booked','confirmed','shows','noshows','closed','revenue','cash','adspend'].forEach(f=>{
+        weeks[wkey][f]+=(src[f]||0);
+        weeks[wkey].bySrc[s][f]+=(src[f]||0);
+      });
+    });
   });
   return Object.entries(weeks).sort((a,b)=>a[0]>b[0]?1:-1).map(([wkey,w])=>{
     const monD=new Date(wkey+'T12:00:00');
-    const sunD=new Date(monD); sunD.setDate(monD.getDate()+6);
+    const sunD=new Date(monD.getFullYear(),monD.getMonth(),monD.getDate()+6);
     const fmt=d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    return {...w, label:`${fmt(monD)} – ${fmt(sunD)}`};
+    return {...w, label:`${fmt(monD)} – ${fmt(sunD)}`, monKey:wkey};
   });
 }
 
@@ -2149,8 +2767,8 @@ function renderOverview(){
       'ov-gen-optins','ov-gen-booked','ov-gen-confirmed','ov-gen-shows','ov-gen-noshows','ov-gen-closed','ov-gen-revenue','ov-gen-cash','ov-gen-adspend','ov-gen-showrate','ov-gen-closerate',
       'ov-mdp-optins','ov-mdp-booked','ov-mdp-confirmed','ov-mdp-shows','ov-mdp-noshows','ov-mdp-closed','ov-mdp-revenue','ov-mdp-cash','ov-mdp-adspend','ov-mdp-showrate','ov-mdp-closerate'];
     ids.forEach(id=>set(id,'—'));
-    renderWeeklyTable('ov-weekly-table', [], lbl, mk);
-    renderWeeklyTable('ov-mdp-weekly-table', [], lbl, mk);
+    renderWeeklyTable('ov-weekly-table', [], lbl, mk, 'gen');
+    renderWeeklyTable('ov-mdp-weekly-table', [], lbl, mk, 'mdp');
     return;
   }
   const {g,m}=result;
@@ -2192,12 +2810,12 @@ function renderOverview(){
   set('ov-mdp-closerate',pct(m.confirmed?(m.closed/m.confirmed)*100:0)+' close rate');
 
   // Weekly tables
-  renderWeeklyTable('ov-weekly-table', getWeeklyBreakdown(mk,'gen'), lbl, mk);
-  renderWeeklyTable('ov-mdp-weekly-table', getWeeklyBreakdown(mk,'mdp'), lbl, mk);
+  renderWeeklyTable('ov-weekly-table', getWeeklyBreakdown(mk,'gen'), lbl, mk, 'gen');
+  renderWeeklyTable('ov-mdp-weekly-table', getWeeklyBreakdown(mk,'mdp'), lbl, mk, 'mdp');
 }
 
 function noDataMsg(lbl){
-  return `<div style="padding:24px;text-align:center;color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:12px;">No data entered yet for ${lbl}. Go to Data Entry to add daily figures.</div>`;
+  return `<div style="padding:24px;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;">No data entered yet for ${lbl}. Go to Data Entry to add daily figures.</div>`;
 }
 
 function getMonthWeekSkeletons(monthKey){
@@ -2219,48 +2837,70 @@ function getMonthWeekSkeletons(monthKey){
   return weeks;
 }
 
-function renderWeeklyTable(containerId, weeks, lbl, monthKey){
+function renderWeeklyTable(containerId, weeks, lbl, monthKey, prog){
   const el=document.getElementById(containerId); if(!el) return;
+  const sources = prog ? (DE_SOURCES[prog]||[]) : [];
   const pct=v=>v>0?v.toFixed(1)+'%':'—';
   const $f=v=>v?'$'+Math.round(v).toLocaleString():'—';
 
-  // Build a map from monKey -> week data
+  const skeletons=monthKey?getMonthWeekSkeletons(monthKey):[];
+  if(!skeletons.length&&!weeks.length){el.innerHTML=noDataMsg(lbl);return;}
+
   const weekMap={};
   (weeks||[]).forEach(w=>{ weekMap[w.monKey]=w; });
 
-  // Generate skeleton for the full month
-  const skeletons = monthKey ? getMonthWeekSkeletons(monthKey) : [];
-  if(!skeletons.length && !weeks.length){ el.innerHTML=noDataMsg(lbl); return; }
-
-  // Merge: use skeleton labels, fill data where available
-  const rows = skeletons.map(sk=>{
-    const w=weekMap[sk.monKey]||{booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,cash:0,adspend:0};
-    return {...w, label:sk.label, monKey:sk.monKey};
+  const rows=skeletons.map(sk=>{
+    const w=weekMap[sk.monKey];
+    return {label:sk.label, monKey:sk.monKey, data:w||null};
   });
 
-  // totals from actual data only
   const tot={booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,cash:0,adspend:0};
-  (weeks||[]).forEach(w=>Object.keys(tot).forEach(f=>tot[f]+=(w[f]||0)));
-
+  const totBySrc={};
+  if(sources.length) sources.forEach(s=>{ totBySrc[s]={booked:0,confirmed:0,shows:0,closed:0,revenue:0,adspend:0}; });
+  (weeks||[]).forEach(w=>{
+    Object.keys(tot).forEach(f=>tot[f]+=(w[f]||0));
+    if(w.bySrc) sources.forEach(s=>{
+      Object.keys(totBySrc[s]||{}).forEach(f=>{ totBySrc[s][f]+=(w.bySrc?.[s]?.[f]||0); });
+    });
+  });
   const hasData=(weeks||[]).length>0;
 
+  // Source breakdown columns
+  const srcHeaders = sources.length ? sources.map(s=>`<th colspan="3" style="background:rgba(108,99,255,.06);font-size:10px;">${DE_SOURCE_LABELS[s]}</th>`).join('') : '';
+  const srcSubHeaders = sources.length ? sources.map(()=>'<th>Booked</th><th>Shows</th><th>Closed</th>').join('') : '';
+
   el.innerHTML=`<div class="table-scroll"><table>
-    <thead><tr><th>Week</th><th>Booked</th><th>Confirmed</th><th>Shows</th><th>No Shows</th><th>Show Rate</th><th>Closed</th><th>Close Rate</th><th>Revenue</th><th>Cash Collected</th><th>Ad Spend</th></tr></thead>
+    <thead>
+      <tr>
+        <th rowspan="2">Week</th>
+        <th colspan="9" style="background:rgba(108,99,255,.05);">Total</th>
+        ${srcHeaders}
+      </tr>
+      <tr>
+        <th>Booked</th><th>Confirmed</th><th>Shows</th><th>No Shows</th><th>Show Rate</th><th>Closed</th><th>Close Rate</th><th>Revenue</th><th>Ad Spend</th>
+        ${srcSubHeaders}
+      </tr>
+    </thead>
     <tbody>
-      ${rows.map(w=>{
-        const hasW=weekMap[w.monKey];
-        const style=hasW?'':'opacity:.45;';
-        return `<tr style="${style}">
-          <td style="color:var(--text);white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:11px;">${w.label}</td>
-          <td>${hasW?w.booked:'—'}</td><td>${hasW?w.confirmed:'—'}</td><td>${hasW?w.shows:'—'}</td><td>${hasW?w.noshows:'—'}</td>
-          <td>${hasW?'<span class="tag lead">'+pct(w.confirmed?(w.shows/w.confirmed)*100:0)+'</span>':'—'}</td>
-          <td>${hasW?w.closed:'—'}</td>
-          <td>${hasW?'<span class="tag lead">'+pct(w.confirmed?(w.closed/w.confirmed)*100:0)+'</span>':'—'}</td>
-          <td>${hasW?$f(w.revenue):'—'}</td><td>${hasW?$f(w.cash):'—'}</td><td>${hasW?$f(w.adspend):'—'}</td>
+      ${rows.map(r=>{
+        const w=r.data;
+        const sty=w?'':'opacity:.4;';
+        const srcCells=sources.map(s=>{
+          const sd=w?.bySrc?.[s]||{};
+          return w?`<td>${sd.booked||'—'}</td><td>${sd.shows||'—'}</td><td>${sd.closed||'—'}</td>`:'<td>—</td><td>—</td><td>—</td>';
+        }).join('');
+        return `<tr style="${sty}">
+          <td style="color:var(--text);white-space:nowrap;font-family:var(--font-mono);font-size:11px;">${r.label}</td>
+          <td>${w?w.booked:'—'}</td><td>${w?w.confirmed:'—'}</td><td>${w?w.shows:'—'}</td><td>${w?w.noshows:'—'}</td>
+          <td>${w?'<span class="tag lead">'+pct(w.confirmed?(w.shows/w.confirmed)*100:0)+'</span>':'—'}</td>
+          <td>${w?w.closed:'—'}</td>
+          <td>${w?'<span class="tag lead">'+pct(w.confirmed?(w.closed/w.confirmed)*100:0)+'</span>':'—'}</td>
+          <td>${w?$f(w.revenue):'—'}</td><td>${w?$f(w.adspend):'—'}</td>
+          ${srcCells}
         </tr>`;
       }).join('')}
       <tr style="background:rgba(108,99,255,.05);">
-        <td style="color:var(--accent2);font-weight:700;font-family:'IBM Plex Mono',monospace;">TOTAL</td>
+        <td style="color:var(--accent2);font-weight:700;font-family:var(--font-mono);">TOTAL</td>
         <td style="font-weight:700;">${hasData?tot.booked:'—'}</td>
         <td style="font-weight:700;">${hasData?tot.confirmed:'—'}</td>
         <td style="font-weight:700;">${hasData?tot.shows:'—'}</td>
@@ -2268,9 +2908,12 @@ function renderWeeklyTable(containerId, weeks, lbl, monthKey){
         <td>${hasData?'<span class="tag booked">'+pct(tot.confirmed?(tot.shows/tot.confirmed)*100:0)+'</span>':'—'}</td>
         <td style="font-weight:700;">${hasData?tot.closed:'—'}</td>
         <td>${hasData?'<span class="tag lead">'+pct(tot.confirmed?(tot.closed/tot.confirmed)*100:0)+'</span>':'—'}</td>
-        <td style="color:var(--gold);font-weight:700;font-family:'IBM Plex Mono',monospace;">${hasData?$f(tot.revenue):'—'}</td>
-        <td style="color:var(--green2);font-weight:700;">${hasData?$f(tot.cash):'—'}</td>
+        <td style="color:var(--gold);font-weight:700;">${hasData?$f(tot.revenue):'—'}</td>
         <td>${hasData?$f(tot.adspend):'—'}</td>
+        ${sources.map(s=>{
+          const sd=totBySrc[s]||{};
+          return hasData?`<td style="font-weight:700;">${sd.booked||'—'}</td><td style="font-weight:700;">${sd.shows||'—'}</td><td style="font-weight:700;">${sd.closed||'—'}</td>`:'<td>—</td><td>—</td><td>—</td>';
+        }).join('')}
       </tr>
     </tbody></table></div>`;
 }
@@ -2292,8 +2935,9 @@ function renderCalcCard(){
   Object.keys(data.dailyData).forEach(date=>{
     if(date>=start&&date<=end){
       days++;
-      const gd=data.dailyData[date].gen||{},md=data.dailyData[date].mdp||{};
-      ['confirmed','shows','closed','adspend'].forEach(f=>{g[f]+=(gd[f]||0);m[f]+=(md[f]||0);});
+      const gs=sumSources(data.dailyData[date].gen)||{};
+      const ms=sumSources(data.dailyData[date].mdp)||{};
+      ['confirmed','shows','closed','adspend'].forEach(f=>{g[f]+=(gs[f]||0);m[f]+=(ms[f]||0);});
     }
   });
   if(!days){if(note)note.textContent='No entries found in this date range.';return;}
@@ -2323,31 +2967,6 @@ function renderCalcCard(){
   setTimeout(renderCalcCard,1500);
 })();
 
-// ════════════════════════════════
-// GOOGLE SHEETS
-// ════════════════════════════════
-function connectSheet(){
-  const url = document.getElementById('sheetUrl').value.trim();
-  if(!url){ alert('Please paste a valid Google Sheets published CSV URL.'); return; }
-  const banner = document.querySelector('.sheets-banner');
-  fetch(url)
-    .then(r => { if(!r.ok) throw new Error(); return r.text(); })
-    .then(csv => {
-      banner.style.background='rgba(34,197,94,.06)';
-      banner.style.borderColor='rgba(34,197,94,.25)';
-      banner.querySelector('strong').textContent='✅ Sheet connected — data loaded';
-      banner.querySelector('span').textContent=url.substring(0,70)+'...';
-      try{ localStorage.setItem('ea_sheetUrl',url); }catch(e){}
-      console.log('Sheet CSV loaded, first 200 chars:', csv.substring(0,200));
-    })
-    .catch(() => {
-      banner.querySelector('strong').textContent='⚠️ Could not fetch — check Publish settings (must be published as CSV, not web page)';
-    });
-}
-try{
-  const saved = localStorage.getItem('ea_sheetUrl');
-  if(saved) document.getElementById('sheetUrl').value = saved;
-}catch(e){}
 
 // ════════════════════════════════
 // SIMULATOR
@@ -2455,7 +3074,7 @@ const DASHBOARD_PASSWORD = 'elieteam2026';
 function confirmDelete(msg){
   const pw=prompt((msg||'Confirm deletion')+'\n\nEnter password to confirm:');
   if(pw===null) return false;
-  if(pw!==DASHBOARD_PASSWORD){ alert('Incorrect password. Delete cancelled.'); return false; }
+  if(pw!==DASHBOARD_PASSWORD){ toast('Incorrect password. Delete cancelled.','error'); return false; }
   return true;
 }
 
@@ -2502,6 +3121,8 @@ function checkPassword(){
   }
 })();
 </script>
+</div><!-- end main-area -->
+</div><!-- end app-layout -->
 </div><!-- end appShell -->
 </body>
 </html>
