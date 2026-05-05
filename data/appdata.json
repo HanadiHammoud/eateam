@@ -176,6 +176,13 @@
         "deadline": "",
         "recurring": "none",
         "done": true
+      },
+      {
+        "text": "Automate Task CSM field (payment plan date)",
+        "pri": "pri-low",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
