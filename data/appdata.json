@@ -175,7 +175,7 @@
         "pri": "pri-high",
         "deadline": "",
         "recurring": "none",
-        "done": false
+        "done": true
       }
     ],
     "aya": [
