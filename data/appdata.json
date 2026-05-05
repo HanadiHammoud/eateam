@@ -339,6 +339,33 @@
         "adspend": null
       },
       "savedAt": "2026-05-05T06:37:54.274Z"
+    },
+    "2026-05-03": {
+      "gen": {
+        "optins": 73,
+        "booked": 3,
+        "confirmed": 2,
+        "shows": 1,
+        "noshows": 1,
+        "closed": null,
+        "revenue": null,
+        "deposits": null,
+        "cash": null,
+        "adspend": 235.28
+      },
+      "mdp": {
+        "optins": null,
+        "booked": null,
+        "confirmed": null,
+        "shows": null,
+        "noshows": null,
+        "closed": null,
+        "revenue": null,
+        "deposits": null,
+        "cash": null,
+        "adspend": null
+      },
+      "savedAt": "2026-05-05T06:39:10.363Z"
     }
   }
 }
