@@ -183,6 +183,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Automate stages for the CSM leads in the CRM",
+        "pri": "pri-low",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
