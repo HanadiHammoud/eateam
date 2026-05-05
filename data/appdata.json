@@ -239,6 +239,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Finish EOD outbound setter for Aya",
+        "pri": "pri-med",
+        "deadline": "2026-05-09",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
