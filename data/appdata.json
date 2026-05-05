@@ -225,6 +225,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Finish Setters Performance Table",
+        "pri": "pri-med",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
