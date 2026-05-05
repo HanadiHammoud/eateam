@@ -288,6 +288,13 @@
         "deadline": "2026-05-09",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Figure out the automation issue (calendly bookings to zoho)",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
