@@ -163,7 +163,7 @@
         "pri": "pri-high",
         "recurring": "weekly",
         "deadline": "",
-        "done": false,
+        "done": true,
         "comment": "testt",
         "resolved": true,
         "commentAuthor": "Elie Ashkar",
