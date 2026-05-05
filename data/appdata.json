@@ -197,6 +197,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Fix Calendly issue for the new funnel (mdp vsl for GCC)",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "aya": [
