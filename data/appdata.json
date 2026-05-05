@@ -295,6 +295,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Follow Up with Fatima Regarding Updating CRM",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "daily",
+        "done": false
       }
     ],
     "aya": [
