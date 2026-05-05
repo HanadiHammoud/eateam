@@ -321,7 +321,7 @@
         "shows": 2,
         "noshows": 2,
         "closed": 1,
-        "revenue": null,
+        "revenue": 1500,
         "deposits": 50,
         "cash": 50,
         "adspend": 220.08
@@ -338,7 +338,7 @@
         "cash": null,
         "adspend": null
       },
-      "savedAt": "2026-05-05T06:37:54.274Z"
+      "savedAt": "2026-05-05T06:44:21.911Z"
     },
     "2026-05-03": {
       "gen": {
