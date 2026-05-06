@@ -356,7 +356,7 @@
         "pri": "pri-high",
         "deadline": "",
         "recurring": "none",
-        "done": false
+        "done": true
       },
       {
         "text": "Solve Ayman Atrees issue with elie",
