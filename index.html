@@ -543,6 +543,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div style="font-size:11px;color:#606075;font-family:var(--font-mono);margin-top:20px;">
       Team access only · Elie Ashkar Operations
     </div>
+    <div style="font-size:10px;color:#22c55e;font-family:var(--font-mono);margin-top:8px;letter-spacing:.06em;">v2.1</div>
   </div>
 </div>
 
@@ -588,7 +589,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="sidebar-logo">EA</div>
     <div>
       <div class="sidebar-brand-text">Elie<span>Ashkar</span></div>
-      <div class="sidebar-brand-sub">OPS Dashboard</div>
+      <div class="sidebar-brand-sub">OPS Dashboard · <span style="color:var(--green2);">v2.1</span></div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -1691,7 +1692,7 @@ function renderTaskItem(task, idx, key){
     <div class="task-check"></div>
     <div class="task-priority ${task.pri}"></div>
     <div style="flex:1;">
-      <div class="task-text">${task.text}</div>
+      <div class="task-text">${escHtml(task.text||'')}</div>
       <div class="task-meta-row">
         ${dlText ? `<span class="task-deadline ${dlClass}">${dlText}</span>` : ''}
         ${recurIcon ? `<span style="font-size:10px;color:var(--text3);">${recurIcon} ${task.recurring}</span>` : ''}
@@ -1713,7 +1714,16 @@ function loadTasks(){
   if(_appData && _appData.tasks) return _appData.tasks;
   try{
     const saved = JSON.parse(localStorage.getItem('ea_tasks_v2'));
-    if(saved) return saved;
+    if(saved){
+      // Detect garbled UTF-8 characters — if found, discard localStorage and use defaults
+      const allText = JSON.stringify(saved);
+      if(allText.includes('Ã') || allText.includes('â€') || allText.includes('Â')){
+        localStorage.removeItem('ea_tasks_v2');
+        console.warn('Garbled task data detected in localStorage — reset to defaults');
+      } else {
+        return saved;
+      }
+    }
   }catch(e){}
   const data = {};
   Object.keys(DEFAULT_TASKS).forEach(k => {
