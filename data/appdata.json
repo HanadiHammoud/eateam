@@ -127,6 +127,13 @@
         "deadline": "",
         "recurring": "none",
         "done": false
+      },
+      {
+        "text": "Test",
+        "pri": "pri-high",
+        "deadline": "",
+        "recurring": "none",
+        "done": false
       }
     ],
     "fatima": [
