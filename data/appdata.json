@@ -342,7 +342,7 @@
         "pri": "pri-high",
         "deadline": "",
         "recurring": "none",
-        "done": true
+        "done": false
       },
       {
         "text": "Follow Up with Fatima Regarding Updating CRM",
@@ -367,34 +367,6 @@
       },
       {
         "text": "build URLs for setters.",
-        "pri": "pri-high",
-        "deadline": "",
-        "recurring": "none",
-        "done": false
-      },
-      {
-        "text": "Contact Closers for 2nd payment leads",
-        "pri": "pri-high",
-        "deadline": "",
-        "recurring": "none",
-        "done": false
-      },
-      {
-        "text": "Contact Closers for 2nd payment leads",
-        "pri": "pri-high",
-        "deadline": "",
-        "recurring": "none",
-        "done": false
-      },
-      {
-        "text": "Contact Closers for 2nd payment leads",
-        "pri": "pri-high",
-        "deadline": "",
-        "recurring": "none",
-        "done": false
-      },
-      {
-        "text": "Contact Closers for 2nd payment leads",
         "pri": "pri-high",
         "deadline": "",
         "recurring": "none",
