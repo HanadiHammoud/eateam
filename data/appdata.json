@@ -384,7 +384,7 @@
         "pri": "pri-high",
         "deadline": "",
         "recurring": "none",
-        "done": false
+        "done": true
       },
       {
         "text": "Automate MDP-GCC bookings to Zoho",
