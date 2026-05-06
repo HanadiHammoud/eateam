@@ -82,7 +82,7 @@
         "deadline": "",
         "done": false,
         "comment": "test",
-        "resolved": false,
+        "resolved": true,
         "commentAuthor": "Elie Ashkar",
         "commentDate": "May 6"
       },
