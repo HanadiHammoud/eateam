@@ -509,14 +509,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
     <input
       id="pwInput"
-      type="password"
+      type="text"
       placeholder="Enter password"
       onkeydown="if(event.key==='Enter')checkPassword()"
+      autocomplete="off"
       style="
         width:100%;background:#18181f;border:1px solid #2a2a38;
         border-radius:8px;padding:12px 16px;
         color:#f0f0f8;font-size:14px;font-family:var(--font-sans);
         outline:none;text-align:center;letter-spacing:.1em;
+        -webkit-text-security:disc;
         transition:border-color .15s;margin-bottom:12px;
       "
       onfocus="this.style.borderColor='#6c63ff'"
@@ -564,7 +566,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
     <div class="form-group">
       <label class="form-label">Personal Access Token</label>
-      <input class="form-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" onkeydown="if(event.key==='Enter')saveGHConfig()" />
+      <input class="form-input" id="gh-token" type="text" style="-webkit-text-security:disc;" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" onkeydown="if(event.key==='Enter')saveGHConfig()" autocomplete="off" />
     </div>
     <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:16px;">Token stored locally on this device only — never shared anywhere except GitHub</div>
     <div class="modal-btns">
@@ -679,34 +681,34 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="panel">
         <div class="panel-title">🏗 Genesis · <span id="ov-genesis-month">—</span></div>
         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">
-          <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Opt-ins</div><div class="kpi-value purple" style="font-size:20px;" id="ov-gen-optins">—</div></div>
-          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Total Booked</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-gen-booked">—</div></div>
-          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Confirmed</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-gen-confirmed">—</div></div>
-          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Shows</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-gen-shows">—</div><div class="kpi-meta" id="ov-gen-showrate"> </div></div>
-          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">No Shows</div><div class="kpi-value orange" style="font-size:20px;" id="ov-gen-noshows">—</div></div>
-          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Closed</div><div class="kpi-value green" style="font-size:20px;" id="ov-gen-closed">—</div><div class="kpi-meta" id="ov-gen-closerate"> </div></div>
+          <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Opt-ins</div><div class="kpi-value purple" style="font-size:20px;" id="ov-gen-optins">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Total Booked</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-gen-booked">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Confirmed</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-gen-confirmed">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Shows</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-gen-shows">—</div><div class="kpi-meta" id="ov-gen-showrate"> </div></div>
+          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">No Shows</div><div class="kpi-value orange" style="font-size:20px;" id="ov-gen-noshows">—</div></div>
+          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Closed</div><div class="kpi-value green" style="font-size:20px;" id="ov-gen-closed">—</div><div class="kpi-meta" id="ov-gen-closerate"> </div></div>
         </div>
         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;">
-          <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:16px;" id="ov-gen-revenue">—</div></div>
-          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Cash Collected</div><div class="kpi-value green" style="font-size:16px;" id="ov-gen-cash">—</div></div>
-          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Ad Spend</div><div class="kpi-value orange" style="font-size:16px;" id="ov-gen-adspend">—</div></div>
+          <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Revenue</div><div class="kpi-value gold" style="font-size:16px;" id="ov-gen-revenue">—</div></div>
+          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Cash Collected</div><div class="kpi-value green" style="font-size:16px;" id="ov-gen-cash">—</div></div>
+          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Ad Spend</div><div class="kpi-value orange" style="font-size:16px;" id="ov-gen-adspend">—</div></div>
         </div>
       </div>
       <!-- MDP -->
       <div class="panel">
         <div class="panel-title">🎯 MDP · <span id="ov-mdp-month">—</span></div>
         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">
-          <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Opt-ins</div><div class="kpi-value purple" style="font-size:20px;" id="ov-mdp-optins">—</div></div>
-          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Total Booked</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-mdp-booked">—</div></div>
-          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Confirmed</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-mdp-confirmed">—</div></div>
-          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Shows</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-mdp-shows">—</div><div class="kpi-meta" id="ov-mdp-showrate"> </div></div>
-          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">No Shows</div><div class="kpi-value orange" style="font-size:20px;" id="ov-mdp-noshows">—</div></div>
-          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Closed</div><div class="kpi-value green" style="font-size:20px;" id="ov-mdp-closed">—</div><div class="kpi-meta" id="ov-mdp-closerate"> </div></div>
+          <div class="kpi-card purple" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Opt-ins</div><div class="kpi-value purple" style="font-size:20px;" id="ov-mdp-optins">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Total Booked</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-mdp-booked">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Confirmed</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-mdp-confirmed">—</div></div>
+          <div class="kpi-card cyan" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Shows</div><div class="kpi-value cyan" style="font-size:20px;" id="ov-mdp-shows">—</div><div class="kpi-meta" id="ov-mdp-showrate"> </div></div>
+          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">No Shows</div><div class="kpi-value orange" style="font-size:20px;" id="ov-mdp-noshows">—</div></div>
+          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Closed</div><div class="kpi-value green" style="font-size:20px;" id="ov-mdp-closed">—</div><div class="kpi-meta" id="ov-mdp-closerate"> </div></div>
         </div>
         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;">
-          <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:16px;" id="ov-mdp-revenue">—</div></div>
-          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Cash Collected</div><div class="kpi-value green" style="font-size:16px;" id="ov-mdp-cash">—</div></div>
-          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:9px;">Ad Spend</div><div class="kpi-value orange" style="font-size:16px;" id="ov-mdp-adspend">—</div></div>
+          <div class="kpi-card gold" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Revenue</div><div class="kpi-value gold" style="font-size:16px;" id="ov-mdp-revenue">—</div></div>
+          <div class="kpi-card green" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Cash Collected</div><div class="kpi-value green" style="font-size:16px;" id="ov-mdp-cash">—</div></div>
+          <div class="kpi-card orange" style="padding:14px 16px;"><div class="kpi-label" style="font-size:10px;">Ad Spend</div><div class="kpi-value orange" style="font-size:16px;" id="ov-mdp-adspend">—</div></div>
         </div>
       </div>
     </div>
@@ -1439,12 +1441,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="sim-panel">
         <div class="sim-title">📊 April Actuals (Benchmark)</div>
         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;">
-          <div class="kpi-card purple" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Confirmed</div><div class="kpi-value purple" style="font-size:20px;">173</div></div>
-          <div class="kpi-card cyan" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Show Rate</div><div class="kpi-value cyan" style="font-size:20px;">48.5%</div></div>
-          <div class="kpi-card green" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Close Rate</div><div class="kpi-value green" style="font-size:20px;">30.9%</div></div>
-          <div class="kpi-card gold" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Revenue</div><div class="kpi-value gold" style="font-size:18px;">$39K</div></div>
-          <div class="kpi-card orange" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">Ad Spend</div><div class="kpi-value orange" style="font-size:18px;">$7.2K</div></div>
-          <div class="kpi-card green" style="padding:12px 14px;"><div class="kpi-label" style="font-size:9px;">CPB</div><div class="kpi-value green" style="font-size:18px;">$41.5</div></div>
+          <div class="kpi-card purple" style="padding:12px 14px;"><div class="kpi-label" style="font-size:10px;">Confirmed</div><div class="kpi-value purple" style="font-size:20px;">173</div></div>
+          <div class="kpi-card cyan" style="padding:12px 14px;"><div class="kpi-label" style="font-size:10px;">Show Rate</div><div class="kpi-value cyan" style="font-size:20px;">48.5%</div></div>
+          <div class="kpi-card green" style="padding:12px 14px;"><div class="kpi-label" style="font-size:10px;">Close Rate</div><div class="kpi-value green" style="font-size:20px;">30.9%</div></div>
+          <div class="kpi-card gold" style="padding:12px 14px;"><div class="kpi-label" style="font-size:10px;">Revenue</div><div class="kpi-value gold" style="font-size:18px;">$39K</div></div>
+          <div class="kpi-card orange" style="padding:12px 14px;"><div class="kpi-label" style="font-size:10px;">Ad Spend</div><div class="kpi-value orange" style="font-size:18px;">$7.2K</div></div>
+          <div class="kpi-card green" style="padding:12px 14px;"><div class="kpi-label" style="font-size:10px;">CPB</div><div class="kpi-value green" style="font-size:18px;">$41.5</div></div>
         </div>
       </div>
     </div>
@@ -1683,8 +1685,8 @@ function renderTaskItem(task, idx, key){
   const hasComment = task.comment && task.comment.trim();
   const isResolved = task.resolved;
   const commentIcon = hasComment
-    ? `<button onclick="event.stopPropagation();openCommentModal('${key}',${idx})" style="background:none;border:none;cursor:pointer;padding:2px 4px;font-size:13px;color:${isResolved?'#3b82f6':'var(--red2)'};" title="${isResolved?'✓ Resolved':'💬 Comment'}${task.commentAuthor?' · '+task.commentAuthor:''}${task.commentDate?' · '+task.commentDate:''}${task.comment?'\n'+task.comment:''}">💬</button>`
-    : `<button onclick="event.stopPropagation();openCommentModal('${key}',${idx})" style="background:none;border:none;cursor:pointer;padding:2px 4px;font-size:12px;color:var(--text3);opacity:.35;" title="Add comment">💬</button>`;
+    ? `<button onclick="event.stopPropagation();openCommentModal('${key}',${idx})" style="background:${isResolved?'rgba(34,197,94,.15)':'rgba(239,68,68,.15)'};border:1px solid ${isResolved?'rgba(34,197,94,.3)':'rgba(239,68,68,.3)'};border-radius:6px;cursor:pointer;padding:2px 6px;font-size:12px;line-height:1;" title="${isResolved?'Resolved':'Has comment'}${task.commentAuthor?' · '+task.commentAuthor:''}">💬</button>`
+    : `<button onclick="event.stopPropagation();openCommentModal('${key}',${idx})" style="background:none;border:1px solid transparent;border-radius:6px;cursor:pointer;padding:2px 6px;font-size:12px;opacity:.3;line-height:1;" title="Add comment">💬</button>`;
   return `<div class="task-item${task.done?' done':''}" data-idx="${idx}" data-key="${key}" onclick="toggleTask(this)">
     <div class="task-check"></div>
     <div class="task-priority ${task.pri}"></div>
@@ -2375,13 +2377,16 @@ function renderReportsList(){
     ?`<div style="text-align:center;color:var(--text3);padding:40px;font-family:var(--font-mono);font-size:12px;">No reports for ${tabMonthLabel('rep')}.</div>`
     :list.map(r=>{
       const dateStr=r.date?new Date(r.date).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'—';
-      const color=AUTHOR_COLORS[r.author]||'var(--text2)';
       return `<div class="report-card">
         <div class="report-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open');">
-          <div><div class="report-date-chip">${dateStr}${r.time ? ' · '+r.time : ''}</div>
-          <div style="font-family:var(--font-mono);font-size:13px;font-weight:700;margin-top:4px;">${TYPE_LABELS[r.type]||r.type} · ${personBadge(r.author)}</div></div>
+          <div style="flex:1;min-width:0;">
+            <div class="report-date-chip">${dateStr}${r.time?' · '+r.time:''}</div>
+            <div style="font-size:var(--text-md);font-weight:600;margin-top:4px;">${TYPE_LABELS[r.type]||r.type} · ${personBadge(r.author)}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
             <button onclick="event.stopPropagation();deleteReport(${r.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
-            <span class="chevron">▶</span></div>
+            <span class="chevron">▶</span>
+          </div>
         </div>
         <div class="report-body"><div class="report-raw">${escHtml(r.content)}</div></div>
       </div>`;
