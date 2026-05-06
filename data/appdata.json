@@ -120,13 +120,6 @@
         "recurring": "daily",
         "deadline": "",
         "done": false
-      },
-      {
-        "text": "Test",
-        "pri": "pri-high",
-        "deadline": "",
-        "recurring": "none",
-        "done": false
       }
     ],
     "fatima": [
