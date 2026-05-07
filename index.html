@@ -577,7 +577,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div style="font-size:11px;color:#606075;font-family:var(--font-mono);margin-top:20px;">
       Team access only · Elie Ashkar Operations
     </div>
-    <div style="font-size:10px;color:#22c55e;font-family:var(--font-mono);margin-top:8px;letter-spacing:.06em;">v2.1.1</div>
+    <div style="font-size:10px;color:#22c55e;font-family:var(--font-mono);margin-top:8px;letter-spacing:.06em;">v2.1.2</div>
   </div>
 </div>
 
@@ -623,7 +623,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="sidebar-logo">EA</div>
     <div>
       <div class="sidebar-brand-text">Elie<span>Ashkar</span></div>
-      <div class="sidebar-brand-sub">OPS Dashboard · <span style="color:var(--green2);">v2.1.1</span></div>
+      <div class="sidebar-brand-sub">OPS Dashboard · <span style="color:var(--green2);">v2.1.2</span></div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -2209,7 +2209,7 @@ function saveGHConfig(){
   closeGHModal();
   updateSyncBadges('connecting');
   toast('Connecting to GitHub…','info');
-  loadAppData().then(()=>{ updateSyncBadges('ok'); refreshAllViews(); toast('GitHub connected — all data is live','success'); });
+  loadAppData().then(()=>{ _appData=normalizeAppData(_appData); updateSyncBadges('ok'); refreshAllViews(); toast('GitHub connected — all data is live','success'); });
 }
 function clearGHConfig(){
   if(!confirm('Disconnect GitHub sync?')) return;
@@ -2217,6 +2217,8 @@ function clearGHConfig(){
   _appData=null; _ghSHA=null;
   closeGHModal();
   updateSyncBadges('local');
+  _appData=normalizeAppData(localFallback());
+  refreshAllViews();
 }
 function updateSyncBadges(state){
   const html={ok:'<span class="status-badge badge-green"><span class="badge-dot"></span>GitHub Synced — live on all devices</span>',connecting:'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Connecting…</span>',local:'<span class="status-badge badge-yellow"><span class="badge-dot"></span>Local only — connect GitHub to sync</span>'}[state]||'';
@@ -2314,12 +2316,16 @@ async function loadAppData(){
     return _appData;
   }
 }
+let _savePending = false;
 async function saveAppData(silent=false){
   if(!_appData) return;
   localStorage.setItem('ea_appdata_cache',JSON.stringify(_appData));
   if(!isGHConfigured()) return;
+  if(_savePending) return; // debounce — another save already in flight
+  _savePending = true;
   try{ _ghSHA=await ghWriteFile(_appData,_ghSHA); }
   catch(e){ if(!silent) toast('Saved locally — GitHub sync failed: '+e.message,'error',6000); }
+  finally{ _savePending = false; }
 }
 
 async function saveTasks(data){
@@ -2369,12 +2375,18 @@ loadAppData().then(()=>{
 document.addEventListener('visibilitychange', function(){
   if(document.visibilityState !== 'visible') return;
   if(!isGHConfigured()) return;
-  _appData = null; _ghSHA = null; // force re-fetch
-  updateSyncBadges('connecting');
-  loadAppData().then(()=>{
+  // Don't nuke _appData — keep it live while re-fetching so renders don't break
+  const prevSHA = _ghSHA;
+  ghReadFile().then(({data, sha})=>{
+    if(!data) return; // no file yet, nothing to do
+    if(sha === prevSHA) return; // no change on GitHub, skip re-render
+    // New data available — normalize and apply
+    _ghSHA = sha;
+    _appData = normalizeAppData(data);
+    localStorage.setItem('ea_appdata_cache', JSON.stringify(_appData));
     updateSyncBadges('ok');
     refreshAllViews();
-  }).catch(()=>{ updateSyncBadges('unsynced'); });
+  }).catch(()=>{ /* silent — keep existing _appData intact */ });
 });
 
 // ════════════════════════════════
