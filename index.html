@@ -2317,15 +2317,25 @@ async function loadAppData(){
   }
 }
 let _savePending = false;
+let _saveQueued = false;
 async function saveAppData(silent=false){
   if(!_appData) return;
   localStorage.setItem('ea_appdata_cache',JSON.stringify(_appData));
   if(!isGHConfigured()) return;
-  if(_savePending) return; // debounce — another save already in flight
+  if(_savePending){
+    _saveQueued = true; // another save will fire when current one finishes
+    return;
+  }
   _savePending = true;
   try{ _ghSHA=await ghWriteFile(_appData,_ghSHA); }
   catch(e){ if(!silent) toast('Saved locally — GitHub sync failed: '+e.message,'error',6000); }
-  finally{ _savePending = false; }
+  finally{
+    _savePending = false;
+    if(_saveQueued){
+      _saveQueued = false;
+      saveAppData(silent); // flush the queued save with latest _appData
+    }
+  }
 }
 
 async function saveTasks(data){
@@ -2874,11 +2884,21 @@ function renderRecentEntries(){
 // RENDER OVERVIEW FROM DAILY DATA
 // ════════════════════════════════
 function sumMonthData(monthKey){
-  const data=_appData; if(!data?.dailyData) return null;
+  const data=_appData;
+  if(!data) return null;
+  if(!data.dailyData || typeof data.dailyData !== 'object') return null;
+  const keys = Object.keys(data.dailyData);
+  if(!keys.length) return null;
+
   const g={optins:0,booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,deposits:0,cash:0,adspend:0};
   const m={optins:0,booked:0,confirmed:0,shows:0,noshows:0,closed:0,revenue:0,deposits:0,cash:0,adspend:0};
   let found=0;
-  Object.keys(data.dailyData).forEach(date=>{
+
+  // Debug: log what keys exist vs what we're looking for
+  const matchingKeys = keys.filter(d=>d.startsWith(monthKey));
+  console.log('[Overview] monthKey:', monthKey, '| dailyData keys:', keys.length, '| matching:', matchingKeys.length, '| sample:', keys[0]);
+
+  keys.forEach(date=>{
     if(!date.startsWith(monthKey)) return;
     found++;
     const gs=sumSources(data.dailyData[date].gen);
@@ -2886,6 +2906,8 @@ function sumMonthData(monthKey){
     if(gs) Object.keys(g).forEach(f=>{ g[f]+=(gs[f]||0); });
     if(ms) Object.keys(m).forEach(f=>{ m[f]+=(ms[f]||0); });
   });
+
+  console.log('[Overview] found:', found, '| g.confirmed:', g.confirmed, '| m.confirmed:', m.confirmed);
   return found?{g,m,days:found}:null;
 }
 
@@ -2921,6 +2943,11 @@ function getWeeklyBreakdown(monthKey, prog){
 }
 
 function renderOverview(){
+  // If data not loaded yet, retry shortly
+  if(!_appData || !_appData.dailyData){
+    setTimeout(renderOverview, 800);
+    return;
+  }
   const mk=ovMonthKey(), lbl=ovMonthLabel();
   const s=document.getElementById('ov-genesis-month'); if(s) s.textContent=lbl;
   const sm=document.getElementById('ov-mdp-month'); if(sm) sm.textContent=lbl;
