@@ -577,7 +577,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div style="font-size:11px;color:#606075;font-family:var(--font-mono);margin-top:20px;">
       Team access only · Elie Ashkar Operations
     </div>
-    <div style="font-size:10px;color:#22c55e;font-family:var(--font-mono);margin-top:8px;letter-spacing:.06em;">v2.1</div>
+    <div style="font-size:10px;color:#22c55e;font-family:var(--font-mono);margin-top:8px;letter-spacing:.06em;">v2.1.1</div>
   </div>
 </div>
 
@@ -623,7 +623,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="sidebar-logo">EA</div>
     <div>
       <div class="sidebar-brand-text">Elie<span>Ashkar</span></div>
-      <div class="sidebar-brand-sub">OPS Dashboard · <span style="color:var(--green2);">v2.1</span></div>
+      <div class="sidebar-brand-sub">OPS Dashboard · <span style="color:var(--green2);">v2.1.1</span></div>
     </div>
   </div>
   <nav class="sidebar-nav">
@@ -633,6 +633,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </button>
     <button class="nav-item" id="nav-dataentry" onclick="switchTab('dataentry',this)">
       <span class="nav-item-icon">✏️</span><span class="nav-item-label">Data Entry</span>
+    </button>
+    <button class="nav-item" id="nav-rvo" onclick="switchTab('rvo',this)">
+      <span class="nav-item-icon">📞</span><span class="nav-item-label">RVO Outbound</span>
     </button>
 
     <div class="sidebar-section-label">Team</div>
@@ -1537,21 +1540,23 @@ const _tabMonths = {
   rep:  { y: today.getFullYear(), m: today.getMonth()+1 },
   meet: { y: today.getFullYear(), m: today.getMonth()+1 },
   kpi:  { y: today.getFullYear(), m: today.getMonth()+1 },
+  rvo:  { y: today.getFullYear(), m: today.getMonth()+1 },
 };
-const _tabMonthLabelIds = { ov:'ovMonthLabel', rep:'repMonthLabel', meet:'meetMonthLabel', kpi:'kpiMonthLabel' };
+const _tabMonthLabelIds = { ov:'ovMonthLabel', rep:'repMonthLabel', meet:'meetMonthLabel', kpi:'kpiMonthLabel', rvo:'rvoMonthLabel' };
 
 function tabMonthKey(tab){  const t=_tabMonths[tab]; return t.y+'-'+String(t.m).padStart(2,'0'); }
 function tabMonthLabel(tab){ const t=_tabMonths[tab]; return MONTH_NAMES[t.m-1]+' '+t.y; }
 function updateTabMonthLabel(tab){ const el=document.getElementById(_tabMonthLabelIds[tab]); if(el) el.textContent=tabMonthLabel(tab); }
 
 function shiftTabMonth(tab, dir){
-  const t=_tabMonths[tab];
+  const t=_tabMonths[tab]; if(!t) return;
   t.m+=dir; if(t.m>12){t.m=1;t.y++;} if(t.m<1){t.m=12;t.y--;}
   updateTabMonthLabel(tab);
   if(tab==='ov') renderOverview();
   if(tab==='rep') renderReportsList();
   if(tab==='meet') renderMeetings();
   if(tab==='kpi'){ const d=_appData||{}; renderKPIList(d.wins||[],'winsDisplay'); renderKPIList(d.insights||[],'insightsDisplay'); renderKPIList(d.improvements||[],'improvementsDisplay'); }
+  if(tab==='rvo'){ renderRvoMonthSummary(); renderRvoRecent(); }
 }
 
 // Aliases used throughout — saves/tags use current calendar month (today), not the selected view month
@@ -1564,7 +1569,7 @@ function shiftMonth(){ /* removed — each tab has its own selector now */ }
 
 // Init all labels + overview skeleton
 (function(){
-  ['ov','rep','meet','kpi'].forEach(tab=>updateTabMonthLabel(tab));
+  ['ov','rep','meet','kpi','rvo'].forEach(tab=>updateTabMonthLabel(tab));
   setTimeout(()=>{ if(typeof renderOverview==='function') renderOverview(); }, 0);
 })();
 
@@ -1573,7 +1578,7 @@ function shiftMonth(){ /* removed — each tab has its own selector now */ }
 // ════════════════════════════════
 
 // ── 1. TOPBAR PAGE TITLE ──
-const TAB_TITLES={overview:'Overview',dataentry:'Data Entry',tasks:'Task Center',kpis:'Team KPIs',reports:'Daily Reports',meetings:'Meeting Notes',errors:'Errors & Fixes',simulator:'Scenario Sim'};
+const TAB_TITLES={overview:'Overview',dataentry:'Data Entry',rvo:'RVO Outbound',tasks:'Task Center',kpis:'Team KPIs',reports:'Daily Reports',meetings:'Meeting Notes',errors:'Errors & Fixes',simulator:'Scenario Sim'};
 function updateTopbarTitle(name){
   let el=document.getElementById('topbarTitle');
   if(!el){
@@ -1829,7 +1834,7 @@ function loadTasks(){
 
 function renderTasks(){
   const data = getTaskData();
-  const allKeys = ['elie','hanadi','fatima','maya','aya',...Object.keys(data).filter(k=>!['elie','hanadi','fatima','maya','aya'].includes(k))];
+  const allKeys = ['elie','hanadi','fatima','maya','aya',...Object.keys(data).filter(k=>!['elie','hanadi','fatima','maya','aya','_persons'].includes(k))];
   allKeys.forEach(key => {
     const list = document.getElementById('tasks-' + key);
     if(!list) return;
@@ -1843,11 +1848,10 @@ function renderTasks(){
   });
   updateHanadiKPI();
   // Render any custom person columns
-  const data2 = getTaskData();
-  const customKeys = Object.keys(data2).filter(k=>!['elie','hanadi','fatima','maya','aya'].includes(k));
+  const customKeys = Object.keys(data).filter(k=>!['elie','hanadi','fatima','maya','aya','_persons'].includes(k));
   customKeys.forEach(key=>{
     if(!document.getElementById('col-'+key)){
-      const info = data2._persons && data2._persons[key];
+      const info = data._persons && data._persons[key];
       const name = info ? info.name : key;
       const role = info ? info.role : '';
       const initials = info ? info.initials : key.slice(0,2).toUpperCase();
@@ -1866,7 +1870,7 @@ function renderTasks(){
     // Re-render tasks for custom person
     const list2 = document.getElementById('tasks-'+key);
     if(!list2) return;
-    const tasks2 = data2[key]||[];
+    const tasks2 = data[key]||[];
     list2.innerHTML = tasks2.map((t,i)=>renderTaskItem(t,i,key)).join('');
     const done2=tasks2.filter(t=>t.done).length, total2=tasks2.length;
     const stat2=document.getElementById('stat-'+key);
@@ -1908,6 +1912,7 @@ async function addNewPerson(){
   if(!name){ toast('Please enter a name.','warning'); return; }
   const key=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
   const data=getTaskData();
+  if(!data._persons) data._persons={};
   data._persons[key]={name,role,initials:initials||name.slice(0,2).toUpperCase()};
   if(!data[key]) data[key]=[];
   await saveTasks(data);
@@ -1955,6 +1960,13 @@ function checkPrivateMeeting(m){
 // ── Errors & Fixes ──
 function toggleErrorForm(show){
   document.getElementById('errorForm').style.display=show?'block':'none';
+  if(show){
+    const lastAuthor=sessionStorage.getItem('err_last_author');
+    if(lastAuthor){
+      const sel=document.getElementById('errAuthor');
+      if(sel) sel.value=lastAuthor;
+    }
+  }
 }
 
 // ── Date range helpers ──
@@ -2099,6 +2111,7 @@ function runErrorEngine(){
 
 async function saveError(){
   const author=document.getElementById('errAuthor').value;
+  sessionStorage.setItem('err_last_author', author);
   const severity=document.getElementById('errSeverity').value;
   const title=document.getElementById('errTitle').value.trim();
   const desc=document.getElementById('errDesc').value.trim();
@@ -2256,12 +2269,17 @@ async function ghWriteFile(data,sha){
 
 function localFallback(){
   return {
-    reports:  JSON.parse(localStorage.getItem('ea_reports_v2')||'null')||[],
-    meetings: JSON.parse(localStorage.getItem('ea_meetings_v2')||'null')||[],
-    wins:     JSON.parse(localStorage.getItem('ea_kpi_wins')||'[]'),
-    insights: JSON.parse(localStorage.getItem('ea_kpi_insights')||'[]'),
+    reports:      JSON.parse(localStorage.getItem('ea_reports_v2')||'null')||[],
+    meetings:     JSON.parse(localStorage.getItem('ea_meetings_v2')||'null')||[],
+    wins:         JSON.parse(localStorage.getItem('ea_kpi_wins')||'[]'),
+    insights:     JSON.parse(localStorage.getItem('ea_kpi_insights')||'[]'),
     improvements: JSON.parse(localStorage.getItem('ea_kpi_improvements')||'[]'),
-    tasks:    JSON.parse(localStorage.getItem('ea_tasks_v2')||'null')
+    tasks:        JSON.parse(localStorage.getItem('ea_tasks_v2')||'null'),
+    dailyData:    {},
+    rvoData:      {},
+    errors:       [],
+    customKPIs:   [],
+    ayaKPI:       []
   };
 }
 
@@ -2304,7 +2322,7 @@ function emptyState(msg, action=''){
 
 function refreshAllViews(){
   if(!_appData) return;
-  ['ov','rep','meet','kpi'].forEach(tab=>updateTabMonthLabel(tab));
+  ['ov','rep','meet','kpi','rvo'].forEach(tab=>updateTabMonthLabel(tab));
   renderReportsList(); renderMeetings();
   const d=_appData;
   renderKPIList(d.wins||[],'winsDisplay');
@@ -2313,22 +2331,35 @@ function refreshAllViews(){
   const wc=document.getElementById('winsCount'); if(wc) wc.textContent=(d.wins||[]).length+' logged';
   const ic=document.getElementById('insightsCount'); if(ic) ic.textContent=(d.insights||[]).length+' logged';
   const imc=document.getElementById('improvCount'); if(imc) imc.textContent=(d.improvements||[]).length+' logged';
-  if(d.tasks) renderTasks();
-  else renderTasks(); // render defaults if no tasks yet
+  renderTasks(); // render with data or defaults
   if(typeof renderOverview==='function') renderOverview();
   if(typeof renderCalcCard==='function') renderCalcCard();
   if(typeof renderRecentEntries==='function') renderRecentEntries();
   if(typeof renderErrors==='function') renderErrors();
   if(typeof runErrorEngine==='function') runErrorEngine();
   if(typeof renderCustomKPIs==='function') renderCustomKPIs();
+  if(typeof renderRvoMonthSummary==='function'){ renderRvoMonthSummary(); renderRvoRecent(); }
 }
 
 loadAppData().then(()=>{
   updateSyncBadges(isGHConfigured()?'ok':'local');
   refreshAllViews();
+  setRvoToday();
   const c=getGHConfig();
   if(c.owner){ document.querySelectorAll('.gh-input-owner').forEach(el=>el.value=c.owner); }
   if(c.repo){  document.querySelectorAll('.gh-input-repo').forEach(el=>el.value=c.repo); }
+});
+
+// ── AUTO-REFRESH ON TAB FOCUS ──
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState !== 'visible') return;
+  if(!isGHConfigured()) return;
+  _appData = null; _ghSHA = null; // force re-fetch
+  updateSyncBadges('connecting');
+  loadAppData().then(()=>{
+    updateSyncBadges('ok');
+    refreshAllViews();
+  }).catch(()=>{ updateSyncBadges('unsynced'); });
 });
 
 // ════════════════════════════════
@@ -2337,6 +2368,7 @@ loadAppData().then(()=>{
 function renderKPIList(items,containerId){
   const el=document.getElementById(containerId); if(!el) return;
   const mk=tabMonthKey('kpi');
+  const filtered=(items||[]).filter(i=>!mk||(i.month||'').startsWith(mk)||(i.date||'').startsWith(mk.substring(0,7)));
   el.innerHTML=filtered.map(i=>`<div class="kpi-target-row" style="margin-top:4px;"><span class="kpi-target-label" style="flex:1;">${escHtml(i.text)}</span><span class="kpi-target-range">${i.date}</span></div>`).join('')||'<div style="font-size:11px;color:var(--text3);padding:8px 0;">No entries yet.</div>';
 }
 async function logWin(){
@@ -2491,7 +2523,7 @@ function renderReportsList(){
             <span class="chevron">▶</span>
           </div>
         </div>
-        <div class="report-body"><div class="report-raw">${escHtml(r.content)}</div></div>
+        <div class="report-body"><div class="report-raw">${safeText(r.content)}</div></div>
       </div>`;
     }).join('');
 }
@@ -2552,7 +2584,7 @@ function renderMeetings(){
             <button onclick="event.stopPropagation();deleteMeeting(${m.id})" class="btn btn-danger btn-sm" style="padding:4px 10px;font-size:10px;">Delete</button>
             <span class="chevron">▶</span></div>
         </div>
-        <div class="report-body" id="mbody-${m.id}"><div class="report-raw">${m.private?'<span style="color:var(--text3);font-family:\'IBM Plex Mono\',monospace;font-size:12px;">🔒 Private — click to authenticate</span>':escHtml(m.content)}</div></div>
+        <div class="report-body" id="mbody-${m.id}"><div class="report-raw">${m.private?'<span style="color:var(--text3);font-family:\'IBM Plex Mono\',monospace;font-size:12px;">🔒 Private — click to authenticate</span>':safeText(m.content)}</div></div>
       </div>`;
     }).join('');
 }
@@ -2573,7 +2605,7 @@ function handleMeetingClick(header, id){
     if(pw===PRIVATE_PW){ sessionStorage.setItem('private_meeting_auth','1'); }
     else { toast('Incorrect password.','error'); return; }
     // Show content now
-    body.querySelector('.report-raw').innerHTML=escHtml(m.content);
+    body.querySelector('.report-raw').innerHTML=safeText(m.content);
   }
   body.classList.toggle('open');
   if(chevron) chevron.classList.toggle('open');
@@ -2718,7 +2750,6 @@ async function loadDayData(){
     DE_SOURCES.gen.forEach(s=>{ if(day.gen?.[s]){ const b=document.getElementById(`de-gen-tab-${s}`); if(b) b.textContent='✓ '+DE_SOURCE_LABELS[s]; }});
     DE_SOURCES.mdp.forEach(s=>{ if(day.mdp?.[s]){ const b=document.getElementById(`de-mdp-tab-${s}`); if(b) b.textContent='✓ '+DE_SOURCE_LABELS[s]; }});
   }
-  if(s) s.textContent=hasSomeData?`✓ Loaded data for ${date}`:`No data yet for ${date}`;
   renderRecentEntries();
 }
 
@@ -2746,9 +2777,15 @@ async function saveSourceData(prog){
   data.dailyData[date][prog][source]=entry;
   const st=document.getElementById(`de-${prog}-status`); if(st) st.textContent='Saving…';
   await saveAppData();
-  const time=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-  if(st) st.textContent=`✓ Saved ${DE_SOURCE_LABELS[source]} at ${time}`;
+  const now2=new Date();
+  const dateStr=now2.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const timeStr=now2.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
   const btn2=document.getElementById(`de-${prog}-save-btn`); if(btn2) btn2.disabled=true;
+  if(st){
+    st.style.color='var(--green2)';
+    st.textContent=`✓ Saved ${DE_SOURCE_LABELS[source]} · ${dateStr} at ${timeStr}`;
+    setTimeout(()=>{ st.style.color='var(--text3)'; },4000);
+  }
   // Mark source tab button as complete with checkmark
   const tabBtn=document.getElementById(`de-${prog}-tab-${source}`);
   if(tabBtn && !tabBtn.textContent.includes('✓')) tabBtn.textContent='✓ '+DE_SOURCE_LABELS[source];
@@ -2782,10 +2819,7 @@ function sumSources(progObj){
 function renderRecentEntries(){
   const el=document.getElementById('de-recent'); if(!el) return;
   const data=_appData;
-  if(!data?.dailyData||!Object.keys(data.dailyData).length){
-    el.innerHTML='<div style="color:var(--text3);padding:16px;font-family:\'IBM Plex Mono\',monospace;font-size:12px;">No entries yet.</div>'; return;
-  }
-  const dates=Object.keys(data.dailyData).sort().reverse().slice(0,14);
+  const dates=data?.dailyData?Object.keys(data.dailyData).sort().reverse().slice(0,14):[];
   const selDate=document.getElementById('de-date')?.value;
   const $f=v=>v!=null&&v>0?'$'+Number(v).toLocaleString():'—';
   const n=v=>v!=null?v:'—';
@@ -2793,19 +2827,20 @@ function renderRecentEntries(){
   const gH=gSrcs.map(s=>`<th colspan="4" style="background:rgba(108,99,255,.08);">Gen ${DE_SOURCE_LABELS[s]}</th>`).join('');
   const mH=mSrcs.map(s=>`<th colspan="4" style="background:rgba(234,179,8,.06);">MDP ${DE_SOURCE_LABELS[s]}</th>`).join('');
   const sub=()=>'<th>Booked</th><th>Conf</th><th>Shows</th><th>Closed</th>';
+  const emptyRow=`<tr><td colspan="13" style="text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;padding:20px;">No entries yet — start by entering today's data above.</td></tr>`;
   el.innerHTML=`<div class="table-scroll"><table>
     <thead>
       <tr><th rowspan="2">Date</th>${gH}${mH}</tr>
       <tr>${gSrcs.map(sub).join('')}${mSrcs.map(sub).join('')}</tr>
     </thead>
-    <tbody>${dates.map(d=>{
+    <tbody>${dates.length?dates.map(d=>{
       const day=data.dailyData[d]||{};
       const hi=d===selDate?'background:rgba(108,99,255,.1);':'';
       const gc=gSrcs.map(s=>{const src=day.gen?.[s]||{};return `<td>${n(src.booked)}</td><td>${n(src.confirmed)}</td><td>${n(src.shows)}</td><td>${n(src.closed)}</td>`;}).join('');
       const mc=mSrcs.map(s=>{const src=day.mdp?.[s]||{};return `<td>${n(src.booked)}</td><td>${n(src.confirmed)}</td><td>${n(src.shows)}</td><td>${n(src.closed)}</td>`;}).join('');
       return `<tr style="${hi}cursor:pointer;" onclick="document.getElementById('de-date').value='${d}';loadDayData();">
         <td style="color:var(--accent2);font-family:var(--font-mono);white-space:nowrap;">${d}</td>${gc}${mc}</tr>`;
-    }).join('')}</tbody></table></div>`;
+    }).join(''):emptyRow}</tbody></table></div>`;
 }
 
 // ════════════════════════════════
@@ -3065,7 +3100,120 @@ function renderCalcCard(){
   if(note)note.textContent=days+' day'+(days>1?'s':'')+' · '+start+' → '+end;
 }
 
-// Init
+// ════════════════════════════════
+// RVO OUTBOUND
+// ════════════════════════════════
+function setRvoToday(){
+  const el=document.getElementById('rvo-date'); if(!el) return;
+  el.value=new Date().toISOString().split('T')[0]; loadRvoData();
+}
+function shiftRvoDate(dir){
+  const input=document.getElementById('rvo-date'); if(!input) return;
+  const d=input.value?new Date(input.value+'T12:00:00'):new Date();
+  d.setDate(d.getDate()+dir);
+  input.value=d.toISOString().split('T')[0]; loadRvoData();
+}
+function rvoEnableSave(){
+  const btn=document.getElementById('rvo-save-btn'); if(btn) btn.disabled=false;
+}
+function rvoCalcNoShows(){
+  const conf=parseFloat(document.getElementById('rvo-total-confirmed')?.value)||0;
+  const shows=parseFloat(document.getElementById('rvo-shows')?.value)||0;
+  const ns=document.getElementById('rvo-no-shows');
+  if(ns) ns.value=Math.max(0,conf-shows)||'';
+  rvoEnableSave();
+}
+function rvoCalcCash(){
+  rvoEnableSave();
+}
+function loadRvoData(){
+  const date=document.getElementById('rvo-date')?.value; if(!date) return;
+  if(!_appData){ setTimeout(()=>loadRvoData(),300); return; }
+  const src=_appData.rvoData?.[date];
+  const fieldMap=[['outbound-calls','outboundcalls'],['total-booked','totalbooked'],['total-confirmed','totalconfirmed'],
+    ['shows','shows'],['no-shows','noshows'],['closed','closed'],['revenue','revenue'],
+    ['deposits','deposits'],['cash','cash']];
+  fieldMap.forEach(([id,key])=>{
+    const el=document.getElementById('rvo-'+id);
+    if(el) el.value=(src&&src[key]!=null)?src[key]:'';
+  });
+  const btn=document.getElementById('rvo-save-btn'); if(btn) btn.disabled=true;
+  const st=document.getElementById('rvo-status'); if(st) st.textContent='';
+  renderRvoMonthSummary();
+  renderRvoRecent();
+}
+async function saveRvoData(){
+  const date=document.getElementById('rvo-date')?.value; if(!date){toast('Please select a date.','warning');return;}
+  const fieldMap=[['outboundcalls','outbound-calls'],['totalbooked','total-booked'],['totalconfirmed','total-confirmed'],
+    ['shows','shows'],['noshows','no-shows'],['closed','closed'],['revenue','revenue'],
+    ['deposits','deposits'],['cash','cash']];
+  const entry={};
+  fieldMap.forEach(([key,id])=>{
+    const v=document.getElementById('rvo-'+id)?.value;
+    entry[key]=v===''||v==null?null:parseFloat(v);
+  });
+  entry.savedAt=new Date().toISOString();
+  const data=await loadAppData();
+  if(!data.rvoData) data.rvoData={};
+  data.rvoData[date]=entry;
+  const st=document.getElementById('rvo-status'); if(st) st.textContent='Saving…';
+  await saveAppData();
+  const time=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  if(st) st.textContent=`✓ Saved at ${time}`;
+  const btn=document.getElementById('rvo-save-btn'); if(btn) btn.disabled=true;
+  renderRvoMonthSummary();
+  renderRvoRecent();
+  toast('RVO entry saved','success');
+}
+function rvoMonthKey(){ return tabMonthKey('rvo'); }
+function renderRvoMonthSummary(){
+  const data=_appData; if(!data?.rvoData) return;
+  const mk=rvoMonthKey();
+  const tot={outboundcalls:0,totalbooked:0,totalconfirmed:0,shows:0,noshows:0,closed:0,revenue:0,deposits:0,cash:0};
+  Object.keys(data.rvoData).forEach(date=>{
+    if(!date.startsWith(mk)) return;
+    const d=data.rvoData[date];
+    Object.keys(tot).forEach(f=>{ tot[f]+=(d[f]||0); });
+  });
+  const $f=v=>v?'$'+Math.round(v).toLocaleString():'—';
+  const n=v=>v?v.toLocaleString():'—';
+  const set=(id,val)=>{ const e=document.getElementById(id); if(e) e.textContent=val; };
+  set('rvo-kpi-calls',n(tot.outboundcalls));
+  set('rvo-kpi-booked',n(tot.totalbooked));
+  set('rvo-kpi-confirmed',n(tot.totalconfirmed));
+  set('rvo-kpi-shows',n(tot.shows));
+  set('rvo-kpi-noshows',n(tot.noshows));
+  set('rvo-kpi-closed',n(tot.closed));
+  set('rvo-kpi-revenue',$f(tot.revenue));
+  set('rvo-kpi-deposits',$f(tot.deposits));
+  set('rvo-kpi-cash',$f(tot.cash));
+}
+function renderRvoRecent(){
+  const el=document.getElementById('rvo-recent'); if(!el) return;
+  const data=_appData;
+  const dates=data?.rvoData?Object.keys(data.rvoData).sort().reverse().slice(0,14):[];
+  const selDate=document.getElementById('rvo-date')?.value;
+  const $f=v=>v!=null&&v>0?'$'+Number(v).toLocaleString():'—';
+  const n=v=>v!=null?v:'—';
+  const emptyRow=`<tr><td colspan="9" style="text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;padding:20px;">No entries yet — start by entering today's data above.</td></tr>`;
+  el.innerHTML=`<div class="table-scroll"><table>
+    <thead><tr>
+      <th>Date</th><th>Outbound Calls</th><th>Booked</th><th>Confirmed</th><th>Shows</th><th>No Shows</th><th>Closed</th><th>Revenue</th><th>Cash Collected</th>
+    </tr></thead>
+    <tbody>${dates.length?dates.map(d=>{
+      const e=data.rvoData[d]||{};
+      const hi=d===selDate?'background:rgba(108,99,255,.1);':'';
+      return `<tr style="${hi}cursor:pointer;" onclick="document.getElementById('rvo-date').value='${d}';loadRvoData();">
+        <td style="color:var(--accent2);font-family:var(--font-mono);white-space:nowrap;">${d}</td>
+        <td>${n(e.outboundcalls)}</td><td>${n(e.totalbooked)}</td><td>${n(e.totalconfirmed)}</td>
+        <td>${n(e.shows)}</td><td>${n(e.noshows)}</td><td>${n(e.closed)}</td>
+        <td>${$f(e.revenue)}</td><td>${$f(e.cash)}</td>
+      </tr>`;
+    }).join(''):emptyRow}</tbody></table></div>`;
+}
+
+// ════════════════════════════════
+// DATA ENTRY INIT
 (function initDataEntry(){
   // Don't auto-call setDeToday here — handled after password unlock
   const now=new Date(),y=now.getFullYear(),mo=String(now.getMonth()+1).padStart(2,'0');
@@ -3190,6 +3338,10 @@ function confirmDelete(msg){
 function escHtml(s){
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+// safeText: escapes HTML, then converts newlines to <br> for readable display
+function safeText(s){
+  return escHtml(s).replace(/\n/g,'<br>');
+}
 
 // ── PASSWORD GATE FUNCTION ──
 
@@ -3229,7 +3381,108 @@ function checkPassword(){
   }
 })();
 </script>
-</div><!-- end main-area -->
+<!-- ═══════════════════════════════════════════
+     RVO OUTBOUND
+═══════════════════════════════════════════ -->
+<div id="tab-rvo" class="content">
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">RVO Outbound</div>
+      <div class="page-header-sub">Genesis · VSL · Outbound tracking</div>
+    </div>
+    <div class="month-nav">
+      <button class="month-nav-btn" onclick="shiftTabMonth('rvo',-1)">◀</button>
+      <div id="rvoMonthLabel" class="month-nav-label"></div>
+      <button class="month-nav-btn" onclick="shiftTabMonth('rvo',1)">▶</button>
+    </div>
+  </div>
+
+  <!-- Date Selector -->
+  <div class="panel" style="margin-bottom:20px;">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div><label class="form-label">Select Date</label>
+        <input class="form-input" type="date" id="rvo-date" style="width:180px;" onchange="loadRvoData()" /></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="shiftRvoDate(-1)">◀ Prev Day</button>
+        <button class="btn btn-ghost btn-sm" onclick="setRvoToday()">Today</button>
+        <button class="btn btn-ghost btn-sm" onclick="shiftRvoDate(1)">Next Day ▶</button>
+      </div>
+      <div id="rvo-save-status" style="font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-left:auto;"></div>
+    </div>
+  </div>
+
+  <!-- Genesis Card — VSL only, hard-coded, no toggle -->
+  <div class="panel" style="max-width:600px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div class="panel-title" style="color:var(--accent2);margin-bottom:0;">📞 Genesis · VSL</div>
+      <span style="margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 10px;">VSL</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label class="form-label">Outbound Calls</label>
+        <input class="form-input" type="number" id="rvo-outbound-calls" placeholder="0" oninput="rvoEnableSave()" />
+      </div>
+      <div>
+        <label class="form-label">Total Booked</label>
+        <input class="form-input" type="number" id="rvo-total-booked" placeholder="0" oninput="rvoEnableSave()" />
+      </div>
+      <div>
+        <label class="form-label">Total Confirmed</label>
+        <input class="form-input" type="number" id="rvo-total-confirmed" placeholder="0" oninput="rvoCalcNoShows()" />
+      </div>
+      <div>
+        <label class="form-label">Shows</label>
+        <input class="form-input" type="number" id="rvo-shows" placeholder="0" oninput="rvoCalcNoShows()" />
+      </div>
+      <div>
+        <label class="form-label">No Shows <span style="color:var(--text3);font-size:10px;">(auto)</span></label>
+        <input class="form-input" type="number" id="rvo-no-shows" placeholder="0" readonly style="opacity:.6;cursor:not-allowed;" />
+      </div>
+      <div>
+        <label class="form-label">Closed</label>
+        <input class="form-input" type="number" id="rvo-closed" placeholder="0" oninput="rvoEnableSave()" />
+      </div>
+      <div style="grid-column:span 2;">
+        <label class="form-label">Revenue ($)</label>
+        <input class="form-input" type="number" id="rvo-revenue" placeholder="0" oninput="rvoEnableSave()" />
+      </div>
+      <div>
+        <label class="form-label">Deposits ($)</label>
+        <input class="form-input" type="number" id="rvo-deposits" placeholder="0" oninput="rvoCalcCash()" />
+      </div>
+      <div>
+        <label class="form-label">Cash Collected ($) <span style="color:var(--text3);font-size:10px;">incl. deposits</span></label>
+        <input class="form-input" type="number" id="rvo-cash" placeholder="0" oninput="rvoEnableSave()" />
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;margin-top:18px;" id="rvo-save-btn" onclick="saveRvoData()" disabled>💾 Save RVO Entry</button>
+    <div id="rvo-status" style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-top:6px;text-align:center;"></div>
+  </div>
+
+  <!-- Monthly Summary KPIs -->
+  <div class="section-divider" style="margin-top:28px;"><div class="section-divider-label">Month Summary</div><div class="section-divider-line"></div></div>
+  <div class="kpi-grid" id="rvo-kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+    <div class="kpi-card cyan"><div class="kpi-label">Outbound Calls</div><div class="kpi-value cyan" id="rvo-kpi-calls">—</div></div>
+    <div class="kpi-card cyan"><div class="kpi-label">Total Booked</div><div class="kpi-value cyan" id="rvo-kpi-booked">—</div></div>
+    <div class="kpi-card cyan"><div class="kpi-label">Total Confirmed</div><div class="kpi-value cyan" id="rvo-kpi-confirmed">—</div></div>
+    <div class="kpi-card cyan"><div class="kpi-label">Shows</div><div class="kpi-value cyan" id="rvo-kpi-shows">—</div></div>
+    <div class="kpi-card orange"><div class="kpi-label">No Shows</div><div class="kpi-value orange" id="rvo-kpi-noshows">—</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Closed</div><div class="kpi-value green" id="rvo-kpi-closed">—</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Revenue</div><div class="kpi-value gold" id="rvo-kpi-revenue">—</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Deposits</div><div class="kpi-value gold" id="rvo-kpi-deposits">—</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Cash Collected</div><div class="kpi-value green" id="rvo-kpi-cash">—</div><div class="kpi-meta">incl. deposits</div></div>
+  </div>
+
+  <!-- Recent Entries -->
+  <div class="panel" style="margin-top:8px;">
+    <div class="panel-title">📅 Recent RVO Entries <span style="font-size:11px;color:var(--text3);font-weight:400;">· Click any row to load that date</span></div>
+    <div id="rvo-recent">Loading…</div>
+  </div>
+</div>
+
+
 </div><!-- end app-layout -->
 </div><!-- end appShell -->
 </body>
