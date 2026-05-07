@@ -443,109 +443,125 @@
   "dailyData": {
     "2026-05-01": {
       "gen": {
-        "optins": 93,
-        "booked": 9,
-        "confirmed": 4,
-        "shows": 2,
-        "noshows": 2,
-        "closed": null,
-        "revenue": null,
-        "deposits": null,
-        "cash": null,
-        "adspend": 250.78
+        "vsl": {
+          "optins": 93,
+          "booked": 9,
+          "confirmed": 4,
+          "shows": 2,
+          "noshows": 2,
+          "closed": null,
+          "revenue": null,
+          "deposits": null,
+          "cash": null,
+          "adspend": 250.78
+        }
       },
       "mdp": {
-        "optins": null,
-        "booked": null,
-        "confirmed": null,
-        "shows": null,
-        "noshows": null,
-        "closed": null,
-        "revenue": null,
-        "deposits": null,
-        "cash": null,
-        "adspend": null
+        "dm": {
+          "optins": null,
+          "booked": null,
+          "confirmed": null,
+          "shows": null,
+          "noshows": null,
+          "closed": null,
+          "revenue": null,
+          "deposits": null,
+          "cash": null,
+          "adspend": null
+        }
       },
       "savedAt": "2026-05-05T06:40:01.835Z"
     },
     "2026-05-02": {
       "gen": {
-        "optins": 62,
-        "booked": 12,
-        "confirmed": 4,
-        "shows": 2,
-        "noshows": 2,
-        "closed": 1,
-        "revenue": 1500,
-        "deposits": 50,
-        "cash": 50,
-        "adspend": 220.08
+        "vsl": {
+          "optins": 62,
+          "booked": 12,
+          "confirmed": 4,
+          "shows": 2,
+          "noshows": 2,
+          "closed": 1,
+          "revenue": 1500,
+          "deposits": 50,
+          "cash": 50,
+          "adspend": 220.08
+        }
       },
       "mdp": {
-        "optins": null,
-        "booked": null,
-        "confirmed": null,
-        "shows": null,
-        "noshows": null,
-        "closed": null,
-        "revenue": null,
-        "deposits": null,
-        "cash": null,
-        "adspend": null
+        "dm": {
+          "optins": null,
+          "booked": null,
+          "confirmed": null,
+          "shows": null,
+          "noshows": null,
+          "closed": null,
+          "revenue": null,
+          "deposits": null,
+          "cash": null,
+          "adspend": null
+        }
       },
       "savedAt": "2026-05-05T06:44:21.911Z"
     },
     "2026-05-03": {
       "gen": {
-        "optins": 73,
-        "booked": 3,
-        "confirmed": 2,
-        "shows": 1,
-        "noshows": 1,
-        "closed": null,
-        "revenue": null,
-        "deposits": null,
-        "cash": null,
-        "adspend": 235.28
+        "vsl": {
+          "optins": 73,
+          "booked": 3,
+          "confirmed": 2,
+          "shows": 1,
+          "noshows": 1,
+          "closed": null,
+          "revenue": null,
+          "deposits": null,
+          "cash": null,
+          "adspend": 235.28
+        }
       },
       "mdp": {
-        "optins": null,
-        "booked": null,
-        "confirmed": null,
-        "shows": null,
-        "noshows": null,
-        "closed": null,
-        "revenue": null,
-        "deposits": null,
-        "cash": null,
-        "adspend": null
+        "dm": {
+          "optins": null,
+          "booked": null,
+          "confirmed": null,
+          "shows": null,
+          "noshows": null,
+          "closed": null,
+          "revenue": null,
+          "deposits": null,
+          "cash": null,
+          "adspend": null
+        }
       },
       "savedAt": "2026-05-05T06:39:10.363Z"
     },
     "2026-05-04": {
       "gen": {
-        "optins": 67,
-        "booked": 13,
-        "confirmed": 6,
-        "shows": 2,
-        "noshows": 4,
-        "closed": 2,
-        "revenue": 3000,
-        "deposits": null,
-        "cash": 2250,
-        "adspend": 238.82
+        "vsl": {
+          "optins": 67,
+          "booked": 13,
+          "confirmed": 6,
+          "shows": 2,
+          "noshows": 4,
+          "closed": 2,
+          "revenue": 3000,
+          "deposits": null,
+          "cash": 2250,
+          "adspend": 238.82
+        }
       },
       "mdp": {
-        "optins": null,
-        "booked": null,
-        "confirmed": null,
-        "shows": null,
-        "noshows": null,
-        "closed": null,
-        "revenue": null,
-        "deposits": null,
-        "cash": null,
-        "adspend": null
+        "dm": {
+          "optins": null,
+          "booked": null,
+          "confirmed": null,
+          "shows": null,
+          "noshows": null,
+          "closed": null,
+          "revenue": null,
+          "deposits": null,
+          "cash": null,
+          "adspend": null
+        }
       },
       "savedAt": "2026-05-05T06:42:41.491Z"
     },
