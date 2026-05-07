@@ -1,1 +1,33 @@
-{"reports":[],"meetings":[],"wins":[],"insights":[],"improvements":[],"tasks":null,"dailyData":{},"rvoData":{},"errors":[],"customKPIs":[],"ayaKPI":[]}
+{
+  "reports": [],
+  "meetings": [],
+  "wins": [],
+  "insights": [],
+  "improvements": [],
+  "tasks": null,
+  "dailyData": {
+    "2026-05-07": {
+      "gen": {
+        "vsl": {
+          "optins": 0,
+          "booked": null,
+          "confirmed": null,
+          "shows": null,
+          "noshows": null,
+          "closed": null,
+          "revenue": null,
+          "deposits": null,
+          "cash": null,
+          "adspend": null,
+          "outbound": null,
+          "vslbook": null,
+          "savedAt": "2026-05-07T19:21:57.068Z"
+        }
+      }
+    }
+  },
+  "rvoData": {},
+  "errors": [],
+  "customKPIs": [],
+  "ayaKPI": []
+}
