@@ -1590,13 +1590,8 @@ function updateTopbarTitle(name){
   el.textContent=TAB_TITLES[name]||'';
 }
 
-// ── 2. SKELETON LOADING ──
-function showSkeletons(){
-  const grid=document.querySelector('#tab-overview .kpi-grid');
-  if(grid && !_appData){
-    grid.innerHTML=Array(6).fill('<div class="kpi-card skeleton-kpi skeleton"></div>').join('');
-  }
-}
+// ── 2. SKELETON LOADING — disabled, caused KPI cards to be wiped ──
+function showSkeletons(){ /* disabled */ }
 
 // ── 3. COUNT-UP ANIMATION ──
 function countUpEl(el, target, duration=700){
@@ -2255,25 +2250,21 @@ let _ghSHA=null;
 
 async function ghReadFile(){
   const {owner,repo,token}=getGHConfig();
-  // Get SHA and download_url via contents API (no content — stays under limit)
+  // Get file metadata (SHA) — lightweight call
   const metaRes=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
   if(metaRes.status===404) return {data:null,sha:null};
   if(!metaRes.ok) throw new Error('GitHub meta error: '+metaRes.status);
   const meta=await metaRes.json();
   const sha=meta.sha;
-  // Use git blob API to get full content regardless of file size
-  const blobRes=await fetch(`https://api.github.com/repos/${owner}/${repo}/git/blobs/${sha}`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
+  // Use git blob API with raw media type — no 1MB limit, returns raw content directly
+  const blobRes=await fetch(`https://api.github.com/repos/${owner}/${repo}/git/blobs/${sha}`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3.raw'}});
   if(!blobRes.ok) throw new Error('GitHub blob error: '+blobRes.status);
-  const blob=await blobRes.json();
-  const binary=atob(blob.content.replace(/\n/g,''));
-  const bytes=new Uint8Array(binary.length);
-  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
-  const json=new TextDecoder().decode(bytes);
-  return {data:JSON.parse(json),sha};
+  const data=await blobRes.json();
+  return {data,sha};
 }
 async function ghWriteFile(data,sha){
   const {owner,repo,token}=getGHConfig();
-  const json=JSON.stringify(data,null,2);
+  const json=JSON.stringify(data);
   // Safe base64 encoding that handles all Unicode (Arabic, emoji, special chars)
   const bytes=new TextEncoder().encode(json);
   let binary='';
@@ -2313,6 +2304,21 @@ function normalizeAppData(data){
   if(!data.wins)         data.wins=[];
   if(!data.insights)     data.insights=[];
   if(!data.improvements) data.improvements=[];
+  // Migrate flat dailyData entries to source-nested format
+  // Old format: dailyData[date].gen = {confirmed:4, booked:9, ...}
+  // New format: dailyData[date].gen = {vsl:{confirmed:4, booked:9, ...}}
+  Object.keys(data.dailyData).forEach(date=>{
+    ['gen','mdp'].forEach(prog=>{
+      const d=data.dailyData[date][prog];
+      if(!d) return;
+      const isFlat = (d.confirmed!==undefined||d.booked!==undefined||d.optins!==undefined);
+      const isNested = !!(d.vsl||d.dm||d.leadgen);
+      if(isFlat && !isNested){
+        const source = prog==='gen'?'vsl':'dm';
+        data.dailyData[date][prog]={[source]:d};
+      }
+    });
+  });
   return data;
 }
 
