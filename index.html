@@ -2283,19 +2283,34 @@ function localFallback(){
   };
 }
 
+function normalizeAppData(data){
+  if(!data) return data;
+  if(!data.dailyData)    data.dailyData={};
+  if(!data.rvoData)      data.rvoData={};
+  if(!data.errors)       data.errors=[];
+  if(!data.customKPIs)   data.customKPIs=[];
+  if(!data.ayaKPI)       data.ayaKPI=[];
+  if(!data.reports)      data.reports=[];
+  if(!data.meetings)     data.meetings=[];
+  if(!data.wins)         data.wins=[];
+  if(!data.insights)     data.insights=[];
+  if(!data.improvements) data.improvements=[];
+  return data;
+}
+
 async function loadAppData(){
   if(_appData) return _appData;
   if(!isGHConfigured()){ _appData=localFallback(); return _appData; }
   try{
     const {data,sha}=await ghReadFile();
-    if(data){ _ghSHA=sha; _appData=data; localStorage.setItem('ea_appdata_cache',JSON.stringify(data)); return _appData; }
+    if(data){ _ghSHA=sha; _appData=normalizeAppData(data); localStorage.setItem('ea_appdata_cache',JSON.stringify(_appData)); return _appData; }
     _appData=localFallback();
     _ghSHA=await ghWriteFile(_appData,null);
     return _appData;
   } catch(e){
     console.warn('GitHub load failed:',e.message);
     const cache=localStorage.getItem('ea_appdata_cache');
-    _appData=cache?JSON.parse(cache):localFallback();
+    _appData=cache?normalizeAppData(JSON.parse(cache)):localFallback();
     return _appData;
   }
 }
