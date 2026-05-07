@@ -2259,11 +2259,21 @@ async function ghReadFile(){
   if(res.status===404) return {data:null,sha:null};
   if(!res.ok) throw new Error('GitHub read error: '+res.status);
   const j=await res.json();
-  return {data:JSON.parse(atob(j.content.replace(/\n/g,''))),sha:j.sha};
+  const binary=atob(j.content.replace(/\n/g,''));
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+  const json=new TextDecoder().decode(bytes);
+  return {data:JSON.parse(json),sha:j.sha};
 }
 async function ghWriteFile(data,sha){
   const {owner,repo,token}=getGHConfig();
-  const body={message:'ops: sync appdata',content:btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2)))),...(sha?{sha}:{})};
+  const json=JSON.stringify(data,null,2);
+  // Safe base64 encoding that handles all Unicode (Arabic, emoji, special chars)
+  const bytes=new TextEncoder().encode(json);
+  let binary='';
+  bytes.forEach(b=>binary+=String.fromCharCode(b));
+  const content=btoa(binary);
+  const body={message:'ops: sync appdata',content,...(sha?{sha}:{})};
   const res=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
   if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||'GitHub write error: '+res.status); }
   return (await res.json()).content.sha;
