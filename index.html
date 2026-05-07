@@ -2255,15 +2255,17 @@ let _ghSHA=null;
 
 async function ghReadFile(){
   const {owner,repo,token}=getGHConfig();
-  const res=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
-  if(res.status===404) return {data:null,sha:null};
-  if(!res.ok) throw new Error('GitHub read error: '+res.status);
-  const j=await res.json();
-  const binary=atob(j.content.replace(/\n/g,''));
-  const bytes=new Uint8Array(binary.length);
-  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
-  const json=new TextDecoder().decode(bytes);
-  return {data:JSON.parse(json),sha:j.sha};
+  // First get the SHA via contents API (lightweight — no content)
+  const metaRes=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${GH_DATA_PATH}`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
+  if(metaRes.status===404) return {data:null,sha:null};
+  if(!metaRes.ok) throw new Error('GitHub meta error: '+metaRes.status);
+  const meta=await metaRes.json();
+  const sha=meta.sha;
+  // Use raw URL to fetch actual content — no 1MB limit
+  const rawRes=await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/main/${GH_DATA_PATH}`,{headers:{'Authorization':'token '+token,'Cache-Control':'no-cache'}});
+  if(!rawRes.ok) throw new Error('GitHub raw read error: '+rawRes.status);
+  const data=await rawRes.json();
+  return {data,sha};
 }
 async function ghWriteFile(data,sha){
   const {owner,repo,token}=getGHConfig();
