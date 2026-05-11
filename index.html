@@ -1653,6 +1653,13 @@ function switchTab(name,btn){
 // Init on load
 setTimeout(()=>{ updateTopbarTitle('overview'); showSkeletons(); },50);
 
+// ── DISABLE SCROLL ON NUMBER INPUTS ──
+document.addEventListener('wheel', function(e){
+  if(document.activeElement && document.activeElement.type === 'number'){
+    document.activeElement.blur();
+  }
+}, {passive: false});
+
 // ── SIDEBAR COLLAPSE ──
 function toggleSidebarCollapse(){
   const sidebar=document.getElementById('sidebar');
@@ -1717,37 +1724,7 @@ function scrollTabs(by){ /* legacy stub */ }
 // TASK SYSTEM
 // ════════════════════════════════
 const DEFAULT_TASKS = {
-  hanadi:[
-    {text:'Finalize and implement May operations plan',pri:'pri-high',recurring:'monthly',deadline:''},
-    {text:'Performance review — Aya KPI dashboard review',pri:'pri-high',recurring:'weekly',deadline:''},
-    {text:'Growth gap analysis — show rate improvement actions',pri:'pri-med',recurring:'weekly',deadline:''},
-    {text:'Team alignment meeting',pri:'pri-med',recurring:'weekly',deadline:''},
-    {text:'Meeting with closers (Stephan / Abdallah)',pri:'pri-med',recurring:'weekly',deadline:''},
-    {text:'Daily lead tracking check',pri:'pri-low',recurring:'daily',deadline:''},
-  ],
-  fatima:[
-    {text:'Onboard new students from this week\'s closes',pri:'pri-high',recurring:'weekly',deadline:''},
-    {text:'100% follow-up on all assigned students this week',pri:'pri-high',recurring:'weekly',deadline:''},
-    {text:'Discord — answer pending student questions',pri:'pri-med',recurring:'daily',deadline:''},
-    {text:'1-on-1 student meetings',pri:'pri-med',recurring:'weekly',deadline:''},
-    {text:'Reactivation outreach — students at risk of churn',pri:'pri-med',recurring:'weekly',deadline:''},
-    {text:'Collect 1 win / success story this week',pri:'pri-low',recurring:'weekly',deadline:''},
-  ],
-  maya:[
-    {text:'Daily CRM accuracy audit — flag errors in Zoho',pri:'pri-high',recurring:'daily',deadline:''},
-    {text:'Follow up with Aya — review KPI log vs target',pri:'pri-high',recurring:'daily',deadline:''},
-    {text:'Weekly data analysis report — produce & share',pri:'pri-med',recurring:'weekly',deadline:''},
-    {text:'3–4 insights/action items from actuals',pri:'pri-med',recurring:'weekly',deadline:''},
-    {text:'Lead categorization audit — hot / no-show / dead',pri:'pri-low',recurring:'weekly',deadline:''},
-  ],
-  aya:[
-    {text:'80–120 outbound calls today',pri:'pri-high',recurring:'daily',deadline:''},
-    {text:'4–8 confirmed bookings (inbound + outbound)',pri:'pri-high',recurring:'daily',deadline:''},
-    {text:'3–8 outbound-sourced bookings',pri:'pri-high',recurring:'daily',deadline:''},
-    {text:'Lead reactivation — work through no-shows & dead leads',pri:'pri-med',recurring:'daily',deadline:''},
-    {text:'Update CRM — categorize hot / cold / no-show leads',pri:'pri-med',recurring:'daily',deadline:''},
-    {text:'End-of-day KPI report to Maya',pri:'pri-low',recurring:'daily',deadline:''},
-  ]
+  elie:[], hanadi:[], fatima:[], maya:[], aya:[]
 };
 
 function getDeadlineClass(deadline){
@@ -2167,6 +2144,7 @@ async function addTask(){
   const recurring = document.getElementById('modalRecurring').value;
   if(!text) return;
   const data = getTaskData();
+  if(!data[key]) data[key] = [];
   data[key].push({text, pri, deadline, recurring, done:false});
   await saveTasks(data);
   renderTasks();
@@ -2820,13 +2798,13 @@ async function saveSourceData(prog){
   const entry={};
   ['optins','booked','confirmed','shows','noshows','closed','revenue','deposits','cash','adspend'].forEach(f=>{
     const v=document.getElementById(`${pid}-${f}`)?.value;
-    entry[f]=v===''||v==null?null:parseFloat(v);
+    entry[f]=v===''||v==null?0:parseFloat(v);
   });
   if(isVSL){
     const vo=document.getElementById(`${pid}-outbound`)?.value;
     const vv=document.getElementById(`${pid}-vslbook`)?.value;
-    entry.outbound=vo?parseFloat(vo):null;
-    entry.vslbook=vv?parseFloat(vv):null;
+    entry.outbound=vo===''||vo==null?0:parseFloat(vo);
+    entry.vslbook=vv===''||vv==null?0:parseFloat(vv);
   }
   entry.savedAt=new Date().toISOString();
   const data=await loadAppData();
@@ -2977,7 +2955,7 @@ function renderOverview(){
   const wlm=document.getElementById('ov-mdp-weekly-month-label'); if(wlm) wlm.textContent=lbl;
 
   const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
-  const $f=v=>v?'$'+Math.round(v).toLocaleString():'—';
+  const $f=v=>v!=null?'$'+Math.round(v).toLocaleString():'—';
   const pct=v=>v>0?v.toFixed(1)+'%':'—';
 
   const result=sumMonthData(mk);
@@ -3060,7 +3038,7 @@ function renderWeeklyTable(containerId, weeks, lbl, monthKey, prog){
   const el=document.getElementById(containerId); if(!el) return;
   const sources = prog ? (DE_SOURCES[prog]||[]) : [];
   const pct=v=>v>0?v.toFixed(1)+'%':'—';
-  const $f=v=>v?'$'+Math.round(v).toLocaleString():'—';
+  const $f=v=>v!=null?'$'+Math.round(v).toLocaleString():'—';
 
   const skeletons=monthKey?getMonthWeekSkeletons(monthKey):[];
   if(!skeletons.length&&!weeks.length){el.innerHTML=noDataMsg(lbl);return;}
@@ -3104,15 +3082,16 @@ function renderWeeklyTable(containerId, weeks, lbl, monthKey, prog){
       ${rows.map(r=>{
         const w=r.data;
         const sty=w?'':'opacity:.4;';
+        const n0=v=>v!=null?v:'—';
         const srcCells=sources.map(s=>{
           const sd=w?.bySrc?.[s]||{};
-          return w?`<td>${sd.booked||'—'}</td><td>${sd.shows||'—'}</td><td>${sd.closed||'—'}</td>`:'<td>—</td><td>—</td><td>—</td>';
+          return w?`<td>${n0(sd.booked)}</td><td>${n0(sd.shows)}</td><td>${n0(sd.closed)}</td>`:'<td>—</td><td>—</td><td>—</td>';
         }).join('');
         return `<tr style="${sty}">
           <td style="color:var(--text);white-space:nowrap;font-family:var(--font-mono);font-size:11px;">${r.label}</td>
-          <td>${w?w.booked:'—'}</td><td>${w?w.confirmed:'—'}</td><td>${w?w.shows:'—'}</td><td>${w?w.noshows:'—'}</td>
+          <td>${w?n0(w.booked):'—'}</td><td>${w?n0(w.confirmed):'—'}</td><td>${w?n0(w.shows):'—'}</td><td>${w?n0(w.noshows):'—'}</td>
           <td>${w?'<span class="tag lead">'+pct(w.confirmed?(w.shows/w.confirmed)*100:0)+'</span>':'—'}</td>
-          <td>${w?w.closed:'—'}</td>
+          <td>${w?n0(w.closed):'—'}</td>
           <td>${w?'<span class="tag lead">'+pct(w.confirmed?(w.closed/w.confirmed)*100:0)+'</span>':'—'}</td>
           <td>${w?$f(w.revenue):'—'}</td><td>${w?$f(w.adspend):'—'}</td>
           ${srcCells}
